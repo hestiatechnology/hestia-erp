@@ -9,6 +9,7 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.New()
+	r.UseH2C = true
 	r.RedirectTrailingSlash = false
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
