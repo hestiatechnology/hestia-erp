@@ -1,18 +1,34 @@
-openapi: 3.0.2
+openapi: 3.1.0
 info:
   title: Hestia ERP
   version: '1.0'
+  contact:
+    name: Hestia Technologies
+    email: help@hestia.com
   license: 
     name: TBD
     url: https://tbd
 servers:
-  - url: https://api.server.test/v1
+  - url: https://dev.api.hestia.test/v1
+  
+tags:
+  - name: Ping
 paths:
   /test:
     get:
+      operationId: "ping"
+      tags: ["Ping"]
+      description: "Returns the ping and IP Address"
       responses:
         '200':
           description: OK
+
+components:
+  securitySchemes:
+    ApiKeyAuth:            # arbitrary name for the security scheme
+      type: apiKey
+      in: header           # the API key is passed in the header
+      name: X-API-KEY      # name of the header, arbitrary
+
 security:
   - name: []
-
