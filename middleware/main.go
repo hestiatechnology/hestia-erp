@@ -6,9 +6,16 @@ import (
 )
 
 func RequestIdMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(ctx *gin.Context) {
 		reqId := uuid.New().String()
-		c.Writer.Header().Set("X-Request-Id", reqId)
-		c.Next()
+		ctx.Writer.Header().Set("X-Request-Id", reqId)
+		ctx.Next()
+	}
+}
+
+func DontCache() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.Writer.Header().Set("Cache-Control", "no-store")
+		ctx.Next()
 	}
 }
