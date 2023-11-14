@@ -2,7 +2,6 @@ package routes
 
 import (
 	"database/sql"
-	"hestia/api/utils"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -30,8 +29,5 @@ func CompanyRoutes(r *gin.Engine) {
 
 	// /company
 	company.GET("", CompanyGet)
-	company.POST("", utils.MethodNotAllowed)
-	company.PUT("", utils.MethodNotAllowed)
-	company.DELETE("", utils.MethodNotAllowed)
 
 }

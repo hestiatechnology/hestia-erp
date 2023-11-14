@@ -10,11 +10,16 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.New()
 	r.UseH2C = true
+	r.ForwardedByClientIP = true
 	r.RedirectTrailingSlash = false
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestIdMiddleware())
 	r.Use(middleware.DontCache())
+	// Handle Method Not Allowed
+	r.HandleMethodNotAllowed = true
+	r.NoMethod(middleware.MethodNotAllowed())
+	r.NoRoute(middleware.NotFound())
 	routes.SetRoutes(r)
 	return r
 }

@@ -1,11 +1,15 @@
 package utils
 
 import (
-	"net/http"
+	"database/sql"
+	"os"
 
-	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
-func MethodNotAllowed(ctx *gin.Context) {
-	ctx.AbortWithStatus(http.StatusMethodNotAllowed)
+// Database
+func ConnectDB() (*sql.DB, error) {
+	connStr := "postgres://" + os.Getenv("") + "postgres:alexis27@localhost/erp?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	return db, err
 }

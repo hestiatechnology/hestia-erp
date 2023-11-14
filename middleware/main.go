@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"hestia/api/models"
 	"net/http"
 	"strings"
 
@@ -23,11 +24,27 @@ func DontCache() gin.HandlerFunc {
 	}
 }
 
+func MethodNotAllowed() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.AbortWithStatus(http.StatusMethodNotAllowed)
+	}
+}
+
+func NotFound() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.AbortWithStatus(http.StatusNotFound)
+	}
+}
+
 func BearerAuthenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			ctx.AbortWithStatus(http.StatusUnauthorized)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorMessage{
+				Code:    http.StatusUnauthorized,
+				Status:  "Unauthorized",
+				Message: "Missing header Authorization",
+			})
 			return
 		}
 
@@ -38,7 +55,11 @@ func BearerAuthenticate() gin.HandlerFunc {
 		// Validate the token
 		// In this example, we're just checking if it matches a predefined token
 		if token != "expected_token" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorMessage{
+				Code:    http.StatusUnauthorized,
+				Status:  "Unauthorized",
+				Message: "Invalid token",
+			})
 			return
 		}
 
