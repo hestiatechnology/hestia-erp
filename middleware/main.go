@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"hestia/api/models"
+	"hestia/api/utils"
+	"log"
 	"net/http"
 	"strings"
 
@@ -63,6 +65,42 @@ func BearerAuthenticate() gin.HandlerFunc {
 			return
 		}
 
+		// If the token is valid, continue with the request
+		ctx.Next()
+	}
+
+}
+
+func CompanyId() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		companyId := ctx.GetHeader("X-Company-Id")
+		if companyId == "" {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorMessage{
+				Code:    http.StatusUnauthorized,
+				Status:  "Unauthorized",
+				Message: "Missing header X-Company-Id",
+			})
+			return
+		}
+
+		// Validate the token
+		// Connect to DB and check if the company exists and the user has access to it via the table user_company
+		db, err := utils.ConnectDB()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rows, err := db.Query("SELECT count(id) FROM users.user_company WHERE user_id = $1 AND company_id",
+			ctx.GetString("x-user-id"), companyId)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var count int
+		rows.Scan(&count)
+		if count == 0 {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+		}
 		// If the token is valid, continue with the request
 		ctx.Next()
 	}
