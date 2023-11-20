@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type TechnicalFile struct {
 	Id          string                   `json:"id"`
 	Code        string                   `json:"code"`
@@ -11,7 +9,7 @@ type TechnicalFile struct {
 	Family      TechnicalFileFamily      `json:"family"`
 	Type        TechnicalFileType        `json:"type"`
 	RawMaterial TechnicalFileRawMaterial `json:"rawMaterial"`
-	Date        time.Time                `json:"date"`
+	Date        string                   `json:"date"`
 }
 
 // Theres a new type for some properties

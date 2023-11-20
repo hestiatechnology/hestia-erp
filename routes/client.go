@@ -16,7 +16,7 @@ func ClientGet(ctx *gin.Context) {
 
 	var clients []models.Client
 
-	rows, err := db.Query("SELECT id, name, code, vat_id, street, postal_code, locality, country FROM sales.client WHERE company_id = $1", "1")
+	rows, err := db.Query("SELECT id, name, code, vat_id, street, postal_code, locality, country FROM sales.client WHERE company_id = $1", ctx.GetHeader("X-Company-Id"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,9 +32,7 @@ func ClientGet(ctx *gin.Context) {
 
 	rows.Close()
 
-	ctx.JSON(200, gin.H{
-		"rows": clients,
-	})
+	ctx.JSON(200, clients)
 }
 
 func ClientRoutes(r *gin.Engine) {
