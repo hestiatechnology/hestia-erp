@@ -41,7 +41,7 @@ func ClientGet(ctx *gin.Context) {
 }
 
 func ClientRoutes(r *gin.Engine) {
-	client := r.Group("/client", middleware.CompanyId())
+	client := r.Group("/client", middleware.BearerAuthenticate(), middleware.CompanyId())
 
 	// /company
 	client.GET("", ClientGet)

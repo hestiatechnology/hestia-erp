@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -29,7 +30,7 @@ func ConnectDB() (*pgxpool.Pool, error) {
 		log.Fatal("Missing one or more environment variables for database connection")
 	}
 
-	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbUser, dbPass, dbHost, dbName)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia_api", dbUser, dbPass, dbHost, dbName)
 
 	// Open a connection to the database
 	var err error
@@ -59,4 +60,25 @@ func GetCompanyTimezone(ctx context.Context, companyId string) (string, error) {
 	}
 
 	return timezone, nil
+}
+
+// Function to grab the Authorization header and remove the Bearer prefix,
+// returning the token only. No database connection is made.
+func GetSessionId(authHeader string) string {
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+	return token
+}
+func GetUserIdFromSession(ctx context.Context, token string) (string, error) {
+	db, err := ConnectDB()
+	if err != nil {
+		return "", err
+	}
+
+	var userId string
+	err = db.QueryRow(ctx, "SELECT user_id FROM users.users_session WHERE id = $1", token).Scan(&userId)
+	if err != nil {
+		return "", err
+	}
+
+	return userId, nil
 }

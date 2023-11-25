@@ -54,14 +54,22 @@ func BearerAuthenticate() gin.HandlerFunc {
 		// The header format is "Bearer <token>"
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 
-		// Validate the token
-		// In this example, we're just checking if it matches a predefined token
-		if token != "expected_token" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, models.ErrorMessage{
-				Code:    http.StatusUnauthorized,
-				Status:  "Unauthorized",
-				Message: "Invalid token",
-			})
+		// Connect to DB and check if the token exists
+		db, err := utils.ConnectDB()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		row := db.QueryRow(ctx.Request.Context(), "SELECT count(id) FROM users.users_session WHERE id = $1", token)
+
+		var count int
+		err = row.Scan(&count)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if count == 0 {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
@@ -90,10 +98,15 @@ func CompanyId() gin.HandlerFunc {
 			log.Fatal(err)
 		}
 
+		userId, err := utils.GetUserIdFromSession(ctx.Request.Context(), utils.GetSessionId(ctx.GetHeader("Authorization")))
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		row := db.QueryRow(
 			ctx.Request.Context(),
-			"SELECT count(id) FROM users.user_company WHERE user_id = $1 AND company_id = $2",
-			ctx.GetString("X-User-Id"),
+			"SELECT count(company_id) FROM users.user_company WHERE user_id = $1 AND company_id = $2",
+			userId,
 			companyId,
 		)
 		var count int
