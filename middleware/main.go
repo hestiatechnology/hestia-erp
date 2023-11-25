@@ -90,14 +90,18 @@ func CompanyId() gin.HandlerFunc {
 			log.Fatal(err)
 		}
 
-		rows, err := db.Query("SELECT count(id) FROM users.user_company WHERE user_id = $1 AND company_id",
-			ctx.GetString("x-user-id"), companyId)
+		row := db.QueryRow(
+			ctx.Request.Context(),
+			"SELECT count(id) FROM users.user_company WHERE user_id = $1 AND company_id = $2",
+			ctx.GetString("X-User-Id"),
+			companyId,
+		)
+		var count int
+		err = row.Scan(&count)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		var count int
-		rows.Scan(&count)
 		if count == 0 {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}

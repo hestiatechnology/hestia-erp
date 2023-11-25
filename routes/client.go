@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"hestia/api/middleware"
 	"hestia/api/models"
 	"hestia/api/utils"
 	"log"
@@ -15,8 +16,12 @@ func ClientGet(ctx *gin.Context) {
 	}
 
 	var clients []models.Client
+	rows, err := db.Query(
+		ctx.Request.Context(),
+		"SELECT id, name, code, vat_id, street, postal_code, locality, country FROM sales.client WHERE company_id = $1",
+		ctx.GetHeader("X-Company-Id"),
+	)
 
-	rows, err := db.Query("SELECT id, name, code, vat_id, street, postal_code, locality, country FROM sales.client WHERE company_id = $1", ctx.GetHeader("X-Company-Id"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +41,7 @@ func ClientGet(ctx *gin.Context) {
 }
 
 func ClientRoutes(r *gin.Engine) {
-	client := r.Group("/client")
+	client := r.Group("/client", middleware.CompanyId())
 
 	// /company
 	client.GET("", ClientGet)
