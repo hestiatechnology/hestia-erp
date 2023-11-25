@@ -1,23 +1,21 @@
 package routes
 
 import (
-	"database/sql"
 	"hestia/api/middleware"
+	"hestia/api/utils"
 	"log"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
 )
 
 func CompanyGet(ctx *gin.Context) {
 
-	connStr := "postgres://postgres:alexis27@localhost/erp?sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	db.Ping()
+	db, err := utils.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	db.Ping(ctx.Request.Context())
 	rows, err := "db.QueryRow()", nil
 	if err != nil {
 		log.Fatal(err)
@@ -28,9 +26,9 @@ func CompanyGet(ctx *gin.Context) {
 }
 
 func CompanyRoutes(r *gin.Engine) {
-	company := r.Group("/company")
+	company := r.Group("/company", middleware.CompanyId())
 
 	// /company
-	company.GET("", middleware.CompanyId(), CompanyGet)
+	company.GET("", CompanyGet)
 
 }
