@@ -68,7 +68,7 @@ func GetSessionId(authHeader string) string {
 	token := strings.TrimPrefix(authHeader, "Bearer ")
 	return token
 }
-func GetUserIdFromSession(ctx context.Context, token string) (string, error) {
+func GetUserId(ctx context.Context, token string) (string, error) {
 	db, err := ConnectDB()
 	if err != nil {
 		return "", err

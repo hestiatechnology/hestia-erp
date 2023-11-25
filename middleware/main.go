@@ -98,7 +98,7 @@ func CompanyId() gin.HandlerFunc {
 			log.Fatal(err)
 		}
 
-		userId, err := utils.GetUserIdFromSession(ctx.Request.Context(), utils.GetSessionId(ctx.GetHeader("Authorization")))
+		userId, err := utils.GetUserId(ctx.Request.Context(), utils.GetSessionId(ctx.GetHeader("Authorization")))
 		if err != nil {
 			log.Fatal(err)
 		}
