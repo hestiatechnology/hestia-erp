@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"hestia/api/logger"
 	"hestia/api/middleware"
 	"hestia/api/models"
 	"hestia/api/utils"
@@ -15,6 +16,13 @@ func ClientGet(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&limitOffset); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
 			Message: "Missing limit and offset",
+		})
+		return
+	}
+
+	if limitOffset.Limit <= 0 || limitOffset.Offset < 0 || limitOffset.Limit > 100 || limitOffset.Offset > 100 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
+			Message: "Invalid limit and offset",
 		})
 		return
 	}
@@ -34,23 +42,27 @@ func ClientGet(ctx *gin.Context) {
 	)
 
 	if err != nil {
+		logger.Error.Println("Error while querying clients: ", err)
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
 			Message: "Error while fetching clients",
 		})
+		return
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var c models.Client
 		err := rows.Scan(&c.Id, &c.Name, &c.Code, &c.VatId, &c.Street, &c.PostalCode, &c.Locality, &c.Country)
 		if err != nil {
+			logger.Error.Println("Unable to scan rows into Client model, error: ", err)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
 				Message: "Error while getting clients",
 			})
+			return
 		}
 		clients = append(clients, c)
 	}
-
-	rows.Close()
 
 	ctx.JSON(200, clients)
 }

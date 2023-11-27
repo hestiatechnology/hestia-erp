@@ -1,6 +1,7 @@
 package main
 
 import (
+	"hestia/api/logger"
 	"hestia/api/middleware"
 	"hestia/api/routes"
 	"os"
@@ -28,6 +29,7 @@ func SetupRouter() *gin.Engine {
 }
 
 func main() {
+	logger.InitLogger()
 	r := SetupRouter()
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
