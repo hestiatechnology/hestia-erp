@@ -12,17 +12,16 @@ import (
 )
 
 func ClientGet(ctx *gin.Context) {
-	var limitOffset models.LimitOffset
-	if err := ctx.ShouldBindJSON(&limitOffset); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
-			Message: "Missing limit and offset",
-		})
-		return
+	type FilterOptions struct {
+		models.Client
+		models.LimitOffset
 	}
+	var filterOptions FilterOptions
+	if err := ctx.ShouldBindJSON(&filterOptions); err != nil {
 
-	if limitOffset.Limit <= 0 || limitOffset.Offset < 0 || limitOffset.Limit > 100 || limitOffset.Offset > 100 {
+		logger.Error.Println("Error while binding JSON: ", err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
-			Message: "Invalid limit and offset",
+			Message: "Missing positive integers for limit and offset",
 		})
 		return
 	}
@@ -37,8 +36,8 @@ func ClientGet(ctx *gin.Context) {
 		ctx.Request.Context(),
 		"SELECT id, name, code, vat_id, street, postal_code, locality, country FROM sales.client WHERE company_id = $1 LIMIT $2 OFFSET $3",
 		ctx.GetHeader("X-Company-Id"),
-		limitOffset.Limit,
-		limitOffset.Offset,
+		filterOptions.Limit,
+		filterOptions.Offset,
 	)
 
 	if err != nil {
