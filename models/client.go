@@ -10,3 +10,13 @@ type Client struct {
 	Locality   string `json:"locality"`
 	Country    string `json:"country" binding:"iso3166_1_alpha2"`
 }
+
+type NewClient struct {
+	Name       string `json:"name" binding:"required"`
+	Code       string `json:"code" binding:"required"`
+	VatId      string `json:"vatId" binding:"required"`
+	Street     string `json:"street" binding:"required"`
+	PostalCode string `json:"postalCode" binding:"required"`
+	Locality   string `json:"locality" binding:"required"`
+	Country    string `json:"country" binding:"iso3166_1_alpha2,required"`
+}

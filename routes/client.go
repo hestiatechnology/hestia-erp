@@ -66,10 +66,41 @@ func ClientGet(ctx *gin.Context) {
 	ctx.JSON(200, clients)
 }
 
+func ClientPost(ctx *gin.Context) {
+
+	var newClient models.NewClient
+	if err := ctx.ShouldBindJSON(&newClient); err != nil {
+
+		logger.Error.Println("Error while binding JSON: ", err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
+			Message: "Input validation failed, check documentation for correct input types",
+		})
+		return
+	}
+
+	db, err := utils.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tx, err := db.Begin(ctx.Request.Context())
+	if err != nil {
+		logger.Error.Println("Error while starting transaction: ", err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
+			Message: "Error while creating client",
+		})
+		return
+	}
+
+	tx.Rollback(ctx.Request.Context())
+	ctx.JSON(200, 1)
+}
+
 func ClientRoutes(r *gin.Engine) {
 	client := r.Group("/client", middleware.BearerAuthenticate(), middleware.CompanyId())
 
 	// /client
 	client.GET("", ClientGet)
+	client.POST("", ClientPost)
 
 }
