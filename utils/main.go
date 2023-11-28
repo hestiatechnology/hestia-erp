@@ -7,13 +7,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
-// ConnectDB establishes a connection to the PostgreSQL database using environment variables.
-// It retrieves the database user, password, name, and host from the environment variables PGUSER, PGPASSWORD, PGDATABASE, and PGHOST respectively.
-// If any of these environment variables are not set, the function logs a fatal error and shutdowns.
-// The function returns a pointer to the sql.DB object representing the database connection and an error if any occurred during the connection process.
 var db *pgxpool.Pool
 
 func ConnectDB() (*pgxpool.Pool, error) {
@@ -33,13 +31,21 @@ func ConnectDB() (*pgxpool.Pool, error) {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia_api", dbUser, dbPass, dbHost, dbName)
 
 	// Open a connection to the database
-	var err error
-	db, err = pgxpool.New(context.Background(), connStr)
+	dbconfig, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		log.Fatal("Wrong connetion string", err)
+	}
+
+	dbconfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		// Allows to use Google's UUIDs
+		pgxUUID.Register(conn.TypeMap())
+		return nil
+	}
+
+	db, err := pgxpool.NewWithConfig(context.Background(), dbconfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
-
-	fmt.Println("Connected to the database")
 
 	return db, nil
 }

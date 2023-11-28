@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func ClientGet(ctx *gin.Context) {
@@ -92,8 +93,67 @@ func ClientPost(ctx *gin.Context) {
 		return
 	}
 
-	tx.Rollback(ctx.Request.Context())
-	ctx.JSON(200, 1)
+	defer tx.Rollback(ctx.Request.Context())
+
+	clientCodeExists := tx.QueryRow(
+		ctx.Request.Context(),
+		"SELECT COUNT(id) FROM sales.client WHERE company_id = $1 AND code = $2",
+		ctx.GetHeader("X-Company-Id"),
+		newClient.Code,
+	)
+
+	var clientCodeCount int
+	err = clientCodeExists.Scan(&clientCodeCount)
+	if err != nil {
+		logger.Error.Println("Error while checking if client code exists: ", err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
+			Message: "Error while creating client",
+		})
+		return
+	}
+
+	if clientCodeCount > 0 {
+		logger.Warning.Println("Client code already exists")
+		ctx.AbortWithStatusJSON(http.StatusConflict, models.ErrorMessage{
+			Message: "A client with that code already exists",
+		})
+		return
+	}
+
+	clientId := tx.QueryRow(
+		ctx.Request.Context(),
+		"INSERT INTO sales.client (company_id, name, code, vat_id, street, postal_code, locality, country) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		ctx.GetHeader("X-Company-Id"),
+		newClient.Name,
+		newClient.Code,
+		newClient.VatId,
+		newClient.Street,
+		newClient.PostalCode,
+		newClient.Locality,
+		newClient.Country,
+	)
+
+	var id uuid.UUID
+	err = clientId.Scan(&id)
+	if err != nil {
+		logger.Error.Println("Error while inserting client: ", err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
+			Message: "Error while creating client",
+		})
+		return
+	}
+
+	err = tx.Commit(ctx.Request.Context())
+	if err != nil {
+		logger.Error.Println("Error while committing transaction: ", err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
+			Message: "Error while creating client",
+		})
+		return
+	}
+	ctx.JSON(200, gin.H{
+		"id": id,
+	})
 }
 
 func ClientRoutes(r *gin.Engine) {
