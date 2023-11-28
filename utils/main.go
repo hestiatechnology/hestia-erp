@@ -42,11 +42,12 @@ func ConnectDB() (*pgxpool.Pool, error) {
 		return nil
 	}
 
-	db, err := pgxpool.NewWithConfig(context.Background(), dbconfig)
+	db, err = pgxpool.NewWithConfig(context.Background(), dbconfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
+	log.Println("Connected to database once")
 	return db, nil
 }
 
