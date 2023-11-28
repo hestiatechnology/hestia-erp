@@ -10,12 +10,12 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
+	if os.Getenv("HESTIA_ENV") == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	r := gin.New()
 	if os.Getenv("HESTIA_ENV") != "production" {
 		r.Use(gin.Logger())
-	}
-	if os.Getenv("HESTIA_ENV") == "production" {
-		gin.SetMode(gin.ReleaseMode)
 	}
 	r.UseH2C = true
 	r.ForwardedByClientIP = true
