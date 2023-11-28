@@ -21,7 +21,7 @@ func ClientGet(ctx *gin.Context) {
 
 		logger.Error.Println("Error while binding JSON: ", err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, models.ErrorMessage{
-			Message: "Missing mandatory positive integers for limit and offset",
+			Message: "Input validation failed, check documentation for correct input types",
 		})
 		return
 	}
