@@ -151,7 +151,9 @@ func ClientPost(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(200, gin.H{
+
+	ctx.Header("Location", "/client/"+id.String())
+	ctx.JSON(201, gin.H{
 		"id": id,
 	})
 }
