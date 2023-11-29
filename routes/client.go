@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func ClientsGet(ctx *gin.Context) {
+func clientsGet(ctx *gin.Context) {
 	type FilterOptions struct {
 		models.Client
 		models.LimitOffset
@@ -74,7 +74,7 @@ func ClientsGet(ctx *gin.Context) {
 	ctx.JSON(200, clients)
 }
 
-func ClientsPost(ctx *gin.Context) {
+func clientsPost(ctx *gin.Context) {
 
 	var newClient models.NewClient
 	if err := ctx.ShouldBindJSON(&newClient); err != nil {
@@ -169,7 +169,7 @@ func ClientsRoutes(r *gin.Engine) {
 	client := r.Group("/clients", middleware.BearerAuthenticate(), middleware.CompanyId())
 
 	// /client
-	client.GET("", ClientsGet)
-	client.POST("", ClientsPost)
+	client.GET("", clientsGet)
+	client.POST("", clientsPost)
 
 }
