@@ -27,7 +27,7 @@ func clientsGet(ctx *gin.Context) {
 		return
 	}
 
-	db, err := utils.ConnectDB()
+	db, err := utils.GetDbPoolConn()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func clientsPost(ctx *gin.Context) {
 		return
 	}
 
-	db, err := utils.ConnectDB()
+	db, err := utils.GetDbPoolConn()
 	if err != nil {
 		log.Fatal(err)
 	}

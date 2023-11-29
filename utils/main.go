@@ -14,7 +14,7 @@ import (
 
 var db *pgxpool.Pool
 
-func ConnectDB() (*pgxpool.Pool, error) {
+func GetDbPoolConn() (*pgxpool.Pool, error) {
 	if db != nil {
 		return db, nil
 	}
@@ -55,7 +55,7 @@ func ConnectDB() (*pgxpool.Pool, error) {
 // Returns the timezone in the format "Area/Location"
 // Example: "Europe/Paris"
 func GetCompanyTimezone(ctx context.Context, companyId string) (string, error) {
-	db, err := ConnectDB()
+	db, err := GetDbPoolConn()
 	if err != nil {
 		return "", err
 	}
@@ -76,7 +76,7 @@ func GetSessionId(authHeader string) string {
 	return token
 }
 func GetUserId(ctx context.Context, token string) (string, error) {
-	db, err := ConnectDB()
+	db, err := GetDbPoolConn()
 	if err != nil {
 		return "", err
 	}
