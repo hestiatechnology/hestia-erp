@@ -5,14 +5,14 @@ import (
 )
 
 type Client struct {
-	Id         uuid.UUID `json:"id" binding:"uuid4_rfc4122"`
+	Id         uuid.UUID `json:"id"`
 	Name       string    `json:"name"`
 	Code       string    `json:"code"`
 	VatId      string    `json:"vatId"`
 	Street     string    `json:"street"`
 	PostalCode string    `json:"postalCode"`
 	Locality   string    `json:"locality"`
-	Country    string    `json:"country" binding:"iso3166_1_alpha2"`
+	Country    string    `json:"country"`
 }
 
 type NewClient struct {

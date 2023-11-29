@@ -51,8 +51,10 @@ func ClientsGet(ctx *gin.Context) {
 
 	defer rows.Close()
 
+	var count int
 	for rows.Next() {
 		var c models.Client
+		count++
 		err := rows.Scan(&c.Id, &c.Name, &c.Code, &c.VatId, &c.Street, &c.PostalCode, &c.Locality, &c.Country)
 		if err != nil {
 			logger.Error.Println("Unable to scan rows into Client model, error: ", err)
@@ -62,6 +64,11 @@ func ClientsGet(ctx *gin.Context) {
 			return
 		}
 		clients = append(clients, c)
+	}
+
+	if count == 0 {
+		ctx.AbortWithStatus(http.StatusNoContent)
+		return
 	}
 
 	ctx.JSON(200, clients)
