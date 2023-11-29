@@ -25,7 +25,7 @@ func BearerAuthenticate() gin.HandlerFunc {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 
 		// Connect to DB and check if the token exists
-		db, err := utils.ConnectDB()
+		db, err := utils.GetDbPoolConn()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -61,7 +61,7 @@ func CompanyId() gin.HandlerFunc {
 
 		// Validate the token
 		// Connect to DB and check if the company exists and the user has access to it via the table user_company
-		db, err := utils.ConnectDB()
+		db, err := utils.GetDbPoolConn()
 		if err != nil {
 			log.Fatal(err)
 		}

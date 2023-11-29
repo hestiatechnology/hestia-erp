@@ -10,7 +10,7 @@ import (
 
 func CompanyGet(ctx *gin.Context) {
 
-	db, err := utils.ConnectDB()
+	db, err := utils.GetDbPoolConn()
 	if err != nil {
 		log.Fatal(err)
 	}
