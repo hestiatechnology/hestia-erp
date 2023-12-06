@@ -84,7 +84,7 @@ func CompanyId() gin.HandlerFunc {
 		}
 
 		if count == 0 {
-			ctx.AbortWithStatus(http.StatusUnauthorized)
+			ctx.AbortWithStatus(http.StatusForbidden)
 		}
 		// If the token is valid, continue with the request
 		ctx.Next()
