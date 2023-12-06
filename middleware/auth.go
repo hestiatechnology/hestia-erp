@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"hestia/api/logger"
 	"hestia/api/models"
 	"hestia/api/utils"
 	"log"
@@ -63,7 +64,11 @@ func CompanyId() gin.HandlerFunc {
 		// Connect to DB and check if the company exists and the user has access to it via the table user_company
 		db, err := utils.GetDbPoolConn()
 		if err != nil {
-			log.Fatal(err)
+			logger.Error.Println("Error while connecting to DB: ", err)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, models.ErrorMessage{
+				Message: "Error while connecting to DB",
+			})
+			return
 		}
 
 		userId, err := utils.GetUserId(ctx.Request.Context(), utils.GetSessionId(ctx.GetHeader("Authorization")))
