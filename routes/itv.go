@@ -33,6 +33,7 @@ func technicalFilesGet(ctx *gin.Context) {
 	var technicalFiles []models.TechnicalFile
 	rows, err := db.Query(
 		ctx.Request.Context(),
+		// TODO: Query
 		"SELECT id FROM itv.technical_file WHERE company_id = $1 LIMIT $2 OFFSET $3",
 		ctx.GetHeader("X-Company-Id"),
 		filterOptions.Limit,
