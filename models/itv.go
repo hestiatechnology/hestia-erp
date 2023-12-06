@@ -7,7 +7,7 @@ type TechnicalFile struct {
 	Client      Client                   `json:"client"`
 	ClientRef   string                   `json:"clientRef"`
 	Family      TechnicalFileFamily      `json:"family"`
-	Type        TechnicalFileType        `json:"type"`
+	Gender      TechnicalFileGender      `json:"gender"`
 	RawMaterial TechnicalFileRawMaterial `json:"rawMaterial"`
 	Date        string                   `json:"date"`
 }
@@ -24,7 +24,7 @@ type TechnicalFileFamily struct {
 	Family string `json:"family"`
 }
 
-type TechnicalFileType struct {
+type TechnicalFileGender struct {
 	// Type of the technical file
 	// male, female, unisex, child, baby, etc.
 	Id   string `json:"id"`
