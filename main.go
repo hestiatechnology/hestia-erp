@@ -1,38 +1,36 @@
 package main
 
 import (
-	"hestia/api/logger"
-	"hestia/api/middleware"
-	"hestia/api/routes"
-	"os"
+	"context"
+	"log"
+	"net"
 
-	"github.com/gin-gonic/gin"
+	pb "hestia/api/pb"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-func SetupRouter() *gin.Engine {
-	if os.Getenv("HESTIA_ENV") == "production" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-	r := gin.New()
-	if os.Getenv("HESTIA_ENV") != "production" {
-		r.Use(gin.Logger())
-	}
-	r.UseH2C = true
-	r.ForwardedByClientIP = true
-	r.RedirectTrailingSlash = false
-	r.Use(gin.Recovery())
-	r.Use(middleware.RequestIdMiddleware())
-	r.Use(middleware.DontCache())
-	r.HandleMethodNotAllowed = true
-	r.NoMethod(middleware.MethodNotAllowed())
-	r.NoRoute(middleware.NotFound())
-	routes.SetRoutes(r)
-	return r
+type server struct {
+	pb.UnimplementedHestiaServiceServer
+}
+
+func (s *server) GetAddress(ctx context.Context, in *pb.Address) (*pb.Address, error) {
+	// Implement your method here.
+	// The following is a dummy implementation.
+	//log.Printf("Received: %v", in.GetYourField())
+	return &pb.Address{City: "Gay", Street: "aasd", State: "sdfsdf", Country: "safdf"}, nil
 }
 
 func main() {
-	logger.InitLogger()
-	r := SetupRouter()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	reflection.Register(s)
+	pb.RegisterHestiaServiceServer(s, &server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

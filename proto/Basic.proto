@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package hestia.api;
+option go_package = ".;pb";
+message Person {
+    string name = 1;
+    int32 age = 2;
+    repeated string hobbies = 3;
+}
+
+message Address {
+    string street = 1;
+    string city = 2;
+    string state = 3;
+    string country = 4;
+}
+
+service HestiaService {
+    rpc GetPerson (Person) returns (Person);
+    rpc GetAddress (Address) returns (Address);
+}
