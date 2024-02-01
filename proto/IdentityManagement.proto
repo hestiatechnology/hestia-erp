@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package hestia.api;
+option go_package = ".;pb";
+
+service IdentityManagementService {
+    rpc Login (LoginRequest) returns (LoginResponse);
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+    string name = 2;
+    string email = 3;
+    repeated Company companies = 4;
+}
+
+message Company {
+    string id = 1;
+    string name = 2;
+    optional string logo = 3;
+}
