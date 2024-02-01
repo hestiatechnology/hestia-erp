@@ -5,6 +5,7 @@ option go_package = ".;pb";
 
 service IdentityManagementService {
     rpc Login (LoginRequest) returns (LoginResponse);
+    rpc Alive (AliveRequest) returns (AliveResponse);
 }
 
 message LoginRequest {

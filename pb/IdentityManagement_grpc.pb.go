@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	IdentityManagementService_Login_FullMethodName = "/hestia.api.IdentityManagementService/Login"
+	IdentityManagementService_Alive_FullMethodName = "/hestia.api.IdentityManagementService/Alive"
 )
 
 // IdentityManagementServiceClient is the client API for IdentityManagementService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IdentityManagementServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*AliveResponse, error)
 }
 
 type identityManagementServiceClient struct {
@@ -46,11 +48,21 @@ func (c *identityManagementServiceClient) Login(ctx context.Context, in *LoginRe
 	return out, nil
 }
 
+func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*AliveResponse, error) {
+	out := new(AliveResponse)
+	err := c.cc.Invoke(ctx, IdentityManagementService_Alive_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IdentityManagementServiceServer is the server API for IdentityManagementService service.
 // All implementations must embed UnimplementedIdentityManagementServiceServer
 // for forward compatibility
 type IdentityManagementServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	Alive(context.Context, *AliveRequest) (*AliveResponse, error)
 	mustEmbedUnimplementedIdentityManagementServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedIdentityManagementServiceServer struct {
 
 func (UnimplementedIdentityManagementServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *AliveRequest) (*AliveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Alive not implemented")
 }
 func (UnimplementedIdentityManagementServiceServer) mustEmbedUnimplementedIdentityManagementServiceServer() {
 }
@@ -93,6 +108,24 @@ func _IdentityManagementService_Login_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AliveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityManagementServiceServer).Alive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityManagementService_Alive_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*AliveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IdentityManagementService_ServiceDesc is the grpc.ServiceDesc for IdentityManagementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -103,6 +136,10 @@ var IdentityManagementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _IdentityManagementService_Login_Handler,
+		},
+		{
+			MethodName: "Alive",
+			Handler:    _IdentityManagementService_Alive_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
