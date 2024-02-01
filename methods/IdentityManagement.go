@@ -5,6 +5,7 @@ import (
 
 	pb "hestia/api/pb"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,5 +18,10 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	if in.GetEmail() == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	return &pb.LoginResponse{Token: in.Email, Name: in.GetEmail(), Email: "a@a.com"}, nil
+	if in.GetPassword() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing password")
+	}
+
+	token := uuid.New().String()
+	return &pb.LoginResponse{Token: token, Name: in.GetEmail(), Email: "a@a.com"}, nil
 }

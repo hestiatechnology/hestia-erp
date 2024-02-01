@@ -24,3 +24,12 @@ message Company {
     string name = 2;
     optional string logo = 3;
 }
+
+message AliveRequest {
+    string token = 1;
+    optional string company_id = 2;
+}
+
+message AliveResponse {
+    bool alive = 1;
+}
