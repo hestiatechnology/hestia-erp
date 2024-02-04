@@ -6,7 +6,7 @@ import (
 	"os"
 
 	idm "hestia/api/methods"
-	pb "hestia/api/pb"
+	"hestia/api/pb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
