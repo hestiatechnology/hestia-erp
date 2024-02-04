@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -28,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IdentityManagementServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*AliveResponse, error)
+	Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type identityManagementServiceClient struct {
@@ -48,8 +49,8 @@ func (c *identityManagementServiceClient) Login(ctx context.Context, in *LoginRe
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*AliveResponse, error) {
-	out := new(AliveResponse)
+func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, IdentityManagementService_Alive_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,7 +63,7 @@ func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRe
 // for forward compatibility
 type IdentityManagementServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Alive(context.Context, *AliveRequest) (*AliveResponse, error)
+	Alive(context.Context, *AliveRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedIdentityManagementServiceServer()
 }
 
@@ -73,7 +74,7 @@ type UnimplementedIdentityManagementServiceServer struct {
 func (UnimplementedIdentityManagementServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *AliveRequest) (*AliveResponse, error) {
+func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *AliveRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Alive not implemented")
 }
 func (UnimplementedIdentityManagementServiceServer) mustEmbedUnimplementedIdentityManagementServiceServer() {

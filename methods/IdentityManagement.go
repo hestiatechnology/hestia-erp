@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type IdentityManagementServer struct {
@@ -26,6 +27,6 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	return &pb.LoginResponse{Token: token, Name: in.GetEmail(), Email: "a@a.com"}, nil
 }
 
-func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.AliveRequest) (*pb.AliveResponse, error) {
-	return &pb.AliveResponse{Alive: true}, nil
+func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.AliveRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, nil
 }

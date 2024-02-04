@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package hestia.api;
+import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
 service IdentityManagementService {
     rpc Login (LoginRequest) returns (LoginResponse);
-    rpc Alive (AliveRequest) returns (AliveResponse);
+    rpc Alive (AliveRequest) returns (google.protobuf.Empty);
 }
 
 message LoginRequest {
@@ -29,8 +30,4 @@ message Company {
 message AliveRequest {
     string token = 1;
     optional string company_id = 2;
-}
-
-message AliveResponse {
-    bool alive = 1;
 }
