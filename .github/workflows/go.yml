@@ -20,10 +20,7 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.21'
-
-    - name: Build Proto files
-      run: protoc --go_out=./pb --go-grpc_out=./pb proto/*.proto
-      
+        
     - name: Build
       run: go build -v ./...
 
