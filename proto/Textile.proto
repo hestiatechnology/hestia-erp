@@ -1,33 +1,18 @@
 syntax = "proto3";
 
 package hestia.api.textile;
-import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
 service TextileService {
-    rpc Login (LoginRequest) returns (LoginResponse);
-    rpc Alive (AliveRequest) returns (google.protobuf.Empty);
+    rpc CreateTechnicalModel(TechnicalModel) returns (TechnicalModel);
 }
 
-message LoginRequest {
-    string email = 1;
-    string password = 2;
-}
-
-message LoginResponse {
-    string token = 1;
+message TechnicalModel {
+    // ID is given after the model is created
+    optional string id = 1;
     string name = 2;
-    string email = 3;
-    repeated Company companies = 4;
-}
-
-message Company {
-    string id = 1;
-    string name = 2;
-    optional string logo = 3;
-}
-
-message AliveRequest {
-    string token = 1;
-    optional string company_id = 2;
+    string description = 3;
+    string type = 4;
+    string created = 5;
+    string updated = 6;
 }
