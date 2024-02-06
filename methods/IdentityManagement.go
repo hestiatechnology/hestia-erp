@@ -3,7 +3,7 @@ package methods
 import (
 	"context"
 
-	pb "hestia/api/pb"
+	"hestia/api/pb"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
