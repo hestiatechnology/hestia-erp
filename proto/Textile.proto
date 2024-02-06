@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package hestia.api.idm;
+package hestia.api.textile;
 import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
-service IdentityManagementService {
+service TextileService {
     rpc Login (LoginRequest) returns (LoginResponse);
     rpc Alive (AliveRequest) returns (google.protobuf.Empty);
 }
