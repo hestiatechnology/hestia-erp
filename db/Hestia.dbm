@@ -1,0 +1,1234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.0.5" use-changelog="false" last-position="1189,1221" last-zoom="0.8" max-obj-count="44"
+	 default-schema="public" default-owner="hestia_erp_internal"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="hestia_erp_internal"
+ createdb="true"
+ replication="true"
+ inherit="true"
+ login="true"
+ password="********">
+</role>
+
+<database name="erp" encoding="UTF8" lc-collate="en_US.utf8" lc-ctype="en_US.utf8" is-template="false" allow-conns="true">
+	<role name="hestia_erp_internal"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="users" layers="0" rect-visible="true" fill-color="#1c7ec8">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="companies" layers="0" rect-visible="true" fill-color="#56b7fb">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="hr" layers="0" rect-visible="true" fill-color="#8be4b3">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="sales" layers="0" rect-visible="true" fill-color="#5aa94f">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="inventory" layers="0" rect-visible="true" fill-color="#9b4ef3">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="subscriptions" layers="0" rect-visible="true" fill-color="#9bc440">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="general" layers="0" rect-visible="true" fill-color="#f297ff">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="itv" layers="0" rect-visible="true" fill-color="#00ff7f">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<table name="users" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="users"/>
+	<role name="hestia_erp_internal"/>
+	<comment> <![CDATA[This is the only table named in plural because USER is a reserved word]]> </comment>
+	<position x="80" y="180"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+		<comment> <![CDATA[User's id (uuid) generated randomly]]> </comment>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="255"/>
+		<comment> <![CDATA[This is the user full name used in the Subscription Management Portal, if used in atual ERP it should use the employee name, if employee name is not available use the user name]]> </comment>
+	</column>
+	<column name="email" not-null="true">
+		<type name="character varying" length="128"/>
+		<comment> <![CDATA[User's email]]> </comment>
+	</column>
+	<column name="password" not-null="true">
+		<type name="character" length="128"/>
+		<comment> <![CDATA[User's password (in SHA512)]]> </comment>
+	</column>
+	<column name="salt" not-null="true">
+		<type name="character" length="20"/>
+		<comment> <![CDATA[User's password salt in string format (maybe hex?)]]> </comment>
+	</column>
+	<column name="timezone" not-null="true" default-value="'Etc/GMT'">
+		<type name="character varying" length="40"/>
+		<comment> <![CDATA[User's timezone]]> </comment>
+	</column>
+	<constraint name="ck_users_timezone" type="ck-constr" table="users.users">
+			<expression> <![CDATA[((now() AT TIME ZONE timezone) IS NOT NULL)]]> </expression>
+		<comment> <![CDATA[Check if the inputed timezone is valid]]> </comment>
+	</constraint>
+	<constraint name="pk_user" type="pk-constr" table="users.users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_users_email" type="uq-constr" table="users.users">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="company" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="companies"/>
+	<role name="postgres"/>
+	<position x="1060" y="140"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+		<comment> <![CDATA[Company ID (UUID)]]> </comment>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="commercial_name">
+		<type name="text" length="0"/>
+		<comment> <![CDATA[Commercial name like Apple, Google, etc...]]> </comment>
+	</column>
+	<column name="vat_id" not-null="true">
+		<type name="text" length="9"/>
+	</column>
+	<column name="ssn" not-null="true">
+		<type name="text" length="11"/>
+	</column>
+	<column name="street" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="locality" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="postal_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="country_code" not-null="true">
+		<type name="varchar" length="2"/>
+	</column>
+	<constraint name="pk_company_id" type="pk-constr" table="companies.company">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_company_vat_id" type="uq-constr" table="companies.company">
+		<columns names="vat_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_company_ssn" type="uq-constr" table="companies.company">
+		<columns names="ssn" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="employee" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="hr"/>
+	<role name="postgres"/>
+	<position x="4560" y="60"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+		<comment> <![CDATA[HR's employee internal id]]> </comment>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="location_id" not-null="true">
+		<type name="uuid" length="0"/>
+		<comment> <![CDATA[Does it need to be NULL?]]> </comment>
+	</column>
+	<constraint name="pk_employee" type="pk-constr" table="hr.employee">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="user_company" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="users"/>
+	<role name="hestia_erp_internal"/>
+	<position x="500" y="180"/>
+	<column name="user_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="employee_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="pk_user_company" type="pk-constr" table="users.user_company">
+		<columns names="user_id,company_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="timesheet" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="4960" y="60"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="employee_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="device">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="type" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="pk_timesheet" type="pk-constr" table="hr.timesheet">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="vacation" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="5420" y="60"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="employee_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="end_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="approved_by">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="pk_vacation" type="pk-constr" table="hr.vacation">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="employee_identification_doc" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="5880" y="60"/>
+	<column name="employee_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="identification_doc_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="doc_number" not-null="true">
+		<type name="character varying" length="50"/>
+	</column>
+	<constraint name="pk_employee_doc_id" type="pk-constr" table="hr.employee_identification_doc">
+		<columns names="employee_id,identification_doc_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="identification_doc" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="6460" y="60"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_identification" type="pk-constr" table="hr.identification_doc">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="device" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="4560" y="360"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="active" not-null="true" default-value="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="70"/>
+	</column>
+	<column name="key" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="last_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="pk_device" type="pk-constr" table="hr.device">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="timesheet_type" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="hr"/>
+	<role name="hestia_erp_internal"/>
+	<position x="5000" y="420"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="pk_timesheet_type" type="pk-constr" table="hr.timesheet_type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="document" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="sales"/>
+	<role name="hestia_erp_internal"/>
+	<position x="540" y="1000"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="pk_document" type="pk-constr" table="sales.document">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="movement" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="inventory"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2260" y="980"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+</table>
+
+<table name="product" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="inventory"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2500" y="900"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="active" not-null="true" default-value="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="category_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="reference" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="barcode">
+		<type name="character varying" length="13"/>
+		<comment> <![CDATA[Barcode type: EAN-13A]]> </comment>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="stock">
+		<type name="numeric" length="14" precision="5"/>
+		<comment> <![CDATA[If stock is null then stock is not enabled
+100 digits good enough no?]]> </comment>
+	</column>
+	<constraint name="pk_product" type="pk-constr" table="inventory.product">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_product_reference" type="uq-constr" table="inventory.product">
+		<columns names="reference" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_product_barcode" type="uq-constr" table="inventory.product">
+		<columns names="barcode" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="category" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="inventory"/>
+	<role name="hestia_erp_internal"/>
+	<position x="3040" y="900"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="40"/>
+	</column>
+	<column name="parent_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="pk_category" type="pk-constr" table="inventory.category">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<extension name="pgcrypto" cur-version="1.3">
+	<schema name="public"/>
+	<comment> <![CDATA[cryptographic functions]]> </comment>
+</extension>
+
+<table name="subscription" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="subscriptions"/>
+	<role name="hestia_erp_internal"/>
+	<position x="80" y="1400"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="user_limit" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="user_price" not-null="true">
+		<type name="numeric" length="0" precision="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="end_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="creation_date" not-null="true" default-value="now()">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="update_date" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="pk_subscriptions" type="pk-constr" table="subscriptions.subscription">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="module" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="subscriptions"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1360" y="1440"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="default_price" not-null="true">
+		<type name="numeric" length="0" precision="0"/>
+	</column>
+	<constraint name="pk_module" type="pk-constr" table="subscriptions.module">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="subscription_module" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="subscriptions"/>
+	<role name="hestia_erp_internal"/>
+	<position x="780" y="1440"/>
+	<column name="subscription_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="module_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="numeric" length="0" precision="0"/>
+	</column>
+	<constraint name="pk_subscription_module" type="pk-constr" table="subscriptions.subscription_module">
+		<columns names="subscription_id,module_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="doccument_series" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="sales"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1060" y="920"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true" default-value="'H'">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_document_series" type="pk-constr" table="sales.doccument_series">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="location" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="companies"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1740" y="140"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+		<comment> <![CDATA[Location Name]]> </comment>
+	</column>
+	<column name="street" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="locality" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="postal_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="country_code" not-null="true" default-value="'PT'">
+		<type name="character varying" length="2"/>
+	</column>
+	<constraint name="pk_location" type="pk-constr" table="companies.location">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="country" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="3" z-value="0">
+	<schema name="general"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1900" y="1020"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="2"/>
+		<comment> <![CDATA[ISO 3166-1 alpha-2 code]]> </comment>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+		<comment> <![CDATA[English name of country]]> </comment>
+	</column>
+	<column name="active" not-null="true" default-value="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Is the Country active? Say the country was abolished]]> </comment>
+	</column>
+	<constraint name="pk_country" type="pk-constr" table="general.country">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="preference" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="companies"/>
+	<role name="postgres"/>
+	<position x="1180" y="600"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="value" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_preference" type="pk-constr" table="companies.preference">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_preference_code" type="uq-constr" table="companies.preference">
+		<columns names="company_id,code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="client" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
+	<schema name="sales"/>
+	<role name="postgres"/>
+	<position x="60" y="920"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="vat_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="street" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="postal_code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="locality" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="country" not-null="true">
+		<type name="varchar" length="2"/>
+	</column>
+	<constraint name="pk_supplier" type="pk-constr" table="sales.client">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_supplier_code" type="uq-constr" table="sales.client">
+		<columns names="company_id,code" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_supplier_vat_id" type="uq-constr" table="sales.client">
+		<columns names="company_id,vat_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="technical_file" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1840" y="1660"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="client_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="department_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<constraint name="pk_technical_file" type="pk-constr" table="itv.technical_file">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_technical_file_code" type="uq-constr" table="itv.technical_file">
+		<columns names="company_id,code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="size" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="3100" y="1380"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="size" not-null="true">
+		<type name="text" length="0"/>
+		<comment> <![CDATA[Size (XS, S, M, L, XL,....)]]> </comment>
+	</column>
+	<constraint name="pk_size" type="pk-constr" table="itv.size">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="users_session" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="users"/>
+	<role name="postgres"/>
+	<position x="100" y="500"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="user_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="expiry_date" not-null="true" default-value="NOW() + INTERVAL '8 hours'">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="pk_users_session" type="pk-constr" table="users.users_session">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="department" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2440" y="1880"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_department" type="pk-constr" table="itv.department">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="technical_file_size" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2440" y="1380"/>
+	<column name="technical_file_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="size_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="comment" default-value="NULL">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_technical_file_size" type="pk-constr" table="itv.technical_file_size">
+		<columns names="technical_file_id,size_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="raw_material" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2920" y="1620"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" default-value="NULL">
+		<type name="text" length="0"/>
+	</column>
+	<column name="material" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_raw_material" type="pk-constr" table="itv.raw_material">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="family" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<comment> <![CDATA[Family of the product (like Pijamas, Sweater, Sweater w/ Hoodie)]]> </comment>
+	<position x="2960" y="1860"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_family" type="pk-constr" table="itv.family">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="gender" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="itv"/>
+	<role name="hestia_erp_internal"/>
+	<position x="2440" y="1640"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="gender" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_gender" type="pk-constr" table="itv.gender">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="fk_company_country" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="companies.company">
+	<columns names="country_code" ref-type="src-columns"/>
+	<columns names="code" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="hr.employee">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_location" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.location" table="hr.employee">
+	<columns names="location_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_user_company_users" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="users.users" table="users.user_company">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_user_company_company" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="users.user_company">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_user_company_employee" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.employee" table="users.user_company">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_timesheet_employee" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.employee" table="hr.timesheet">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_timesheet_device" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.device" table="hr.timesheet">
+	<columns names="device" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_timesheet_timesheet_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.timesheet_type" table="hr.timesheet">
+	<columns names="type" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_vacation_employee" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.employee" table="hr.vacation">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_vacation_employee_1" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.employee" table="hr.vacation">
+	<columns names="approved_by" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_identification_doc_employee" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.employee" table="hr.employee_identification_doc">
+	<columns names="employee_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_employee_identification_doc_identification_doc" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="hr.identification_doc" table="hr.employee_identification_doc">
+	<columns names="identification_doc_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_device_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="hr.device">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_product_category" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="inventory.category" table="inventory.product">
+	<columns names="category_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_product_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="inventory.product">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_category_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="inventory.category">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_category_category" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="inventory.category" table="inventory.category">
+	<columns names="parent_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_subscription_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="subscriptions.subscription">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_subscription_module_subscription" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="subscriptions.subscription" table="subscriptions.subscription_module">
+	<columns names="subscription_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_subscription_module_module" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="subscriptions.module" table="subscriptions.subscription_module">
+	<columns names="module_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_location_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="companies.location">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_location_country" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="companies.location">
+	<columns names="country_code" ref-type="src-columns"/>
+	<columns names="code" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_preference_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="companies.preference">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_supplier_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="sales.client">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_supplier_country" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="sales.client">
+	<columns names="country" ref-type="src-columns"/>
+	<columns names="code" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_technical_file_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.technical_file">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_technical_file_client" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.client" table="itv.technical_file">
+	<columns names="client_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_technical_file_department" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="itv.department" table="itv.technical_file">
+	<columns names="department_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_size_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.size">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_users_session_users" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="users.users" table="users.users_session">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_department_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.department">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_technical_file_size_technical_file" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="itv.technical_file" table="itv.technical_file_size">
+	<columns names="technical_file_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_technical_file_size_size" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="itv.size" table="itv.technical_file_size">
+	<columns names="size_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_raw_material_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.raw_material">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_family_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.family">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_gender_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.gender">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_employee_company" type="relfk" layers="0"
+	 custom-color="#83c25d"
+	 src-table="hr.employee"
+	 dst-table="companies.company" reference-fk="fk_employee_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_employee_location" type="relfk" layers="0"
+	 custom-color="#c6f8fe"
+	 src-table="hr.employee"
+	 dst-table="companies.location" reference-fk="fk_employee_location"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_company_users" type="relfk" layers="0"
+	 custom-color="#aac470"
+	 src-table="users.user_company"
+	 dst-table="users.users" reference-fk="fk_user_company_users"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_company_company" type="relfk" layers="0"
+	 custom-color="#cf735a"
+	 src-table="users.user_company"
+	 dst-table="companies.company" reference-fk="fk_user_company_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_user_company_employee" type="relfk" layers="0"
+	 custom-color="#7c84f8"
+	 src-table="users.user_company"
+	 dst-table="hr.employee" reference-fk="fk_user_company_employee"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_timesheet_employee" type="relfk" layers="0"
+	 custom-color="#f55012"
+	 src-table="hr.timesheet"
+	 dst-table="hr.employee" reference-fk="fk_timesheet_employee"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_timesheet_device" type="relfk" layers="0"
+	 custom-color="#f6d58e"
+	 src-table="hr.timesheet"
+	 dst-table="hr.device" reference-fk="fk_timesheet_device"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_timesheet_timesheet_type" type="relfk" layers="0"
+	 custom-color="#af3991"
+	 src-table="hr.timesheet"
+	 dst-table="hr.timesheet_type" reference-fk="fk_timesheet_timesheet_type"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_vacation_employee" type="relfk" layers="0"
+	 custom-color="#0868ce"
+	 src-table="hr.vacation"
+	 dst-table="hr.employee" reference-fk="fk_vacation_employee"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_vacation_employee1" type="relfk" layers="0"
+	 custom-color="#4b349e"
+	 src-table="hr.vacation"
+	 dst-table="hr.employee" reference-fk="fk_vacation_employee_1"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_employee_identification_doc_employee" type="relfk" layers="0"
+	 custom-color="#ee9c27"
+	 src-table="hr.employee_identification_doc"
+	 dst-table="hr.employee" reference-fk="fk_employee_identification_doc_employee"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_employee_identification_doc_identification_doc" type="relfk" layers="0"
+	 custom-color="#9d2a94"
+	 src-table="hr.employee_identification_doc"
+	 dst-table="hr.identification_doc" reference-fk="fk_employee_identification_doc_identification_doc"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_device_company" type="relfk" layers="0"
+	 custom-color="#ccd659"
+	 src-table="hr.device"
+	 dst-table="companies.company" reference-fk="fk_device_company"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_product_category" type="relfk" layers="0"
+	 custom-color="#1be550"
+	 src-table="inventory.product"
+	 dst-table="inventory.category" reference-fk="fk_product_category"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-4.33729" y="8.39244"/>
+	</label>
+</relationship>
+
+<relationship name="rel_product_company" type="relfk" layers="0"
+	 custom-color="#b0219d"
+	 src-table="inventory.product"
+	 dst-table="companies.company" reference-fk="fk_product_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_category_company" type="relfk" layers="0"
+	 custom-color="#21d773"
+	 src-table="inventory.category"
+	 dst-table="companies.company" reference-fk="fk_category_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_category_category" type="relfk" layers="0"
+	 custom-color="#c5cac8"
+	 src-table="inventory.category"
+	 dst-table="inventory.category" reference-fk="fk_category_category"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="3417.76" y="965.708"/>
+	<position x="3417.76" y="867"/>
+	<position x="3269.84" y="867"/>
+	</line>
+</relationship>
+
+<relationship name="rel_subscription_company" type="relfk" layers="0"
+	 custom-color="#b88bf4"
+	 src-table="subscriptions.subscription"
+	 dst-table="companies.company" reference-fk="fk_subscription_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_subscription_module_subscription" type="relfk" layers="0"
+	 custom-color="#c06882"
+	 src-table="subscriptions.subscription_module"
+	 dst-table="subscriptions.subscription" reference-fk="fk_subscription_module_subscription"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_subscription_module_module" type="relfk" layers="0"
+	 custom-color="#946578"
+	 src-table="subscriptions.subscription_module"
+	 dst-table="subscriptions.module" reference-fk="fk_subscription_module_module"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_location_company" type="relfk" layers="0"
+	 custom-color="#58b4d0"
+	 src-table="companies.location"
+	 dst-table="companies.company" reference-fk="fk_location_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_location_country" type="relfk" layers="0"
+	 custom-color="#ba6152"
+	 src-table="companies.location"
+	 dst-table="general.country" reference-fk="fk_location_country"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_preference_company" type="relfk" layers="0"
+	 custom-color="#9d5ba7"
+	 src-table="companies.preference"
+	 dst-table="companies.company" reference-fk="fk_preference_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_company_country" type="relfk" layers="0"
+	 custom-color="#bd954c"
+	 src-table="companies.company"
+	 dst-table="general.country" reference-fk="fk_company_country"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_supplier_company" type="relfk" layers="0"
+	 custom-color="#3934a7"
+	 src-table="sales.client"
+	 dst-table="companies.company" reference-fk="fk_supplier_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_supplier_country" type="relfk" layers="0"
+	 custom-color="#e3cd85"
+	 src-table="sales.client"
+	 dst-table="general.country" reference-fk="fk_supplier_country"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_technical_file_company" type="relfk" layers="0"
+	 custom-color="#dee4d9"
+	 src-table="itv.technical_file"
+	 dst-table="companies.company" reference-fk="fk_technical_file_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_technical_file_client" type="relfk" layers="0"
+	 custom-color="#c4e551"
+	 src-table="itv.technical_file"
+	 dst-table="sales.client" reference-fk="fk_technical_file_client"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_users_session_users" type="relfk" layers="0"
+	 custom-color="#df6475"
+	 src-table="users.users_session"
+	 dst-table="users.users" reference-fk="fk_users_session_users"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_department_company" type="relfk" layers="0"
+	 custom-color="#efab47"
+	 src-table="itv.department"
+	 dst-table="companies.company" reference-fk="fk_department_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_technical_file_size_technical_file" type="relfk" layers="0"
+	 custom-color="#8595dc"
+	 src-table="itv.technical_file_size"
+	 dst-table="itv.technical_file" reference-fk="fk_technical_file_size_technical_file"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_technical_file_size_size" type="relfk" layers="0"
+	 custom-color="#f59342"
+	 src-table="itv.technical_file_size"
+	 dst-table="itv.size" reference-fk="fk_technical_file_size_size"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_technical_file_department" type="relfk" layers="0"
+	 custom-color="#3374f1"
+	 src-table="itv.technical_file"
+	 dst-table="itv.department" reference-fk="fk_technical_file_department"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_size_company" type="relfk" layers="0"
+	 custom-color="#8df991"
+	 src-table="itv.size"
+	 dst-table="companies.company" reference-fk="fk_size_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_raw_material_company" type="relfk" layers="0"
+	 custom-color="#7d161b"
+	 src-table="itv.raw_material"
+	 dst-table="companies.company" reference-fk="fk_raw_material_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_family_company" type="relfk" layers="0"
+	 custom-color="#3a80ab"
+	 src-table="itv.family"
+	 dst-table="companies.company" reference-fk="fk_family_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_gender_company" type="relfk" layers="0"
+	 custom-color="#e1a152"
+	 src-table="itv.gender"
+	 dst-table="companies.company" reference-fk="fk_gender_company"
+	 src-required="false" dst-required="true"/>
+
+</dbmodel>
