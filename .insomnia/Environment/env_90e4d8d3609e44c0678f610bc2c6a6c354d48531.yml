@@ -1,0 +1,16 @@
+_id: env_90e4d8d3609e44c0678f610bc2c6a6c354d48531
+type: Environment
+parentId: wrk_6ec49ab50a814979862ae49b4bafcfc6
+modified: 1707495291241
+created: 1706795138178
+name: Base Environment
+data:
+  HOST: prod.api.hestiatechnology.pt
+  PORT: 9000
+dataPropertyOrder:
+  "&":
+    - HOST
+    - PORT
+color: null
+isPrivate: false
+metaSortKey: 1706795138178
