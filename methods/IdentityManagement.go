@@ -178,3 +178,46 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty)
 
 	return &emptypb.Empty{}, nil
 }
+
+func (s *IdentityManagementServer) Logout(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
+	// Get metadata X-AUTH-TOKEN
+	metadata, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "Missing token")
+	}
+
+	token := metadata.Get("X-AUTH-TOKEN")
+	if len(token) == 0 {
+		return nil, status.Error(codes.Unauthenticated, "Missing token")
+	}
+
+	db, err := db.GetDbPoolConn()
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Start a transaction
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	defer tx.Rollback(ctx)
+
+	// Delete token from the database
+	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token[0])
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	return &emptypb.Empty{}, nil
+}
