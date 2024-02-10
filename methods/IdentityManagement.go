@@ -47,7 +47,26 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		}
 	}
 
-	// Generate a token
+	// Get companies of the user
+	rows, err := db.Query(ctx, "SELECT id, name FROM companies.company WHERE id  = (SELECT company_id FROM users.user_company WHERE user_id = $1)", userId)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	defer rows.Close()
+
+	companies := []*pb.Company{}
+	for rows.Next() {
+		var companyId uuid.UUID
+		var companyName string
+		err = rows.Scan(&companyId, &companyName)
+		if err != nil {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+		companies = append(companies, &pb.Company{Id: companyId.String(), Name: companyName})
+	}
+
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
@@ -71,7 +90,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
-	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: []*pb.Company{}}, nil
+	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
 }
 
 func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
