@@ -4,8 +4,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 
-	idm "hestia/api/methods"
+	"hestia/api/methods"
 	"hestia/api/pb"
 
 	"google.golang.org/grpc"
@@ -19,14 +20,14 @@ func main() {
 	}
 	s := grpc.NewServer()
 
-	if os.Getenv("HESTIA_ENV") == "development" {
+	if strings.ToLower(os.Getenv("ENV")) == "development" {
 		log.Println("Running in development mode")
 		log.Println("Registering reflection service")
 		reflection.Register(s)
 	}
 
 	// Service registration
-	pb.RegisterIdentityManagementServiceServer(s, &idm.IdentityManagementServer{})
+	pb.RegisterIdentityManagementServiceServer(s, &methods.IdentityManagementServer{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

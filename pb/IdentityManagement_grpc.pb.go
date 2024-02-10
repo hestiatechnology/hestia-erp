@@ -20,8 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IdentityManagementService_Login_FullMethodName = "/hestia.api.IdentityManagementService/Login"
-	IdentityManagementService_Alive_FullMethodName = "/hestia.api.IdentityManagementService/Alive"
+	IdentityManagementService_Login_FullMethodName    = "/hestia.api.idm.IdentityManagementService/Login"
+	IdentityManagementService_Register_FullMethodName = "/hestia.api.idm.IdentityManagementService/Register"
+	IdentityManagementService_Alive_FullMethodName    = "/hestia.api.idm.IdentityManagementService/Alive"
+	IdentityManagementService_Logout_FullMethodName   = "/hestia.api.idm.IdentityManagementService/Logout"
 )
 
 // IdentityManagementServiceClient is the client API for IdentityManagementService service.
@@ -29,7 +31,11 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IdentityManagementServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Requires token in the metadata X-AUTH-TOKEN
+	Alive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Requires token in the metadata X-AUTH-TOKEN
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type identityManagementServiceClient struct {
@@ -49,9 +55,27 @@ func (c *identityManagementServiceClient) Login(ctx context.Context, in *LoginRe
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, IdentityManagementService_Register_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityManagementServiceClient) Alive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, IdentityManagementService_Alive_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identityManagementServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, IdentityManagementService_Logout_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +87,11 @@ func (c *identityManagementServiceClient) Alive(ctx context.Context, in *AliveRe
 // for forward compatibility
 type IdentityManagementServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Alive(context.Context, *AliveRequest) (*emptypb.Empty, error)
+	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
+	// Requires token in the metadata X-AUTH-TOKEN
+	Alive(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	// Requires token in the metadata X-AUTH-TOKEN
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedIdentityManagementServiceServer()
 }
 
@@ -74,8 +102,14 @@ type UnimplementedIdentityManagementServiceServer struct {
 func (UnimplementedIdentityManagementServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *AliveRequest) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServiceServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Alive not implemented")
+}
+func (UnimplementedIdentityManagementServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedIdentityManagementServiceServer) mustEmbedUnimplementedIdentityManagementServiceServer() {
 }
@@ -109,8 +143,26 @@ func _IdentityManagementService_Login_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IdentityManagementService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityManagementServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityManagementService_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityManagementServiceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AliveRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -122,7 +174,25 @@ func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Conte
 		FullMethod: IdentityManagementService_Alive_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*AliveRequest))
+		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentityManagementService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentityManagementServiceServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentityManagementService_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentityManagementServiceServer).Logout(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -131,7 +201,7 @@ func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Conte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var IdentityManagementService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.api.IdentityManagementService",
+	ServiceName: "hestia.api.idm.IdentityManagementService",
 	HandlerType: (*IdentityManagementServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -139,8 +209,16 @@ var IdentityManagementService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IdentityManagementService_Login_Handler,
 		},
 		{
+			MethodName: "Register",
+			Handler:    _IdentityManagementService_Register_Handler,
+		},
+		{
 			MethodName: "Alive",
 			Handler:    _IdentityManagementService_Alive_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _IdentityManagementService_Logout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
