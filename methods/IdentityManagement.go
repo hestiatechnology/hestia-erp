@@ -93,6 +93,52 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
 }
 
+func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.RegisterRequest) (*emptypb.Empty, error) {
+	if in.GetEmail() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing email")
+	}
+	if in.GetPassword() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing password")
+	}
+	if in.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing name")
+	}
+	if in.GetTimezone() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing timezone")
+	}
+
+	//Check if user exists in the database
+	db, err := db.GetDbPoolConn()
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Start a transaction
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	defer tx.Rollback(ctx)
+
+	// Insert user into the database
+	_, err = tx.Exec(ctx, "INSERT INTO users.users (email, password, name, timezone) VALUES ($1, $2, $3, $4, $5)", in.GetEmail(), in.GetPassword(), in.GetName(), in.GetTimezone())
+
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	return &emptypb.Empty{}, nil
+}
+
 func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
 	// Get metadata X-AUTH-TOKEN
 	metadata, ok := metadata.FromIncomingContext(ctx)
