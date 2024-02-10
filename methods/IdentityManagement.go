@@ -28,8 +28,50 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
 	}
 
-	token := uuid.New().String()
-	return &pb.LoginResponse{Token: token, Name: in.GetEmail(), Email: "a@a.com"}, nil
+	//Check if user exists in the database
+	db, err := db.GetDbPoolConn()
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	var userId uuid.UUID
+	var name string
+	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), in.GetPassword()).Scan(&userId, &name)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "Wrong email or password")
+		} else {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+	}
+
+	// Generate a token
+	// Start a transaction
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	defer tx.Rollback(ctx)
+
+	// Insert token into the database
+	token := uuid.New()
+	_, err = tx.Exec(ctx, "INSERT INTO users.users_session (id, user_id, expiry_date) VALUES ($1, $2, $3)", token, userId, time.Now().Add(time.Hour*72))
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: []*pb.Company{}}, nil
 }
 
 func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
@@ -52,8 +94,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty)
 
 	// Check if token exists in the database
 	var expiry_date time.Time
-	scan := db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token[0])
-	err = scan.Scan(&expiry_date)
+	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token[0]).Scan(&expiry_date)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			// For security reasons, we don't want to give the user any information about the token
