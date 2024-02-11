@@ -27,17 +27,17 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ### Database Tools
 We use PostgreSQL for the database. You will need to install the following tools to work with the database. 
 
-- [PGModeler](https://pgmodeler.io/)
+- [pgModeler](https://pgmodeler.io/)
     - This is used to design and see the database schema.
     - You will need to compile PGModeler or request a copy.
-- [PGAmin](https://www.pgadmin.org/)
+- [pgAmin](https://www.pgadmin.org/)
     - This is used to manage the database.
     - You will use this to test queries.
     - Install the latest version of PGAdmin.
 
 ### Setup database
 #### Using Docker
-We recommend using Docker to run the database locally. You can use the following command to start a PostgreSQL instance.
+We recommend using Docker to run the database locally. You can use the following command to start a PostgreSQL 16.1 instance.
 ```bash
 docker run --name hestia-erp-db -e POSTGRES_PASSWORD=YOUR_PASSWORD_HERE -p 5432:5432 -d postgres:16.1-bullseye
 ```
