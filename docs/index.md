@@ -1,17 +1,6 @@
-# Welcome to MkDocs
+# Welcome to the Hestia ERP Backend
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This is the backend for the Hestia ERP system. It is a gRPC API that is used to manage the data for the Hestia ERP system.
 
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Getting started
+First you'll need to get you environment setup. Follow the instructions in the [Setup Guide](setup.md) to get started.

@@ -1,3 +1,11 @@
 site_name: Hestia ERP API
+site_description: Documentation for the Hestia ERP API
+site_author: Hestia Technology
+site_url: https://HestiaTechnology.github.io/hestia-api/
+copyright: Hestia Technology
+
+nav:
+  - Home: index.md
+  - Setup: setup.md
 theme:
   name: material
