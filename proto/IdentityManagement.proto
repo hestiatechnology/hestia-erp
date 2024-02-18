@@ -7,10 +7,8 @@ option go_package = ".;pb";
 service IdentityManagementService {
     rpc Login (LoginRequest) returns (LoginResponse);
     rpc Register (RegisterRequest) returns (google.protobuf.Empty);
-    // Requires token in the metadata X-AUTH-TOKEN
-    rpc Alive (google.protobuf.Empty) returns (google.protobuf.Empty);
-    // Requires token in the metadata X-AUTH-TOKEN
-    rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc Alive (TokenRequest) returns (google.protobuf.Empty);
+    rpc Logout (TokenRequest) returns (google.protobuf.Empty);
 }
 
 message LoginRequest {
@@ -37,4 +35,8 @@ message RegisterRequest {
     string password = 3;
     // Timezone in the format of "America/New_York"
     string timezone = 4;
+}
+
+message TokenRequest {
+    string token = 1;
 }

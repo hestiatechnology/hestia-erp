@@ -32,10 +32,8 @@ const (
 type IdentityManagementServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Requires token in the metadata X-AUTH-TOKEN
-	Alive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// Requires token in the metadata X-AUTH-TOKEN
-	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type identityManagementServiceClient struct {
@@ -64,7 +62,7 @@ func (c *identityManagementServiceClient) Register(ctx context.Context, in *Regi
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Alive(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementServiceClient) Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, IdentityManagementService_Alive_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -73,7 +71,7 @@ func (c *identityManagementServiceClient) Alive(ctx context.Context, in *emptypb
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementServiceClient) Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, IdentityManagementService_Logout_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -88,10 +86,8 @@ func (c *identityManagementServiceClient) Logout(ctx context.Context, in *emptyp
 type IdentityManagementServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
-	// Requires token in the metadata X-AUTH-TOKEN
-	Alive(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	// Requires token in the metadata X-AUTH-TOKEN
-	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	Alive(context.Context, *TokenRequest) (*emptypb.Empty, error)
+	Logout(context.Context, *TokenRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedIdentityManagementServiceServer()
 }
 
@@ -105,10 +101,10 @@ func (UnimplementedIdentityManagementServiceServer) Login(context.Context, *Logi
 func (UnimplementedIdentityManagementServiceServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *TokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Alive not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServiceServer) Logout(context.Context, *TokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedIdentityManagementServiceServer) mustEmbedUnimplementedIdentityManagementServiceServer() {
@@ -162,7 +158,7 @@ func _IdentityManagementService_Register_Handler(srv interface{}, ctx context.Co
 }
 
 func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(TokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -174,13 +170,13 @@ func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Conte
 		FullMethod: IdentityManagementService_Alive_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*emptypb.Empty))
+		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _IdentityManagementService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(TokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -192,7 +188,7 @@ func _IdentityManagementService_Logout_Handler(srv interface{}, ctx context.Cont
 		FullMethod: IdentityManagementService_Logout_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Logout(ctx, req.(*emptypb.Empty))
+		return srv.(IdentityManagementServiceServer).Logout(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

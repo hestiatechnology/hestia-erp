@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -156,15 +155,11 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
-	// Get metadata X-AUTH-TOKEN
-	metadata, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, status.Error(codes.Unauthenticated, "Missing token")
-	}
+func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
 
-	token := metadata.Get("X-AUTH-TOKEN")
-	if len(token) == 0 {
+	token := in.GetToken()
+
+	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
 
@@ -176,7 +171,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty)
 
 	// Check if token exists in the database
 	var expiry_date time.Time
-	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token[0]).Scan(&expiry_date)
+	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token).Scan(&expiry_date)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			// For security reasons, we don't want to give the user any information about the token
@@ -196,15 +191,9 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *emptypb.Empty)
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Logout(ctx context.Context, in *emptypb.Empty) (*emptypb.Empty, error) {
-	// Get metadata X-AUTH-TOKEN
-	metadata, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, status.Error(codes.Unauthenticated, "Missing token")
-	}
-
-	token := metadata.Get("X-AUTH-TOKEN")
-	if len(token) == 0 {
+func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
+	token := in.GetToken()
+	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
 
@@ -223,7 +212,7 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *emptypb.Empty
 	defer tx.Rollback(ctx)
 
 	// Delete token from the database
-	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token[0])
+	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token)
 	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
