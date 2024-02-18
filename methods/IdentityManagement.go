@@ -7,6 +7,7 @@ import (
 
 	"hestia/api/pb"
 	"hestia/api/utils/db"
+	"hestia/api/utils/idm"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -26,6 +27,8 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	}
 	if in.GetPassword() == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
+	} else if len(in.GetPassword()) != 64 {
+		return nil, status.Error(codes.InvalidArgument, "Invalid password")
 	}
 
 	//Check if user exists in the database
@@ -35,9 +38,23 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
+	// Get salt from the database
+	salt, err := idm.GetSalt(ctx, in.GetEmail())
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, status.Error(codes.NotFound, "Wrong email or password")
+		} else {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+	}
+
+	// Hash the password
+	hashedPassword := idm.PasswordHash(in.GetPassword(), salt)
+
 	var userId uuid.UUID
 	var name string
-	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), in.GetPassword()).Scan(&userId, &name)
+	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), hashedPassword).Scan(&userId, &name)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
