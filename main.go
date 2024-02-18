@@ -28,7 +28,7 @@ func main() {
 
 	// Service registration
 	pb.RegisterIdentityManagementServiceServer(s, &methods.IdentityManagementServer{})
-
+	pb.RegisterTextileServiceServer(s, &methods.TextileServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
