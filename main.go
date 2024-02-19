@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"hestia/api/interceptor"
 	"hestia/api/methods"
 	"hestia/api/pb"
 
@@ -18,7 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor))
 
 	if strings.ToLower(os.Getenv("ENV")) == "development" {
 		log.Println("Running in development mode")
