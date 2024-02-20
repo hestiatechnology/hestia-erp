@@ -47,4 +47,5 @@ message AddUserToCompanyRequest {
     // If the user does not exist, a temporary account will be created until the user logs in
     string email = 1;
     string companyId = 2;
+    optional string employeeId = 3;
 }

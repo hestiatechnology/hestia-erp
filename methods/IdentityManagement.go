@@ -2,6 +2,7 @@ package methods
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -40,7 +41,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	// Get salt from the database
 	salt, err := idm.GetSalt(ctx, in.GetEmail())
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
 			log.Println(err)
@@ -55,7 +56,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	var name string
 	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), hashedPassword).Scan(&userId, &name)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
 			log.Println(err)
@@ -173,7 +174,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 	var expiry_date time.Time
 	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token).Scan(&expiry_date)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			// For security reasons, we don't want to give the user any information about the token
 			return nil, status.Error(codes.Unauthenticated, "Token expired")
 		} else {
@@ -254,8 +255,9 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 	var userId uuid.UUID
 	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", in.GetEmail()).Scan(&userId)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			// TODO: Send an email to the user to invite him to the platform
+			log.Println("IMPLEMENT FUNCTIONALITY TO SEND EMAIL TO INVITE USER")
 			return nil, status.Error(codes.NotFound, "User not found")
 		} else {
 			log.Println(err)
