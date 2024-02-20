@@ -278,6 +278,19 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 		return nil, status.Error(codes.AlreadyExists, "User already in the company")
 	}
 
+	// if employeeId is provided, check if the there's already a user with that employeeId in the company
+	if in.GetEmployeeId() != "" {
+		var count int
+		err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1 AND company_id = $2", in.GetEmployeeId(), in.GetCompanyId()).Scan(&count)
+		if err != nil {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+
+		if count > 0 {
+			return nil, status.Error(codes.AlreadyExists, "Employee ID already in use")
+		}
+	}
 	// Insert user into the company
 	_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
 	if err != nil {
