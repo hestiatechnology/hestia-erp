@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -293,7 +294,14 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 	}
 	// Insert user into the company
 	_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
+
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" {
+				return nil, status.Error(codes.AlreadyExists, "User already in the company")
+			}
+		}
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
