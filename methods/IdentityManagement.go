@@ -291,17 +291,34 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 		if count > 0 {
 			return nil, status.Error(codes.AlreadyExists, "Employee ID already in use")
 		}
-	}
-	// Insert user into the company
-	_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
 
-	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) {
-			if pgErr.Code == "23505" {
-				return nil, status.Error(codes.AlreadyExists, "User already in the company")
+		// Associate user with the company
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id, employee_id) VALUES ($1, $2, $3)", userId, in.GetCompanyId(), in.GetEmployeeId())
+
+		if err != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(err, &pgErr) {
+				// Check if the error also sho
+				if pgErr.Code == "23505" {
+					return nil, status.Error(codes.AlreadyExists, "User already in the company")
+				}
 			}
+			log.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
 		}
+	} else {
+		// Associate user with the company
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
+		if err != nil {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
