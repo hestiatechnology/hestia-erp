@@ -227,3 +227,61 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenReque
 
 	return &emptypb.Empty{}, nil
 }
+
+func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.AddUserToCompanyRequest) (*emptypb.Empty, error) {
+	if in.GetEmail() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing email")
+	}
+	if in.GetCompanyId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "Missing company id")
+	}
+
+	db, err := db.GetDbPoolConn()
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	// Start a transaction
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	defer tx.Rollback(ctx)
+
+	// Get user id
+	var userId uuid.UUID
+	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", in.GetEmail()).Scan(&userId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			// TODO: Send an email to the user to invite him to the platform
+			return nil, status.Error(codes.NotFound, "User not found")
+		} else {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+
+	}
+
+	// Check if the user is already in the company
+	var count int
+	err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE user_id = $1 AND company_id = $2", userId, in.GetCompanyId()).Scan(&count)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	if count > 0 {
+		return nil, status.Error(codes.AlreadyExists, "User already in the company")
+	}
+
+	// Insert user into the company
+	_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+
+	return &emptypb.Empty{}, nil
+}
