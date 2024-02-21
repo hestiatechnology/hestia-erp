@@ -73,7 +73,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	}
 	defer rows.Close()
 
-	companies := []*pb.Company{}
+	companies := []*pb.CompanyList{}
 	for rows.Next() {
 		var companyId uuid.UUID
 		var companyName string
@@ -82,7 +82,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 			log.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
-		companies = append(companies, &pb.Company{Id: companyId.String(), Name: companyName})
+		companies = append(companies, &pb.CompanyList{Id: companyId.String(), Name: companyName})
 	}
 
 	// Start a transaction
