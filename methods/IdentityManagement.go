@@ -298,12 +298,12 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) {
-				// Check if the error also sho
-				if pgErr.Code == "23505" {
-					return nil, status.Error(codes.AlreadyExists, "User already in the company")
-				}
+				//// Check if the error also sho
+				//if pgErr.Code == "23505" {
+				//	return nil, status.Error(codes.AlreadyExists, "User already in the company")
+				//}
+				log.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
 			}
-			log.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
 			log.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
