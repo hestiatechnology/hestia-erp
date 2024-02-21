@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -278,8 +279,45 @@ func (s *IdentityManagementServer) AddUserToCompany(ctx context.Context, in *pb.
 		return nil, status.Error(codes.AlreadyExists, "User already in the company")
 	}
 
-	// Insert user into the company
-	_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
+	// if employeeId is provided, check if the there's already a user with that employeeId in the company
+	if in.GetEmployeeId() != "" {
+		var count int
+		err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1 AND company_id = $2", in.GetEmployeeId(), in.GetCompanyId()).Scan(&count)
+		if err != nil {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+
+		if count > 0 {
+			return nil, status.Error(codes.AlreadyExists, "Employee ID already in use")
+		}
+
+		// Associate user with the company
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id, employee_id) VALUES ($1, $2, $3)", userId, in.GetCompanyId(), in.GetEmployeeId())
+
+		if err != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(err, &pgErr) {
+				//// Check if the error also sho
+				//if pgErr.Code == "23505" {
+				//	return nil, status.Error(codes.AlreadyExists, "User already in the company")
+				//}
+				log.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
+			}
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+	} else {
+		// Associate user with the company
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
+		if err != nil {
+			log.Println(err)
+			return nil, status.Error(codes.Internal, "Database error")
+		}
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
 	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
