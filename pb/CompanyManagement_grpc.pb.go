@@ -34,7 +34,7 @@ type CompanyManagementClient interface {
 	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
-	CreateLocation(ctx context.Context, in *CreateLocationRequest, opts ...grpc.CallOption) (*IdResponse, error)
+	CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*IdResponse, error)
 }
 
 type companyManagementClient struct {
@@ -72,7 +72,7 @@ func (c *companyManagementClient) UpdateCompany(ctx context.Context, in *UpdateC
 	return out, nil
 }
 
-func (c *companyManagementClient) CreateLocation(ctx context.Context, in *CreateLocationRequest, opts ...grpc.CallOption) (*IdResponse, error) {
+func (c *companyManagementClient) CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*IdResponse, error) {
 	out := new(IdResponse)
 	err := c.cc.Invoke(ctx, CompanyManagement_CreateLocation_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -90,7 +90,7 @@ type CompanyManagementServer interface {
 	UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error)
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
-	CreateLocation(context.Context, *CreateLocationRequest) (*IdResponse, error)
+	CreateLocation(context.Context, *Location) (*IdResponse, error)
 	mustEmbedUnimplementedCompanyManagementServer()
 }
 
@@ -107,7 +107,7 @@ func (UnimplementedCompanyManagementServer) GetCompany(context.Context, *GetComp
 func (UnimplementedCompanyManagementServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompany not implemented")
 }
-func (UnimplementedCompanyManagementServer) CreateLocation(context.Context, *CreateLocationRequest) (*IdResponse, error) {
+func (UnimplementedCompanyManagementServer) CreateLocation(context.Context, *Location) (*IdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLocation not implemented")
 }
 func (UnimplementedCompanyManagementServer) mustEmbedUnimplementedCompanyManagementServer() {}
@@ -178,7 +178,7 @@ func _CompanyManagement_UpdateCompany_Handler(srv interface{}, ctx context.Conte
 }
 
 func _CompanyManagement_CreateLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateLocationRequest)
+	in := new(Location)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -190,7 +190,7 @@ func _CompanyManagement_CreateLocation_Handler(srv interface{}, ctx context.Cont
 		FullMethod: CompanyManagement_CreateLocation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CompanyManagementServer).CreateLocation(ctx, req.(*CreateLocationRequest))
+		return srv.(CompanyManagementServer).CreateLocation(ctx, req.(*Location))
 	}
 	return interceptor(ctx, in, info, handler)
 }
