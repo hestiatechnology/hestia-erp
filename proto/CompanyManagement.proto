@@ -1,23 +1,39 @@
 syntax = "proto3";
 
-package hestia.api.com;
+package hestia.v1.com;
 //import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
-service CompanyManagementService {
-    rpc CreateCompany(CreateCompanyRequest) returns (CreateCompanyResponse);
+service CompanyManagement {
+    rpc CreateCompany(CreateCompanyRequest) returns (IdResponse);
     rpc GetCompany(GetCompanyRequest) returns (GetCompanyResponse);
     rpc UpdateCompany(UpdateCompanyRequest) returns (UpdateCompanyResponse);
     //rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
     //rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
+    rpc CreateLocation(CreateLocationRequest) returns (IdResponse);
 }
 
 message CreateCompanyRequest {
     string name = 1;
-    string description = 2;
+    optional string commercialName = 2;
+    int32 vatId = 3;
+    int32 ssn = 4;
+    string address = 5;
+    string locality = 6;
+    string postalCode = 7;
+    // Must be a Alpha-2 code
+    string country = 8;
 }
 
-message CreateCompanyResponse {
+message CreateLocationRequest {
+    string companyId = 1;
+    string address = 2;
+    string locality = 3;
+    string postalCode = 4;
+    string country = 5;
+}
+
+message IdResponse {
     string id = 1;
 }
 

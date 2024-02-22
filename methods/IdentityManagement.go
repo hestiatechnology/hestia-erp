@@ -19,7 +19,7 @@ import (
 )
 
 type IdentityManagementServer struct {
-	pb.UnimplementedIdentityManagementServiceServer
+	pb.UnimplementedIdentityManagementServer
 }
 
 func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {

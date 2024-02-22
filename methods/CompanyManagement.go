@@ -5,5 +5,5 @@ import (
 )
 
 type CompanyManagementServer struct {
-	pb.UnimplementedCompanyManagementServiceServer
+	pb.UnimplementedCompanyManagementServer
 }
