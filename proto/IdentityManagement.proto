@@ -9,7 +9,6 @@ service IdentityManagement {
     rpc Register (RegisterRequest) returns (google.protobuf.Empty);
     rpc Alive (TokenRequest) returns (google.protobuf.Empty);
     rpc Logout (TokenRequest) returns (google.protobuf.Empty);
-    rpc AddUserToCompany (AddUserToCompanyRequest) returns (google.protobuf.Empty);
 }
 
 message LoginRequest {
@@ -42,10 +41,3 @@ message TokenRequest {
     string token = 1;
 }
 
-message AddUserToCompanyRequest {
-    // Email of the user to add to the company
-    // If the user does not exist, a temporary account will be created until the user logs in
-    string email = 1;
-    string companyId = 2;
-    optional string employeeId = 3;
-}

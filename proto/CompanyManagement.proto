@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package hestia.v1.com;
-//import "google/protobuf/empty.proto";
+import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
 service CompanyManagement {
@@ -11,6 +11,7 @@ service CompanyManagement {
     //rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
     //rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
     rpc CreateLocation(Location) returns (IdResponse);
+    rpc AddUserToCompany (AddUserToCompanyRequest) returns (google.protobuf.Empty);
 }
 
 message CreateCompanyRequest {
@@ -74,3 +75,10 @@ message Company {
     string description = 3;
 }
 
+message AddUserToCompanyRequest {
+    // Email of the user to add to the company
+    // If the user does not exist, a temporary account will be created until the user logs in
+    string email = 1;
+    string companyId = 2;
+    optional string employeeId = 3;
+}

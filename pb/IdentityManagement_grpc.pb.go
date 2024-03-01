@@ -20,11 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IdentityManagement_Login_FullMethodName            = "/hestia.v1.idm.IdentityManagement/Login"
-	IdentityManagement_Register_FullMethodName         = "/hestia.v1.idm.IdentityManagement/Register"
-	IdentityManagement_Alive_FullMethodName            = "/hestia.v1.idm.IdentityManagement/Alive"
-	IdentityManagement_Logout_FullMethodName           = "/hestia.v1.idm.IdentityManagement/Logout"
-	IdentityManagement_AddUserToCompany_FullMethodName = "/hestia.v1.idm.IdentityManagement/AddUserToCompany"
+	IdentityManagement_Login_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Login"
+	IdentityManagement_Register_FullMethodName = "/hestia.v1.idm.IdentityManagement/Register"
+	IdentityManagement_Alive_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Alive"
+	IdentityManagement_Logout_FullMethodName   = "/hestia.v1.idm.IdentityManagement/Logout"
 )
 
 // IdentityManagementClient is the client API for IdentityManagement service.
@@ -35,7 +34,6 @@ type IdentityManagementClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type identityManagementClient struct {
@@ -82,15 +80,6 @@ func (c *identityManagementClient) Logout(ctx context.Context, in *TokenRequest,
 	return out, nil
 }
 
-func (c *identityManagementClient) AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, IdentityManagement_AddUserToCompany_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // IdentityManagementServer is the server API for IdentityManagement service.
 // All implementations must embed UnimplementedIdentityManagementServer
 // for forward compatibility
@@ -99,7 +88,6 @@ type IdentityManagementServer interface {
 	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
 	Alive(context.Context, *TokenRequest) (*emptypb.Empty, error)
 	Logout(context.Context, *TokenRequest) (*emptypb.Empty, error)
-	AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedIdentityManagementServer()
 }
 
@@ -118,9 +106,6 @@ func (UnimplementedIdentityManagementServer) Alive(context.Context, *TokenReques
 }
 func (UnimplementedIdentityManagementServer) Logout(context.Context, *TokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
-}
-func (UnimplementedIdentityManagementServer) AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddUserToCompany not implemented")
 }
 func (UnimplementedIdentityManagementServer) mustEmbedUnimplementedIdentityManagementServer() {}
 
@@ -207,24 +192,6 @@ func _IdentityManagement_Logout_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityManagement_AddUserToCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddUserToCompanyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IdentityManagementServer).AddUserToCompany(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IdentityManagement_AddUserToCompany_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServer).AddUserToCompany(ctx, req.(*AddUserToCompanyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // IdentityManagement_ServiceDesc is the grpc.ServiceDesc for IdentityManagement service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -247,10 +214,6 @@ var IdentityManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _IdentityManagement_Logout_Handler,
-		},
-		{
-			MethodName: "AddUserToCompany",
-			Handler:    _IdentityManagement_AddUserToCompany_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

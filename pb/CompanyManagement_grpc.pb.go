@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,10 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CompanyManagement_CreateCompany_FullMethodName  = "/hestia.v1.com.CompanyManagement/CreateCompany"
-	CompanyManagement_GetCompany_FullMethodName     = "/hestia.v1.com.CompanyManagement/GetCompany"
-	CompanyManagement_UpdateCompany_FullMethodName  = "/hestia.v1.com.CompanyManagement/UpdateCompany"
-	CompanyManagement_CreateLocation_FullMethodName = "/hestia.v1.com.CompanyManagement/CreateLocation"
+	CompanyManagement_CreateCompany_FullMethodName    = "/hestia.v1.com.CompanyManagement/CreateCompany"
+	CompanyManagement_GetCompany_FullMethodName       = "/hestia.v1.com.CompanyManagement/GetCompany"
+	CompanyManagement_UpdateCompany_FullMethodName    = "/hestia.v1.com.CompanyManagement/UpdateCompany"
+	CompanyManagement_CreateLocation_FullMethodName   = "/hestia.v1.com.CompanyManagement/CreateLocation"
+	CompanyManagement_AddUserToCompany_FullMethodName = "/hestia.v1.com.CompanyManagement/AddUserToCompany"
 )
 
 // CompanyManagementClient is the client API for CompanyManagement service.
@@ -35,6 +37,7 @@ type CompanyManagementClient interface {
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
 	CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*IdResponse, error)
+	AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type companyManagementClient struct {
@@ -81,6 +84,15 @@ func (c *companyManagementClient) CreateLocation(ctx context.Context, in *Locati
 	return out, nil
 }
 
+func (c *companyManagementClient) AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, CompanyManagement_AddUserToCompany_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompanyManagementServer is the server API for CompanyManagement service.
 // All implementations must embed UnimplementedCompanyManagementServer
 // for forward compatibility
@@ -91,6 +103,7 @@ type CompanyManagementServer interface {
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
 	CreateLocation(context.Context, *Location) (*IdResponse, error)
+	AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedCompanyManagementServer()
 }
 
@@ -109,6 +122,9 @@ func (UnimplementedCompanyManagementServer) UpdateCompany(context.Context, *Upda
 }
 func (UnimplementedCompanyManagementServer) CreateLocation(context.Context, *Location) (*IdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLocation not implemented")
+}
+func (UnimplementedCompanyManagementServer) AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserToCompany not implemented")
 }
 func (UnimplementedCompanyManagementServer) mustEmbedUnimplementedCompanyManagementServer() {}
 
@@ -195,6 +211,24 @@ func _CompanyManagement_CreateLocation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompanyManagement_AddUserToCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserToCompanyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyManagementServer).AddUserToCompany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyManagement_AddUserToCompany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyManagementServer).AddUserToCompany(ctx, req.(*AddUserToCompanyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompanyManagement_ServiceDesc is the grpc.ServiceDesc for CompanyManagement service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -217,6 +251,10 @@ var CompanyManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateLocation",
 			Handler:    _CompanyManagement_CreateLocation_Handler,
+		},
+		{
+			MethodName: "AddUserToCompany",
+			Handler:    _CompanyManagement_AddUserToCompany_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
