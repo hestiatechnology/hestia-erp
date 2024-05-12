@@ -46,6 +46,6 @@ func GetDbPoolConn() (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
-	log.Println("Connected to database once")
+	log.Println("First connection to the database successful")
 	return db, nil
 }
