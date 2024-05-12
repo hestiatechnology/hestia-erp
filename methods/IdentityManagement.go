@@ -122,9 +122,13 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	}
 	if in.GetTimezone() == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing timezone")
+	} else {
+		_, err := time.LoadLocation(in.GetTimezone())
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, "Timezone "+in.GetTimezone()+" is invalid")
+		}
 	}
 
-	//Check if user exists in the database
 	db, err := db.GetDbPoolConn()
 	if err != nil {
 		log.Println(err)
@@ -139,9 +143,19 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	}
 	defer tx.Rollback(ctx)
 
-	// Insert user into the database
-	_, err = tx.Exec(ctx, "INSERT INTO users.users (email, password, name, timezone) VALUES ($1, $2, $3, $4, $5)", in.GetEmail(), in.GetPassword(), in.GetName(), in.GetTimezone())
+	// Check if user already exists in the database
+	var count int
+	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", in.GetEmail()).Scan(&count)
+	if err != nil {
+		log.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	if count > 0 {
+		return nil, status.Error(codes.AlreadyExists, "User already exists")
+	}
 
+	// Insert user into the database
+	_, err = tx.Exec(ctx, "INSERT INTO users.users (email, password, name, timezone) VALUES ($1, $2, $3, $4)", in.GetEmail(), in.GetPassword(), in.GetName(), in.GetTimezone())
 	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
@@ -159,7 +173,6 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
 
 	token := in.GetToken()
-
 	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
