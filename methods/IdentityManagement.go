@@ -3,12 +3,12 @@ package methods
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"hestia/api/pb"
 	"hestia/api/utils/db"
 	"hestia/api/utils/idm"
+	"hestia/api/utils/logger"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -37,7 +37,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	//Check if user exists in the database
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
@@ -47,7 +47,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -62,7 +62,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -70,7 +70,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	// Get companies of the user
 	rows, err := db.Query(ctx, "SELECT id, name FROM companies.company WHERE id  = (SELECT company_id FROM users.user_company WHERE user_id = $1)", userId)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer rows.Close()
@@ -81,7 +81,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		var companyName string
 		err = rows.Scan(&companyId, &companyName)
 		if err != nil {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 		companies = append(companies, &pb.CompanyList{Id: companyId.String(), Name: companyName})
@@ -90,7 +90,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
@@ -99,14 +99,14 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	token := uuid.New()
 	_, err = tx.Exec(ctx, "INSERT INTO users.users_session (id, user_id, expiry_date) VALUES ($1, $2, $3)", token, userId, time.Now().Add(time.Hour*72))
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
@@ -139,14 +139,14 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
@@ -155,7 +155,7 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	var count int
 	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", email).Scan(&count)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	if count > 0 {
@@ -168,14 +168,14 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 
 	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4)", name, email, hashedPassword, salt, timezone)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	return &emptypb.Empty{}, nil
@@ -190,7 +190,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
@@ -203,7 +203,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 			return nil, status.Error(codes.Unauthenticated, "Token expired")
 		} else {
 			// Handle other errors
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -224,14 +224,14 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenReque
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
@@ -239,14 +239,14 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenReque
 	// Delete token from the database
 	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
