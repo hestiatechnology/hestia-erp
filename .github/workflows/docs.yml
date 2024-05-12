@@ -1,7 +1,8 @@
 name: Docs CI
 on:
   push:
-    branches: ["main", "develop"]
+    branches:
+      - main
 permissions:
   contents: write
 jobs:
@@ -24,8 +25,4 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material 
-      # If the branch is develop, deploy to /develop
-      - if: github.ref == 'refs/heads/develop'
-        run: mkdocs gh-deploy --config-file mkdocs.yml --remote-branch develop -d develop --force
-      - if: github.ref == 'refs/heads/main'
-        run: mkdocs gh-deploy --config-file mkdocs.yml --remote-branch main --force
+      - run: mkdocs gh-deploy --force
