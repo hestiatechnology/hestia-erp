@@ -28,8 +28,9 @@ func main() {
 	}
 
 	// Service registration
-	pb.RegisterIdentityManagementServiceServer(s, &methods.IdentityManagementServer{})
-	pb.RegisterTextileServiceServer(s, &methods.TextileServer{})
+	pb.RegisterIdentityManagementServer(s, &methods.IdentityManagementServer{})
+	pb.RegisterTextileServer(s, &methods.TextileServer{})
+	pb.RegisterCompanyManagementServer(s, &methods.CompanyManagementServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

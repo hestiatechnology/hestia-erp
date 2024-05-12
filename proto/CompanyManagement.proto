@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package hestia.v1.com;
+import "google/protobuf/empty.proto";
+option go_package = ".;pb";
+
+service CompanyManagement {
+    rpc CreateCompany(CreateCompanyRequest) returns (IdResponse);
+    rpc GetCompany(GetCompanyRequest) returns (GetCompanyResponse);
+    rpc UpdateCompany(UpdateCompanyRequest) returns (UpdateCompanyResponse);
+    //rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
+    //rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
+    rpc CreateLocation(Location) returns (IdResponse);
+    rpc AddUserToCompany (AddUserToCompanyRequest) returns (google.protobuf.Empty);
+}
+
+message CreateCompanyRequest {
+    string name = 1;
+    optional string commercialName = 2;
+    int32 vatId = 3;
+    int32 ssn = 4;
+    Location location = 5;
+}
+
+message Location {
+    string address = 1;
+    string locality = 2;
+    string postalCode = 3;
+    // Must be a Alpha-2 code
+    string country = 4;
+}
+
+message IdResponse {
+    string id = 1;
+}
+
+message GetCompanyRequest {
+    string id = 1;
+}
+
+message GetCompanyResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message UpdateCompanyRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message UpdateCompanyResponse {
+    string id = 1;
+}
+
+message DeleteCompanyRequest {
+    string id = 1;
+}
+
+message DeleteCompanyResponse {
+    string id = 1;
+}
+
+message ListCompaniesRequest {
+}
+
+message ListCompaniesResponse {
+    repeated Company companies = 1;
+}
+
+message Company {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message AddUserToCompanyRequest {
+    // Email of the user to add to the company
+    // If the user does not exist, a temporary account will be created until the user logs in
+    string email = 1;
+    string companyId = 2;
+    optional string employeeId = 3;
+}

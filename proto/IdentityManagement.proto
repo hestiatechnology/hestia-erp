@@ -1,15 +1,14 @@
 syntax = "proto3";
 
-package hestia.api.idm;
+package hestia.v1.idm;
 import "google/protobuf/empty.proto";
 option go_package = ".;pb";
 
-service IdentityManagementService {
+service IdentityManagement {
     rpc Login (LoginRequest) returns (LoginResponse);
     rpc Register (RegisterRequest) returns (google.protobuf.Empty);
     rpc Alive (TokenRequest) returns (google.protobuf.Empty);
     rpc Logout (TokenRequest) returns (google.protobuf.Empty);
-    rpc AddUserToCompany (AddUserToCompanyRequest) returns (google.protobuf.Empty);
 }
 
 message LoginRequest {
@@ -21,10 +20,10 @@ message LoginResponse {
     string token = 1;
     string name = 2;
     string email = 3;
-    repeated Company companies = 4;
+    repeated CompanyList companies = 4;
 }
 
-message Company {
+message CompanyList {
     string id = 1;
     string name = 2;
     optional string logo = 3;
@@ -42,10 +41,3 @@ message TokenRequest {
     string token = 1;
 }
 
-message AddUserToCompanyRequest {
-    // Email of the user to add to the company
-    // If the user does not exist, a temporary account will be created until the user logs in
-    string email = 1;
-    string companyId = 2;
-    optional string employeeId = 3;
-}

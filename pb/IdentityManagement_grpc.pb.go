@@ -20,238 +20,200 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IdentityManagementService_Login_FullMethodName            = "/hestia.api.idm.IdentityManagementService/Login"
-	IdentityManagementService_Register_FullMethodName         = "/hestia.api.idm.IdentityManagementService/Register"
-	IdentityManagementService_Alive_FullMethodName            = "/hestia.api.idm.IdentityManagementService/Alive"
-	IdentityManagementService_Logout_FullMethodName           = "/hestia.api.idm.IdentityManagementService/Logout"
-	IdentityManagementService_AddUserToCompany_FullMethodName = "/hestia.api.idm.IdentityManagementService/AddUserToCompany"
+	IdentityManagement_Login_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Login"
+	IdentityManagement_Register_FullMethodName = "/hestia.v1.idm.IdentityManagement/Register"
+	IdentityManagement_Alive_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Alive"
+	IdentityManagement_Logout_FullMethodName   = "/hestia.v1.idm.IdentityManagement/Logout"
 )
 
-// IdentityManagementServiceClient is the client API for IdentityManagementService service.
+// IdentityManagementClient is the client API for IdentityManagement service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type IdentityManagementServiceClient interface {
+type IdentityManagementClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type identityManagementServiceClient struct {
+type identityManagementClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewIdentityManagementServiceClient(cc grpc.ClientConnInterface) IdentityManagementServiceClient {
-	return &identityManagementServiceClient{cc}
+func NewIdentityManagementClient(cc grpc.ClientConnInterface) IdentityManagementClient {
+	return &identityManagementClient{cc}
 }
 
-func (c *identityManagementServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+func (c *identityManagementClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, IdentityManagementService_Login_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IdentityManagement_Login_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, IdentityManagementService_Register_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IdentityManagement_Register_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementClient) Alive(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, IdentityManagementService_Alive_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IdentityManagement_Alive_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *identityManagementClient) Logout(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, IdentityManagementService_Logout_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, IdentityManagement_Logout_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identityManagementServiceClient) AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, IdentityManagementService_AddUserToCompany_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// IdentityManagementServiceServer is the server API for IdentityManagementService service.
-// All implementations must embed UnimplementedIdentityManagementServiceServer
+// IdentityManagementServer is the server API for IdentityManagement service.
+// All implementations must embed UnimplementedIdentityManagementServer
 // for forward compatibility
-type IdentityManagementServiceServer interface {
+type IdentityManagementServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
 	Alive(context.Context, *TokenRequest) (*emptypb.Empty, error)
 	Logout(context.Context, *TokenRequest) (*emptypb.Empty, error)
-	AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error)
-	mustEmbedUnimplementedIdentityManagementServiceServer()
+	mustEmbedUnimplementedIdentityManagementServer()
 }
 
-// UnimplementedIdentityManagementServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedIdentityManagementServiceServer struct {
+// UnimplementedIdentityManagementServer must be embedded to have forward compatible implementations.
+type UnimplementedIdentityManagementServer struct {
 }
 
-func (UnimplementedIdentityManagementServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedIdentityManagementServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Alive(context.Context, *TokenRequest) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServer) Alive(context.Context, *TokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Alive not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) Logout(context.Context, *TokenRequest) (*emptypb.Empty, error) {
+func (UnimplementedIdentityManagementServer) Logout(context.Context, *TokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedIdentityManagementServiceServer) AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddUserToCompany not implemented")
-}
-func (UnimplementedIdentityManagementServiceServer) mustEmbedUnimplementedIdentityManagementServiceServer() {
-}
+func (UnimplementedIdentityManagementServer) mustEmbedUnimplementedIdentityManagementServer() {}
 
-// UnsafeIdentityManagementServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to IdentityManagementServiceServer will
+// UnsafeIdentityManagementServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to IdentityManagementServer will
 // result in compilation errors.
-type UnsafeIdentityManagementServiceServer interface {
-	mustEmbedUnimplementedIdentityManagementServiceServer()
+type UnsafeIdentityManagementServer interface {
+	mustEmbedUnimplementedIdentityManagementServer()
 }
 
-func RegisterIdentityManagementServiceServer(s grpc.ServiceRegistrar, srv IdentityManagementServiceServer) {
-	s.RegisterService(&IdentityManagementService_ServiceDesc, srv)
+func RegisterIdentityManagementServer(s grpc.ServiceRegistrar, srv IdentityManagementServer) {
+	s.RegisterService(&IdentityManagement_ServiceDesc, srv)
 }
 
-func _IdentityManagementService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IdentityManagement_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityManagementServiceServer).Login(ctx, in)
+		return srv.(IdentityManagementServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityManagementService_Login_FullMethodName,
+		FullMethod: IdentityManagement_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Login(ctx, req.(*LoginRequest))
+		return srv.(IdentityManagementServer).Login(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityManagementService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IdentityManagement_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityManagementServiceServer).Register(ctx, in)
+		return srv.(IdentityManagementServer).Register(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityManagementService_Register_FullMethodName,
+		FullMethod: IdentityManagement_Register_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Register(ctx, req.(*RegisterRequest))
+		return srv.(IdentityManagementServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityManagementService_Alive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IdentityManagement_Alive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityManagementServiceServer).Alive(ctx, in)
+		return srv.(IdentityManagementServer).Alive(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityManagementService_Alive_FullMethodName,
+		FullMethod: IdentityManagement_Alive_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Alive(ctx, req.(*TokenRequest))
+		return srv.(IdentityManagementServer).Alive(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityManagementService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _IdentityManagement_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentityManagementServiceServer).Logout(ctx, in)
+		return srv.(IdentityManagementServer).Logout(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: IdentityManagementService_Logout_FullMethodName,
+		FullMethod: IdentityManagement_Logout_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).Logout(ctx, req.(*TokenRequest))
+		return srv.(IdentityManagementServer).Logout(ctx, req.(*TokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentityManagementService_AddUserToCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddUserToCompanyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IdentityManagementServiceServer).AddUserToCompany(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IdentityManagementService_AddUserToCompany_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityManagementServiceServer).AddUserToCompany(ctx, req.(*AddUserToCompanyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// IdentityManagementService_ServiceDesc is the grpc.ServiceDesc for IdentityManagementService service.
+// IdentityManagement_ServiceDesc is the grpc.ServiceDesc for IdentityManagement service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var IdentityManagementService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.api.idm.IdentityManagementService",
-	HandlerType: (*IdentityManagementServiceServer)(nil),
+var IdentityManagement_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "hestia.v1.idm.IdentityManagement",
+	HandlerType: (*IdentityManagementServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Login",
-			Handler:    _IdentityManagementService_Login_Handler,
+			Handler:    _IdentityManagement_Login_Handler,
 		},
 		{
 			MethodName: "Register",
-			Handler:    _IdentityManagementService_Register_Handler,
+			Handler:    _IdentityManagement_Register_Handler,
 		},
 		{
 			MethodName: "Alive",
-			Handler:    _IdentityManagementService_Alive_Handler,
+			Handler:    _IdentityManagement_Alive_Handler,
 		},
 		{
 			MethodName: "Logout",
-			Handler:    _IdentityManagementService_Logout_Handler,
-		},
-		{
-			MethodName: "AddUserToCompany",
-			Handler:    _IdentityManagementService_AddUserToCompany_Handler,
+			Handler:    _IdentityManagement_Logout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

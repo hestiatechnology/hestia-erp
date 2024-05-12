@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TextileService_CreateTechnicalModel_FullMethodName = "/hestia.api.textile.TextileService/CreateTechnicalModel"
+	Textile_CreateTechnicalModel_FullMethodName = "/hestia.v1.textile.Textile/CreateTechnicalModel"
 )
 
-// TextileServiceClient is the client API for TextileService service.
+// TextileClient is the client API for Textile service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TextileServiceClient interface {
+type TextileClient interface {
 	CreateTechnicalModel(ctx context.Context, in *TechnicalModel, opts ...grpc.CallOption) (*TechnicalModel, error)
 }
 
-type textileServiceClient struct {
+type textileClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTextileServiceClient(cc grpc.ClientConnInterface) TextileServiceClient {
-	return &textileServiceClient{cc}
+func NewTextileClient(cc grpc.ClientConnInterface) TextileClient {
+	return &textileClient{cc}
 }
 
-func (c *textileServiceClient) CreateTechnicalModel(ctx context.Context, in *TechnicalModel, opts ...grpc.CallOption) (*TechnicalModel, error) {
+func (c *textileClient) CreateTechnicalModel(ctx context.Context, in *TechnicalModel, opts ...grpc.CallOption) (*TechnicalModel, error) {
 	out := new(TechnicalModel)
-	err := c.cc.Invoke(ctx, TextileService_CreateTechnicalModel_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Textile_CreateTechnicalModel_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TextileServiceServer is the server API for TextileService service.
-// All implementations must embed UnimplementedTextileServiceServer
+// TextileServer is the server API for Textile service.
+// All implementations must embed UnimplementedTextileServer
 // for forward compatibility
-type TextileServiceServer interface {
+type TextileServer interface {
 	CreateTechnicalModel(context.Context, *TechnicalModel) (*TechnicalModel, error)
-	mustEmbedUnimplementedTextileServiceServer()
+	mustEmbedUnimplementedTextileServer()
 }
 
-// UnimplementedTextileServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedTextileServiceServer struct {
+// UnimplementedTextileServer must be embedded to have forward compatible implementations.
+type UnimplementedTextileServer struct {
 }
 
-func (UnimplementedTextileServiceServer) CreateTechnicalModel(context.Context, *TechnicalModel) (*TechnicalModel, error) {
+func (UnimplementedTextileServer) CreateTechnicalModel(context.Context, *TechnicalModel) (*TechnicalModel, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTechnicalModel not implemented")
 }
-func (UnimplementedTextileServiceServer) mustEmbedUnimplementedTextileServiceServer() {}
+func (UnimplementedTextileServer) mustEmbedUnimplementedTextileServer() {}
 
-// UnsafeTextileServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TextileServiceServer will
+// UnsafeTextileServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TextileServer will
 // result in compilation errors.
-type UnsafeTextileServiceServer interface {
-	mustEmbedUnimplementedTextileServiceServer()
+type UnsafeTextileServer interface {
+	mustEmbedUnimplementedTextileServer()
 }
 
-func RegisterTextileServiceServer(s grpc.ServiceRegistrar, srv TextileServiceServer) {
-	s.RegisterService(&TextileService_ServiceDesc, srv)
+func RegisterTextileServer(s grpc.ServiceRegistrar, srv TextileServer) {
+	s.RegisterService(&Textile_ServiceDesc, srv)
 }
 
-func _TextileService_CreateTechnicalModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Textile_CreateTechnicalModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TechnicalModel)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TextileServiceServer).CreateTechnicalModel(ctx, in)
+		return srv.(TextileServer).CreateTechnicalModel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TextileService_CreateTechnicalModel_FullMethodName,
+		FullMethod: Textile_CreateTechnicalModel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TextileServiceServer).CreateTechnicalModel(ctx, req.(*TechnicalModel))
+		return srv.(TextileServer).CreateTechnicalModel(ctx, req.(*TechnicalModel))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TextileService_ServiceDesc is the grpc.ServiceDesc for TextileService service.
+// Textile_ServiceDesc is the grpc.ServiceDesc for Textile service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TextileService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.api.textile.TextileService",
-	HandlerType: (*TextileServiceServer)(nil),
+var Textile_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "hestia.v1.textile.Textile",
+	HandlerType: (*TextileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateTechnicalModel",
-			Handler:    _TextileService_CreateTechnicalModel_Handler,
+			Handler:    _Textile_CreateTechnicalModel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

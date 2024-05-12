@@ -5,5 +5,5 @@ import (
 )
 
 type TextileServer struct {
-	pb.UnimplementedTextileServiceServer
+	pb.UnimplementedTextileServer
 }

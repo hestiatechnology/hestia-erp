@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package hestia.api.textile;
+package hestia.v1.textile;
 option go_package = ".;pb";
 
-service TextileService {
+service Textile {
     rpc CreateTechnicalModel(TechnicalModel) returns (TechnicalModel);
 }
 
