@@ -22,12 +22,15 @@ type IdentityManagementServer struct {
 }
 
 func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
-	if in.GetEmail() == "" {
+	email := in.GetEmail()
+	password := in.GetPassword()
+
+	if email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	if in.GetPassword() == "" {
+	if password == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
-	} else if len(in.GetPassword()) != 64 {
+	} else if len(password) != 64 {
 		return nil, status.Error(codes.InvalidArgument, "Invalid password")
 	}
 
@@ -39,7 +42,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	}
 
 	// Get salt from the database
-	salt, err := idm.GetSalt(ctx, in.GetEmail())
+	salt, err := idm.GetSalt(ctx, email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
@@ -50,11 +53,11 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	}
 
 	// Hash the password
-	hashedPassword := idm.PasswordHash(in.GetPassword(), salt)
+	hashedPassword := idm.PasswordHash(password, salt)
 
 	var userId uuid.UUID
 	var name string
-	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), hashedPassword).Scan(&userId, &name)
+	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", email, hashedPassword).Scan(&userId, &name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
@@ -111,21 +114,26 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 }
 
 func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.RegisterRequest) (*emptypb.Empty, error) {
-	if in.GetEmail() == "" {
+	email := in.GetEmail()
+	password := in.GetPassword()
+	name := in.GetName()
+	timezone := in.GetTimezone()
+
+	if email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	if in.GetPassword() == "" {
+	if password == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
 	}
-	if in.GetName() == "" {
+	if name == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing name")
 	}
-	if in.GetTimezone() == "" {
+	if timezone == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing timezone")
 	} else {
-		_, err := time.LoadLocation(in.GetTimezone())
+		_, err := time.LoadLocation(timezone)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "Timezone "+in.GetTimezone()+" is invalid")
+			return nil, status.Error(codes.InvalidArgument, "Timezone "+timezone+" is invalid")
 		}
 	}
 
@@ -145,7 +153,7 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 
 	// Check if user already exists in the database
 	var count int
-	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", in.GetEmail()).Scan(&count)
+	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", email).Scan(&count)
 	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
@@ -155,7 +163,10 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	}
 
 	// Insert user into the database
-	_, err = tx.Exec(ctx, "INSERT INTO users.users (email, password, name, timezone) VALUES ($1, $2, $3, $4)", in.GetEmail(), in.GetPassword(), in.GetName(), in.GetTimezone())
+	salt := idm.RandomSalt()
+	hashedPassword := idm.PasswordHash(password, salt)
+
+	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4)", name, email, hashedPassword, salt, timezone)
 	if err != nil {
 		log.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
