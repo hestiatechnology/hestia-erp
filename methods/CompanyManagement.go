@@ -24,10 +24,14 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *pb.Crea
 }
 
 func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *pb.AddUserToCompanyRequest) (*emptypb.Empty, error) {
-	if in.GetEmail() == "" {
+	email := in.GetEmail()
+	companyId := in.GetCompanyId()
+	employeeId := in.GetEmployeeId()
+
+	if email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	if in.GetCompanyId() == "" {
+	if companyId == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing company id")
 	}
 
@@ -73,7 +77,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *pb.A
 	}
 
 	// if employeeId is provided, check if the there's already a user with that employeeId in the company
-	if in.GetEmployeeId() != "" {
+	if employeeId != "" {
 		var count int
 		err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1 AND company_id = $2", in.GetEmployeeId(), in.GetCompanyId()).Scan(&count)
 		if err != nil {
