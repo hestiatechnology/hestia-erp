@@ -2,7 +2,7 @@ package interceptor
 
 import (
 	"context"
-	"hestia/api/pb"
+	"hestia/api/pb/hestia/idmanagement"
 	"hestia/api/utils/user"
 	"log"
 
@@ -16,10 +16,10 @@ import (
 func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	// Methods to not check
 	methods := []string{
-		pb.IdentityManagement_Alive_FullMethodName,
-		pb.IdentityManagement_Login_FullMethodName,
-		pb.IdentityManagement_Logout_FullMethodName,
-		pb.IdentityManagement_Register_FullMethodName,
+		idmanagement.IdentityManagement_Alive_FullMethodName,
+		idmanagement.IdentityManagement_Login_FullMethodName,
+		idmanagement.IdentityManagement_Logout_FullMethodName,
+		idmanagement.IdentityManagement_Register_FullMethodName,
 	}
 
 	// Check if the method is in the list of methods to not check

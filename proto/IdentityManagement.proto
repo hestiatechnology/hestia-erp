@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package hestia.v1.idm;
 import "google/protobuf/empty.proto";
-option go_package = ".;pb";
+option go_package = "hestia/idmanagement";
 
 service IdentityManagement {
     rpc Login (LoginRequest) returns (LoginResponse);

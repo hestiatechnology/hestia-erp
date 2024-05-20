@@ -1,9 +1,7 @@
 package methods
 
-import (
-	"hestia/api/pb"
-)
+import "hestia/api/pb/hestia/textile"
 
 type TextileServer struct {
-	pb.UnimplementedTextileServer
+	textile.UnimplementedTextileServer
 }

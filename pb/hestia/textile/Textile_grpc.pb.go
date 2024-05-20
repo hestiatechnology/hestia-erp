@@ -4,7 +4,7 @@
 // - protoc             v4.25.2
 // source: proto/Textile.proto
 
-package pb
+package textile
 
 import (
 	context "context"

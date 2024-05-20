@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package hestia.v1.textile;
-option go_package = ".;pb";
+option go_package = "hestia/textile";
 
 service Textile {
     rpc CreateTechnicalModel(TechnicalModel) returns (TechnicalModel);

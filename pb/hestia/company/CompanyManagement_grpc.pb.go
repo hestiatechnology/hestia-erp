@@ -4,7 +4,7 @@
 // - protoc             v4.25.2
 // source: proto/CompanyManagement.proto
 
-package pb
+package company
 
 import (
 	context "context"

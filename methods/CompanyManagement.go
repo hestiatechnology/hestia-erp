@@ -3,7 +3,8 @@ package methods
 import (
 	"context"
 	"errors"
-	"hestia/api/pb"
+
+	"hestia/api/pb/hestia/company"
 	"hestia/api/utils/db"
 	"log"
 
@@ -16,14 +17,14 @@ import (
 )
 
 type CompanyManagementServer struct {
-	pb.UnimplementedCompanyManagementServer
+	company.UnimplementedCompanyManagementServer
 }
 
-func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *pb.CreateCompanyRequest) (*pb.IdResponse, error) {
-	return &pb.IdResponse{}, nil
+func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company.CreateCompanyRequest) (*company.IdResponse, error) {
+	return &company.IdResponse{}, nil
 }
 
-func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *pb.AddUserToCompanyRequest) (*emptypb.Empty, error) {
+func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *company.AddUserToCompanyRequest) (*emptypb.Empty, error) {
 	email := in.GetEmail()
 	companyId := in.GetCompanyId()
 	employeeId := in.GetEmployeeId()

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"hestia/api/pb"
+	"hestia/api/pb/hestia/idmanagement"
 	"hestia/api/utils/db"
 	"hestia/api/utils/idm"
 	"hestia/api/utils/logger"
@@ -18,10 +18,10 @@ import (
 )
 
 type IdentityManagementServer struct {
-	pb.UnimplementedIdentityManagementServer
+	idmanagement.UnimplementedIdentityManagementServer
 }
 
-func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.LoginRequest) (*idmanagement.LoginResponse, error) {
 	email := in.GetEmail()
 	password := in.GetPassword()
 
@@ -75,7 +75,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	}
 	defer rows.Close()
 
-	companies := []*pb.CompanyList{}
+	companies := []*idmanagement.CompanyList{}
 	for rows.Next() {
 		var companyId uuid.UUID
 		var companyName string
@@ -84,7 +84,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
-		companies = append(companies, &pb.CompanyList{Id: companyId.String(), Name: companyName})
+		companies = append(companies, &idmanagement.CompanyList{Id: companyId.String(), Name: companyName})
 	}
 
 	// Start a transaction
@@ -110,10 +110,10 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
-	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
+	return &idmanagement.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
 }
 
-func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.RegisterRequest) (*emptypb.Empty, error) {
+func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagement.RegisterRequest) (*emptypb.Empty, error) {
 	email := in.GetEmail()
 	password := in.GetPassword()
 	name := in.GetName()
@@ -181,7 +181,7 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.Register
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
+func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.TokenRequest) (*emptypb.Empty, error) {
 
 	token := in.GetToken()
 	if token == "" {
@@ -216,7 +216,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
+func (s *IdentityManagementServer) Logout(ctx context.Context, in *idmanagement.TokenRequest) (*emptypb.Empty, error) {
 	token := in.GetToken()
 	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")

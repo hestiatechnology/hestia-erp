@@ -8,7 +8,9 @@ import (
 
 	"hestia/api/interceptor"
 	"hestia/api/methods"
-	"hestia/api/pb"
+	"hestia/api/pb/hestia/company"
+	"hestia/api/pb/hestia/idmanagement"
+	"hestia/api/pb/hestia/textile"
 	"hestia/api/utils/logger"
 
 	"google.golang.org/grpc"
@@ -31,9 +33,9 @@ func main() {
 	}
 
 	// Service registration
-	pb.RegisterIdentityManagementServer(s, &methods.IdentityManagementServer{})
-	pb.RegisterTextileServer(s, &methods.TextileServer{})
-	pb.RegisterCompanyManagementServer(s, &methods.CompanyManagementServer{})
+	idmanagement.RegisterIdentityManagementServer(s, &methods.IdentityManagementServer{})
+	textile.RegisterTextileServer(s, &methods.TextileServer{})
+	company.RegisterCompanyManagementServer(s, &methods.CompanyManagementServer{})
 	if err := s.Serve(lis); err != nil {
 		logger.ErrorLogger.Fatalf("failed to serve: %v", err)
 	}

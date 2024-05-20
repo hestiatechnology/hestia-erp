@@ -4,7 +4,7 @@
 // - protoc             v4.25.2
 // source: proto/IdentityManagement.proto
 
-package pb
+package idmanagement
 
 import (
 	context "context"
