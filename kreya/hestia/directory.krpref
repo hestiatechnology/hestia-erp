@@ -1,0 +1,15 @@
+{
+  "settings": [
+    {
+      "options": {
+        "grpc": {
+          "endpoint": "{{ env.HOST }}:{{env.PORT}}",
+          "metadata": []
+        },
+        "rest": {
+          "pathParams": []
+        }
+      }
+    }
+  ]
+}

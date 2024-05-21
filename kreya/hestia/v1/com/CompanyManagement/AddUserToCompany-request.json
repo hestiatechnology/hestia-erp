@@ -1,0 +1,5 @@
+{
+  "email": "{{ faker.internet.example_email }}",
+  "companyId": "{{ faker.random.uuid }}",
+  "employeeId": "{{ faker.random.uuid }}"
+}
