@@ -6,6 +6,7 @@ option go_package = "hestia/api/pb/company";
 
 service CompanyManagement {
     rpc CreateCompany(CreateCompanyRequest) returns (Id);
+    rpc GetCompanies(google.protobuf.Empty) returns (ListCompaniesResponse);
     rpc GetCompany(Id) returns (Company);
     rpc UpdateCompany(UpdateCompanyRequest) returns (google.protobuf.Empty);
     //rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);

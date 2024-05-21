@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	CompanyManagement_CreateCompany_FullMethodName    = "/hestia.v1.CompanyManagement/CreateCompany"
+	CompanyManagement_GetCompanies_FullMethodName     = "/hestia.v1.CompanyManagement/GetCompanies"
 	CompanyManagement_GetCompany_FullMethodName       = "/hestia.v1.CompanyManagement/GetCompany"
 	CompanyManagement_UpdateCompany_FullMethodName    = "/hestia.v1.CompanyManagement/UpdateCompany"
 	CompanyManagement_CreateLocation_FullMethodName   = "/hestia.v1.CompanyManagement/CreateLocation"
@@ -31,12 +32,13 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompanyManagementClient interface {
-	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*IdResponse, error)
-	GetCompany(ctx context.Context, in *GetCompanyRequest, opts ...grpc.CallOption) (*GetCompanyResponse, error)
-	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
+	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*Id, error)
+	GetCompanies(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCompaniesResponse, error)
+	GetCompany(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Company, error)
+	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
-	CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*IdResponse, error)
+	CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Id, error)
 	AddUserToCompany(ctx context.Context, in *AddUserToCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -48,8 +50,8 @@ func NewCompanyManagementClient(cc grpc.ClientConnInterface) CompanyManagementCl
 	return &companyManagementClient{cc}
 }
 
-func (c *companyManagementClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*IdResponse, error) {
-	out := new(IdResponse)
+func (c *companyManagementClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*Id, error) {
+	out := new(Id)
 	err := c.cc.Invoke(ctx, CompanyManagement_CreateCompany_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -57,8 +59,17 @@ func (c *companyManagementClient) CreateCompany(ctx context.Context, in *CreateC
 	return out, nil
 }
 
-func (c *companyManagementClient) GetCompany(ctx context.Context, in *GetCompanyRequest, opts ...grpc.CallOption) (*GetCompanyResponse, error) {
-	out := new(GetCompanyResponse)
+func (c *companyManagementClient) GetCompanies(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCompaniesResponse, error) {
+	out := new(ListCompaniesResponse)
+	err := c.cc.Invoke(ctx, CompanyManagement_GetCompanies_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyManagementClient) GetCompany(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Company, error) {
+	out := new(Company)
 	err := c.cc.Invoke(ctx, CompanyManagement_GetCompany_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -66,8 +77,8 @@ func (c *companyManagementClient) GetCompany(ctx context.Context, in *GetCompany
 	return out, nil
 }
 
-func (c *companyManagementClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
-	out := new(UpdateCompanyResponse)
+func (c *companyManagementClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, CompanyManagement_UpdateCompany_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -75,8 +86,8 @@ func (c *companyManagementClient) UpdateCompany(ctx context.Context, in *UpdateC
 	return out, nil
 }
 
-func (c *companyManagementClient) CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*IdResponse, error) {
-	out := new(IdResponse)
+func (c *companyManagementClient) CreateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Id, error) {
+	out := new(Id)
 	err := c.cc.Invoke(ctx, CompanyManagement_CreateLocation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,12 +108,13 @@ func (c *companyManagementClient) AddUserToCompany(ctx context.Context, in *AddU
 // All implementations must embed UnimplementedCompanyManagementServer
 // for forward compatibility
 type CompanyManagementServer interface {
-	CreateCompany(context.Context, *CreateCompanyRequest) (*IdResponse, error)
-	GetCompany(context.Context, *GetCompanyRequest) (*GetCompanyResponse, error)
-	UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error)
+	CreateCompany(context.Context, *CreateCompanyRequest) (*Id, error)
+	GetCompanies(context.Context, *emptypb.Empty) (*ListCompaniesResponse, error)
+	GetCompany(context.Context, *Id) (*Company, error)
+	UpdateCompany(context.Context, *UpdateCompanyRequest) (*emptypb.Empty, error)
 	// rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
 	// rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
-	CreateLocation(context.Context, *Location) (*IdResponse, error)
+	CreateLocation(context.Context, *Location) (*Id, error)
 	AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedCompanyManagementServer()
 }
@@ -111,16 +123,19 @@ type CompanyManagementServer interface {
 type UnimplementedCompanyManagementServer struct {
 }
 
-func (UnimplementedCompanyManagementServer) CreateCompany(context.Context, *CreateCompanyRequest) (*IdResponse, error) {
+func (UnimplementedCompanyManagementServer) CreateCompany(context.Context, *CreateCompanyRequest) (*Id, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCompany not implemented")
 }
-func (UnimplementedCompanyManagementServer) GetCompany(context.Context, *GetCompanyRequest) (*GetCompanyResponse, error) {
+func (UnimplementedCompanyManagementServer) GetCompanies(context.Context, *emptypb.Empty) (*ListCompaniesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCompanies not implemented")
+}
+func (UnimplementedCompanyManagementServer) GetCompany(context.Context, *Id) (*Company, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCompany not implemented")
 }
-func (UnimplementedCompanyManagementServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error) {
+func (UnimplementedCompanyManagementServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompany not implemented")
 }
-func (UnimplementedCompanyManagementServer) CreateLocation(context.Context, *Location) (*IdResponse, error) {
+func (UnimplementedCompanyManagementServer) CreateLocation(context.Context, *Location) (*Id, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLocation not implemented")
 }
 func (UnimplementedCompanyManagementServer) AddUserToCompany(context.Context, *AddUserToCompanyRequest) (*emptypb.Empty, error) {
@@ -157,8 +172,26 @@ func _CompanyManagement_CreateCompany_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompanyManagement_GetCompanies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyManagementServer).GetCompanies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyManagement_GetCompanies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyManagementServer).GetCompanies(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CompanyManagement_GetCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCompanyRequest)
+	in := new(Id)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -170,7 +203,7 @@ func _CompanyManagement_GetCompany_Handler(srv interface{}, ctx context.Context,
 		FullMethod: CompanyManagement_GetCompany_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CompanyManagementServer).GetCompany(ctx, req.(*GetCompanyRequest))
+		return srv.(CompanyManagementServer).GetCompany(ctx, req.(*Id))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -239,6 +272,10 @@ var CompanyManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCompany",
 			Handler:    _CompanyManagement_CreateCompany_Handler,
+		},
+		{
+			MethodName: "GetCompanies",
+			Handler:    _CompanyManagement_GetCompanies_Handler,
 		},
 		{
 			MethodName: "GetCompany",
