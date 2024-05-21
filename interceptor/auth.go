@@ -4,7 +4,6 @@ import (
 	"context"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/user"
-	"log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -35,12 +34,11 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 	}
 
 	// Check if the token is in the metadata md["X-AUTH-TOKEN"][0]
-	log.Println(md)
-	if len(md["x-auth-token"]) == 0 {
+	if len(md["authorization"]) == 0 {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
 
-	token := md["x-auth-token"][0]
+	token := md["authorization"][0]
 	if !user.VerifyAuthToken(ctx, token) {
 		return nil, status.Error(codes.Unauthenticated, "Invalid token")
 	}

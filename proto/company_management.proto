@@ -16,10 +16,12 @@ service CompanyManagement {
 
 message CreateCompanyRequest {
     string name = 1;
-    optional string commercialName = 2;
-    int32 vatId = 3;
-    int32 ssn = 4;
-    Location location = 5;
+    // Indicates whether the company is a sole trader or not 
+    bool isSoleTrader = 2;
+    optional string commercialName = 3;
+    int32 vatId = 4;
+    int32 ssn = 5;
+    Location location = 6;
 }
 
 message Location {
