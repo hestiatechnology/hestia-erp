@@ -69,23 +69,23 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<comment> <![CDATA[User's id (uuid) generated randomly]]> </comment>
 	</column>
 	<column name="name" not-null="true">
-		<type name="character varying" length="255"/>
+		<type name="text" length="255"/>
 		<comment> <![CDATA[This is the user full name used in the Subscription Management Portal, if used in atual ERP it should use the employee name, if employee name is not available use the user name]]> </comment>
 	</column>
 	<column name="email" not-null="true">
-		<type name="character varying" length="128"/>
+		<type name="text" length="128"/>
 		<comment> <![CDATA[User's email]]> </comment>
 	</column>
 	<column name="password" not-null="true">
-		<type name="character" length="128"/>
+		<type name="text" length="128"/>
 		<comment> <![CDATA[User's password (in SHA512)]]> </comment>
 	</column>
 	<column name="salt" not-null="true">
-		<type name="character" length="20"/>
+		<type name="text" length="20"/>
 		<comment> <![CDATA[User's password salt in string format (maybe hex?)]]> </comment>
 	</column>
 	<column name="timezone" not-null="true" default-value="'Etc/GMT'">
-		<type name="character varying" length="40"/>
+		<type name="text" length="40"/>
 		<comment> <![CDATA[User's timezone]]> </comment>
 	</column>
 	<constraint name="ck_users_timezone" type="ck-constr" table="users.users">
