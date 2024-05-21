@@ -1,0 +1,13 @@
+{
+  "name": "{{ faker.name.last_name }}",
+  "isSoleTrader": true,
+  "commercialName": "Checking Account",
+  "vatId": 420,
+  "ssn": 543,
+  "location": {
+    "address": "SCSI Crescent Wooden",
+    "locality": "Libyan Arab Jamahiriya azure",
+    "postalCode": "{{ faker.address.zip_code }}",
+    "country": "{{ faker.address.country }}"
+  }
+}

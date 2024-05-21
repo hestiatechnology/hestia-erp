@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.idm.IdentityManagement.Logout"
+    "methodFqn": "hestia.v1.CompanyManagement.GetCompany"
   },
   "requests": [
     {
-      "location": "Logout-request.json"
+      "location": "GetCompany-request.json"
     }
   ],
   "operationType": "unary",

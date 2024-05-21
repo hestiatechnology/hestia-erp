@@ -1,6 +1,6 @@
 {
-  "address": "Cotton open-source",
-  "locality": "Assimilated policy",
+  "address": "Developer",
+  "locality": "Checking Account",
   "postalCode": "{{ faker.address.zip_code }}",
   "country": "{{ faker.address.country }}"
 }

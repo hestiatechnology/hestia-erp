@@ -1,6 +1,6 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.idm.IdentityManagement.Alive"
+    "methodFqn": "hestia.v1.IdentityManagement.Alive"
   },
   "requests": [
     {

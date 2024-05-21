@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.com.CompanyManagement.AddUserToCompany"
+    "methodFqn": "hestia.v1.CompanyManagement.CreateLocation"
   },
   "requests": [
     {
-      "location": "AddUserToCompany-request.json"
+      "location": "CreateLocation-request.json"
     }
   ],
   "operationType": "unary",

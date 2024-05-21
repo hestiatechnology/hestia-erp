@@ -1,0 +1,8 @@
+{
+  "id": "{{ faker.random.uuid }}",
+  "name": "{{ faker.name.last_name }}",
+  "description": "SQL secondary silver",
+  "type": "{{ faker.database.type }}",
+  "created": "New Caledonia dynamic circuit",
+  "updated": "Burundi Franc"
+}

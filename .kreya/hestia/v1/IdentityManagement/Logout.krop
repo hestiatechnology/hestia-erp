@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.com.CompanyManagement.CreateLocation"
+    "methodFqn": "hestia.v1.IdentityManagement.Logout"
   },
   "requests": [
     {
-      "location": "CreateLocation-request.json"
+      "location": "Logout-request.json"
     }
   ],
   "operationType": "unary",

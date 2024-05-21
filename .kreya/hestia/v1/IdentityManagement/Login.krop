@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.idm.IdentityManagement.Register"
+    "methodFqn": "hestia.v1.IdentityManagement.Login"
   },
   "requests": [
     {
-      "location": "Register-request.json"
+      "location": "Login-request.json"
     }
   ],
   "operationType": "unary",

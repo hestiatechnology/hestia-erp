@@ -1,7 +1,0 @@
-{
-  "name": "{{ faker.name.last_name }}",
-  "description": "FTP",
-  "type": "{{ faker.database.type }}",
-  "created": "Platinum",
-  "updated": "Square"
-}
