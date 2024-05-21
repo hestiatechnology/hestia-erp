@@ -1,9 +1,12 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 )
 
 var (
@@ -12,8 +15,24 @@ var (
 	ErrorLogger   *log.Logger
 )
 
+func generateFileName() string {
+	t := time.Now()
+	randomDigits := generateRandomDigits(6)
+	return fmt.Sprintf("%s_%s.log", t.Format("20060102_150405"), randomDigits)
+}
+
+func generateRandomDigits(n int) string {
+	randGenerator := rand.New(rand.NewSource(time.Now().Unix()))
+	digits := make([]byte, n)
+	for i := 0; i < n; i++ {
+		digits[i] = byte(randGenerator.Intn(10) + '0')
+	}
+	return string(digits)
+}
+
 func init() {
-	file, err := os.OpenFile("", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	fileName := generateFileName()
+	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
