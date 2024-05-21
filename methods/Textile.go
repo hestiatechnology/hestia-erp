@@ -2,7 +2,7 @@ package methods
 
 import (
 	"context"
-	"hestia/api/pb/hestia/textile"
+	"hestia/api/pb/textile"
 )
 
 type TextileServer struct {

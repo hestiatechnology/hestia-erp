@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"hestia/api/pb/hestia/idmanagement"
+	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/db"
 	"hestia/api/utils/idm"
 	"hestia/api/utils/logger"

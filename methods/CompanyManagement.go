@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"hestia/api/pb/hestia/company"
+	"hestia/api/pb/company"
 	"hestia/api/utils/db"
 	"log"
 

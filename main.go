@@ -8,9 +8,9 @@ import (
 
 	"hestia/api/interceptor"
 	"hestia/api/methods"
-	"hestia/api/pb/hestia/company"
-	"hestia/api/pb/hestia/idmanagement"
-	"hestia/api/pb/hestia/textile"
+	"hestia/api/pb/company"
+	"hestia/api/pb/idmanagement"
+	"hestia/api/pb/textile"
 	"hestia/api/utils/logger"
 
 	"google.golang.org/grpc"

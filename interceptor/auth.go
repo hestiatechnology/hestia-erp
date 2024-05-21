@@ -2,7 +2,7 @@ package interceptor
 
 import (
 	"context"
-	"hestia/api/pb/hestia/idmanagement"
+	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/user"
 	"log"
 
