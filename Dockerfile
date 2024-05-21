@@ -7,9 +7,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the source code. Note the slash at the end, as explained in
-# https://docs.docker.com/reference/dockerfile/#copy
-COPY *.go ./
+# Copy all the source code, including the subdirectories, but only the .go files
+COPY . ./
 
 # Build
 # CGO_ENABLED=0 is required to build a static binary so it doesnt depend on any shared libraries
