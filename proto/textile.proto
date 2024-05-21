@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package hestia.v1.textile;
+option go_package = "pb/textile";
+
+service Textile {
+    rpc CreateTechnicalModel(TechnicalModel) returns (TechnicalModel);
+}
+
+message TechnicalModel {
+    // ID is given after the model is created
+    optional string id = 1;
+    string name = 2;
+    string description = 3;
+    string type = 4;
+    string created = 5;
+    string updated = 6;
+}

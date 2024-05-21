@@ -1,0 +1,9 @@
+{
+  "id": "d3b242c2-1eba-452d-99b6-37f5b97d9ef1",
+  "color": "#B744FB",
+  "globalContent": {
+    "HOST": "localhost",
+    "PORT": 9000,
+    "AUTH_TOKEN": "{{ faker.random.uuid }}"
+  }
+}

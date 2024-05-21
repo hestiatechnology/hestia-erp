@@ -47,7 +47,7 @@ func PasswordHash(password string, salt string) string {
 		return ""
 	}
 	// Verify the salt isn't empty
-	if salt != "" {
+	if salt == "" {
 		return ""
 	}
 

@@ -1,0 +1,12 @@
+{
+  "name": "{{ faker.name.last_name }}",
+  "commercialName": "Intelligent users",
+  "vatId": 594,
+  "ssn": 201,
+  "location": {
+    "address": "Optimization plum Seychelles Rupee",
+    "locality": "Handmade Fresh Mouse Human Cotton",
+    "postalCode": "{{ faker.address.zip_code }}",
+    "country": "{{ faker.address.country }}"
+  }
+}

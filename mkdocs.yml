@@ -7,6 +7,8 @@ copyright: Hestia Technology
 nav:
   - Home: index.md
   - Setup: setup.md
+  - Services:
+    - Identity Management: services/idm.md
 theme:
   name: material
   palette:

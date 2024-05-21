@@ -2,12 +2,13 @@ package methods
 
 import (
 	"context"
-	"log"
+	"errors"
 	"time"
 
-	"hestia/api/pb"
+	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/db"
 	"hestia/api/utils/idm"
+	"hestia/api/utils/logger"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -17,48 +18,51 @@ import (
 )
 
 type IdentityManagementServer struct {
-	pb.UnimplementedIdentityManagementServiceServer
+	idmanagement.UnimplementedIdentityManagementServer
 }
 
-func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
-	if in.GetEmail() == "" {
+func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.LoginRequest) (*idmanagement.LoginResponse, error) {
+	email := in.GetEmail()
+	password := in.GetPassword()
+
+	if email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	if in.GetPassword() == "" {
+	if password == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
-	} else if len(in.GetPassword()) != 64 {
+	} else if len(password) != 64 {
 		return nil, status.Error(codes.InvalidArgument, "Invalid password")
 	}
 
 	//Check if user exists in the database
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Get salt from the database
-	salt, err := idm.GetSalt(ctx, in.GetEmail())
+	salt, err := idm.GetSalt(ctx, email)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
 
 	// Hash the password
-	hashedPassword := idm.PasswordHash(in.GetPassword(), salt)
+	hashedPassword := idm.PasswordHash(password, salt)
 
 	var userId uuid.UUID
 	var name string
-	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", in.GetEmail(), hashedPassword).Scan(&userId, &name)
+	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", email, hashedPassword).Scan(&userId, &name)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "Wrong email or password")
 		} else {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -66,27 +70,27 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	// Get companies of the user
 	rows, err := db.Query(ctx, "SELECT id, name FROM companies.company WHERE id  = (SELECT company_id FROM users.user_company WHERE user_id = $1)", userId)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer rows.Close()
 
-	companies := []*pb.Company{}
+	companies := []*idmanagement.CompanyList{}
 	for rows.Next() {
 		var companyId uuid.UUID
 		var companyName string
 		err = rows.Scan(&companyId, &companyName)
 		if err != nil {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
-		companies = append(companies, &pb.Company{Id: companyId.String(), Name: companyName})
+		companies = append(companies, &idmanagement.CompanyList{Id: companyId.String(), Name: companyName})
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
@@ -95,77 +99,98 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *pb.LoginReques
 	token := uuid.New()
 	_, err = tx.Exec(ctx, "INSERT INTO users.users_session (id, user_id, expiry_date) VALUES ($1, $2, $3)", token, userId, time.Now().Add(time.Hour*72))
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
-	return &pb.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
+	return &idmanagement.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
 }
 
-func (s *IdentityManagementServer) Register(ctx context.Context, in *pb.RegisterRequest) (*emptypb.Empty, error) {
-	if in.GetEmail() == "" {
+func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagement.RegisterRequest) (*emptypb.Empty, error) {
+	email := in.GetEmail()
+	password := in.GetPassword()
+	name := in.GetName()
+	timezone := in.GetTimezone()
+
+	if email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing email")
 	}
-	if in.GetPassword() == "" {
+	if password == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
 	}
-	if in.GetName() == "" {
+	if name == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing name")
 	}
-	if in.GetTimezone() == "" {
+	if timezone == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing timezone")
+	} else {
+		_, err := time.LoadLocation(timezone)
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, "Timezone "+timezone+" is invalid")
+		}
 	}
 
-	//Check if user exists in the database
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
 
-	// Insert user into the database
-	_, err = tx.Exec(ctx, "INSERT INTO users.users (email, password, name, timezone) VALUES ($1, $2, $3, $4, $5)", in.GetEmail(), in.GetPassword(), in.GetName(), in.GetTimezone())
-
+	// Check if user already exists in the database
+	var count int
+	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", email).Scan(&count)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
+		return nil, status.Error(codes.Internal, "Database error")
+	}
+	if count > 0 {
+		return nil, status.Error(codes.AlreadyExists, "User already exists")
+	}
+
+	// Insert user into the database
+	salt := idm.RandomSalt()
+	hashedPassword := idm.PasswordHash(password, salt)
+
+	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4)", name, email, hashedPassword, salt, timezone)
+	if err != nil {
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
+func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.TokenRequest) (*emptypb.Empty, error) {
 
 	token := in.GetToken()
-
 	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
@@ -173,12 +198,12 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 	var expiry_date time.Time
 	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token).Scan(&expiry_date)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			// For security reasons, we don't want to give the user any information about the token
 			return nil, status.Error(codes.Unauthenticated, "Token expired")
 		} else {
 			// Handle other errors
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -191,7 +216,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *pb.TokenReques
 	return &emptypb.Empty{}, nil
 }
 
-func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenRequest) (*emptypb.Empty, error) {
+func (s *IdentityManagementServer) Logout(ctx context.Context, in *idmanagement.TokenRequest) (*emptypb.Empty, error) {
 	token := in.GetToken()
 	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
@@ -199,14 +224,14 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenReque
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
@@ -214,14 +239,14 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *pb.TokenReque
 	// Delete token from the database
 	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 

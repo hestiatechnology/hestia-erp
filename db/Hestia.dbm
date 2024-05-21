@@ -3,7 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.5" use-changelog="false" last-position="1189,1221" last-zoom="0.8" max-obj-count="44"
+<dbmodel pgmodeler-ver="1.1.2" use-changelog="false" max-obj-count="44"
+	 last-position="8,18" last-zoom="0.8" scene-rect="0,0,6780.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -18,43 +19,43 @@ CAUTION: Do not modify this file unless you know what you are doing.
  password="********">
 </role>
 
-<database name="erp" encoding="UTF8" lc-collate="en_US.utf8" lc-ctype="en_US.utf8" is-template="false" allow-conns="true">
+<database name="erp" encoding="UTF8" template="template0" lc-collate="pt_PT" lc-ctype="pt_PT" is-template="false" allow-conns="true">
 	<role name="hestia_erp_internal"/>
 	<tablespace name="pg_default"/>
 </database>
 
-<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
 </schema>
 
-<schema name="users" layers="0" rect-visible="true" fill-color="#1c7ec8">
+<schema name="users" layers="0" rect-visible="true" fill-color="#1c7ec8" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="companies" layers="0" rect-visible="true" fill-color="#56b7fb">
+<schema name="companies" layers="0" rect-visible="true" fill-color="#56b7fb" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="hr" layers="0" rect-visible="true" fill-color="#8be4b3">
+<schema name="hr" layers="0" rect-visible="true" fill-color="#8be4b3" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="sales" layers="0" rect-visible="true" fill-color="#5aa94f">
+<schema name="sales" layers="0" rect-visible="true" fill-color="#5aa94f" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="inventory" layers="0" rect-visible="true" fill-color="#9b4ef3">
+<schema name="inventory" layers="0" rect-visible="true" fill-color="#9b4ef3" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="subscriptions" layers="0" rect-visible="true" fill-color="#9bc440">
+<schema name="subscriptions" layers="0" rect-visible="true" fill-color="#9bc440" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="general" layers="0" rect-visible="true" fill-color="#f297ff">
+<schema name="general" layers="0" rect-visible="true" fill-color="#f297ff" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
-<schema name="itv" layers="0" rect-visible="true" fill-color="#00ff7f">
+<schema name="itv" layers="0" rect-visible="true" fill-color="#00ff7f" name-color="#000000">
 	<role name="hestia_erp_internal"/>
 </schema>
 
@@ -1105,9 +1106,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="inventory.category" reference-fk="fk_category_category"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="3417.76" y="965.708"/>
-	<position x="3417.76" y="867"/>
-	<position x="3269.84" y="867"/>
+		<position x="3416.76" y="964.041"/>
+	<position x="3416.76" y="867"/>
+	<position x="3269.17" y="867"/>
 	</line>
 </relationship>
 

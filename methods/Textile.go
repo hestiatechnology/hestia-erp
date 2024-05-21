@@ -1,9 +1,14 @@
 package methods
 
 import (
-	"hestia/api/pb"
+	"context"
+	"hestia/api/pb/textile"
 )
 
 type TextileServer struct {
-	pb.UnimplementedTextileServiceServer
+	textile.UnimplementedTextileServer
+}
+
+func (s *TextileServer) CreateTechnicalModel(ctx context.Context, in *textile.TechnicalModel) (*textile.TechnicalModel, error) {
+	return &textile.TechnicalModel{}, nil
 }
