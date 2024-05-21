@@ -10,8 +10,6 @@ RUN go mod download
 # Copy all the source code, including the subdirectories, but only the .go files
 COPY . ./
 
-RUN ["ls", "-la"]
-
 # Build
 # CGO_ENABLED=0 is required to build a static binary so it doesnt depend on any shared libraries
 RUN CGO_ENABLED=0 GOOS=linux go build -o /hestia-api
