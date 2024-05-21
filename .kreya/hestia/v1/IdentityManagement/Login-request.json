@@ -1,4 +1,4 @@
 {
-  "email": "{{ faker.internet.example_email }}",
-  "password": "{{ faker.internet.password }}"
+  "email": "{{env.EMAIL}}",
+  "password": "{{env.PASSWORD}}"
 }
