@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.34.1
 // 	protoc        v5.26.1
-// source: proto/Textile.proto
+// source: proto/textile.proto
 
 package textile
 
@@ -37,7 +37,7 @@ type TechnicalModel struct {
 func (x *TechnicalModel) Reset() {
 	*x = TechnicalModel{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_proto_Textile_proto_msgTypes[0]
+		mi := &file_proto_textile_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -50,7 +50,7 @@ func (x *TechnicalModel) String() string {
 func (*TechnicalModel) ProtoMessage() {}
 
 func (x *TechnicalModel) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_Textile_proto_msgTypes[0]
+	mi := &file_proto_textile_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *TechnicalModel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TechnicalModel.ProtoReflect.Descriptor instead.
 func (*TechnicalModel) Descriptor() ([]byte, []int) {
-	return file_proto_Textile_proto_rawDescGZIP(), []int{0}
+	return file_proto_textile_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *TechnicalModel) GetId() string {
@@ -108,10 +108,10 @@ func (x *TechnicalModel) GetUpdated() string {
 	return ""
 }
 
-var File_proto_Textile_proto protoreflect.FileDescriptor
+var File_proto_textile_proto protoreflect.FileDescriptor
 
-var file_proto_Textile_proto_rawDesc = []byte{
-	0x0a, 0x13, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x54, 0x65, 0x78, 0x74, 0x69, 0x6c, 0x65, 0x2e,
+var file_proto_textile_proto_rawDesc = []byte{
+	0x0a, 0x13, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x74, 0x65, 0x78, 0x74, 0x69, 0x6c, 0x65, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x11, 0x68, 0x65, 0x73, 0x74, 0x69, 0x61, 0x2e, 0x76, 0x31,
 	0x2e, 0x74, 0x65, 0x78, 0x74, 0x69, 0x6c, 0x65, 0x22, 0xaa, 0x01, 0x0a, 0x0e, 0x54, 0x65, 0x63,
 	0x68, 0x6e, 0x69, 0x63, 0x61, 0x6c, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x12, 0x13, 0x0a, 0x02, 0x69,
@@ -136,22 +136,22 @@ var file_proto_Textile_proto_rawDesc = []byte{
 }
 
 var (
-	file_proto_Textile_proto_rawDescOnce sync.Once
-	file_proto_Textile_proto_rawDescData = file_proto_Textile_proto_rawDesc
+	file_proto_textile_proto_rawDescOnce sync.Once
+	file_proto_textile_proto_rawDescData = file_proto_textile_proto_rawDesc
 )
 
-func file_proto_Textile_proto_rawDescGZIP() []byte {
-	file_proto_Textile_proto_rawDescOnce.Do(func() {
-		file_proto_Textile_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_Textile_proto_rawDescData)
+func file_proto_textile_proto_rawDescGZIP() []byte {
+	file_proto_textile_proto_rawDescOnce.Do(func() {
+		file_proto_textile_proto_rawDescData = protoimpl.X.CompressGZIP(file_proto_textile_proto_rawDescData)
 	})
-	return file_proto_Textile_proto_rawDescData
+	return file_proto_textile_proto_rawDescData
 }
 
-var file_proto_Textile_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_proto_Textile_proto_goTypes = []interface{}{
+var file_proto_textile_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_proto_textile_proto_goTypes = []interface{}{
 	(*TechnicalModel)(nil), // 0: hestia.v1.textile.TechnicalModel
 }
-var file_proto_Textile_proto_depIdxs = []int32{
+var file_proto_textile_proto_depIdxs = []int32{
 	0, // 0: hestia.v1.textile.Textile.CreateTechnicalModel:input_type -> hestia.v1.textile.TechnicalModel
 	0, // 1: hestia.v1.textile.Textile.CreateTechnicalModel:output_type -> hestia.v1.textile.TechnicalModel
 	1, // [1:2] is the sub-list for method output_type
@@ -161,13 +161,13 @@ var file_proto_Textile_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_proto_Textile_proto_init() }
-func file_proto_Textile_proto_init() {
-	if File_proto_Textile_proto != nil {
+func init() { file_proto_textile_proto_init() }
+func file_proto_textile_proto_init() {
+	if File_proto_textile_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_proto_Textile_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_proto_textile_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TechnicalModel); i {
 			case 0:
 				return &v.state
@@ -180,23 +180,23 @@ func file_proto_Textile_proto_init() {
 			}
 		}
 	}
-	file_proto_Textile_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_proto_textile_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_proto_Textile_proto_rawDesc,
+			RawDescriptor: file_proto_textile_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_Textile_proto_goTypes,
-		DependencyIndexes: file_proto_Textile_proto_depIdxs,
-		MessageInfos:      file_proto_Textile_proto_msgTypes,
+		GoTypes:           file_proto_textile_proto_goTypes,
+		DependencyIndexes: file_proto_textile_proto_depIdxs,
+		MessageInfos:      file_proto_textile_proto_msgTypes,
 	}.Build()
-	File_proto_Textile_proto = out.File
-	file_proto_Textile_proto_rawDesc = nil
-	file_proto_Textile_proto_goTypes = nil
-	file_proto_Textile_proto_depIdxs = nil
+	File_proto_textile_proto = out.File
+	file_proto_textile_proto_rawDesc = nil
+	file_proto_textile_proto_goTypes = nil
+	file_proto_textile_proto_depIdxs = nil
 }

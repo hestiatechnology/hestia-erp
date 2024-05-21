@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v5.26.1
-// source: proto/IdentityManagement.proto
+// source: proto/identity_management.proto
 
 package idmanagement
 
@@ -217,5 +217,5 @@ var IdentityManagement_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/IdentityManagement.proto",
+	Metadata: "proto/identity_management.proto",
 }
