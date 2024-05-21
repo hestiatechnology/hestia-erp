@@ -3,7 +3,7 @@
     {
       "options": {
         "grpc": {
-          "endpoint": "{{ env.HOST }}:{{env.PORT}}",
+          "endpoint": "http://{{ env.HOST }}:{{env.PORT}}",
           "metadata": []
         },
         "rest": {

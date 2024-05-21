@@ -14,6 +14,15 @@
       }
     }
   ],
-  "authConfigs": [],
+  "authConfigs": [
+    {
+      "name": "Env Auth",
+      "providerName": "static",
+      "id": "46129ab1-0be6-4840-a7b3-5b71c8205787",
+      "options": {
+        "value": "\"{{ env.AUTH_TOKEN }}\""
+      }
+    }
+  ],
   "certificates": []
 }

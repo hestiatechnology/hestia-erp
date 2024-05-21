@@ -4,6 +4,6 @@
   "globalContent": {
     "HOST": "localhost",
     "PORT": 9000,
-    "AUTH_TOKEN": "{% uuid 'v4' %}"
+    "AUTH_TOKEN": "{{ faker.random.uuid }}"
   }
 }
