@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"hestia/api/pb/company"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/db"
 	"hestia/api/utils/idm"
@@ -75,7 +76,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	}
 	defer rows.Close()
 
-	companies := []*idmanagement.CompanyList{}
+	companies := []*company.Company{}
 	for rows.Next() {
 		var companyId uuid.UUID
 		var companyName string
@@ -84,7 +85,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
-		companies = append(companies, &idmanagement.CompanyList{Id: companyId.String(), Name: companyName})
+		companies = append(companies, &company.Company{Id: companyId.String(), Name: companyName})
 	}
 
 	// Start a transaction
@@ -166,7 +167,7 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagemen
 	salt := idm.RandomSalt()
 	hashedPassword := idm.PasswordHash(password, salt)
 
-	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4)", name, email, hashedPassword, salt, timezone)
+	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4, $5)", name, email, hashedPassword, salt, timezone)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
@@ -186,6 +187,12 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.T
 	token := in.GetToken()
 	if token == "" {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
+	}
+
+	// Convert token to UUID
+	_, err := uuid.Parse(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Not a UUID")
 	}
 
 	db, err := db.GetDbPoolConn()

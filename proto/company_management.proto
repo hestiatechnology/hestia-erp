@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package hestia.v1;
 import "google/protobuf/empty.proto";
-option go_package = "pb/company";
+option go_package = "hestia/api/pb/company";
 
 service CompanyManagement {
     rpc CreateCompany(CreateCompanyRequest) returns (IdResponse);
@@ -74,7 +74,9 @@ message ListCompaniesResponse {
 message Company {
     string id = 1;
     string name = 2;
-    string description = 3;
+    string commercialName = 3;
+    string description = 4;
+    string logo = 5;
 }
 
 message AddUserToCompanyRequest {

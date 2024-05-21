@@ -7,4 +7,4 @@ test:
 	go test ./...
 
 proto:
-	protoc --go_out=. --go-grpc_out=. proto/*.proto
+	protoc --go_out=. --go_opt=module=hestia/api --go-grpc_out=. --go-grpc_opt=module=hestia/api  proto/*.proto
