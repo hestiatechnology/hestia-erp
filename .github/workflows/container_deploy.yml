@@ -1,4 +1,4 @@
-#
+# Github Action to build and push a Docker image to the GitHub Container Registry
 name: Create and publish a Docker image
 
 on:
