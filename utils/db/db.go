@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"hestia/api/utils/logger"
-	"log"
 	"os"
 
 	"github.com/jackc/pgx/v5"
@@ -25,7 +24,7 @@ func GetDbPoolConn() (*pgxpool.Pool, error) {
 	dbHost := os.Getenv("PGHOST")
 
 	if dbUser == "" || dbPass == "" || dbName == "" || dbHost == "" {
-		log.Fatal("Missing one or more environment variables for database connection")
+		logger.ErrorLogger.Fatal("Missing one or more environment variables for database connection")
 	}
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia_api", dbUser, dbPass, dbHost, dbName)
@@ -33,7 +32,7 @@ func GetDbPoolConn() (*pgxpool.Pool, error) {
 	// Open a connection to the database
 	dbconfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		log.Fatal("Wrong connetion string", err)
+		logger.ErrorLogger.Fatal("Wrong connetion string", err)
 	}
 
 	dbconfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
