@@ -5,12 +5,12 @@ import "google/protobuf/empty.proto";
 option go_package = "hestia/api/pb/company";
 
 service CompanyManagement {
-    rpc CreateCompany(CreateCompanyRequest) returns (IdResponse);
-    rpc GetCompany(GetCompanyRequest) returns (GetCompanyResponse);
-    rpc UpdateCompany(UpdateCompanyRequest) returns (UpdateCompanyResponse);
+    rpc CreateCompany(CreateCompanyRequest) returns (Id);
+    rpc GetCompany(Id) returns (Company);
+    rpc UpdateCompany(UpdateCompanyRequest) returns (google.protobuf.Empty);
     //rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
     //rpc ListCompanies(ListCompaniesRequest) returns (ListCompaniesResponse);
-    rpc CreateLocation(Location) returns (IdResponse);
+    rpc CreateLocation(Location) returns (Id);
     rpc AddUserToCompany (AddUserToCompanyRequest) returns (google.protobuf.Empty);
 }
 
@@ -32,18 +32,8 @@ message Location {
     string country = 4;
 }
 
-message IdResponse {
+message Id {
     string id = 1;
-}
-
-message GetCompanyRequest {
-    string id = 1;
-}
-
-message GetCompanyResponse {
-    string id = 1;
-    string name = 2;
-    string description = 3;
 }
 
 message UpdateCompanyRequest {
@@ -56,16 +46,6 @@ message UpdateCompanyResponse {
     string id = 1;
 }
 
-message DeleteCompanyRequest {
-    string id = 1;
-}
-
-message DeleteCompanyResponse {
-    string id = 1;
-}
-
-message ListCompaniesRequest {
-}
 
 message ListCompaniesResponse {
     repeated Company companies = 1;
