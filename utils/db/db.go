@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"hestia/api/utils/logger"
 	"log"
 	"os"
 
@@ -46,6 +47,6 @@ func GetDbPoolConn() (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
-	log.Println("First connection to the database successful")
+	logger.InfoLogger.Println("First connection to the database successful")
 	return db, nil
 }
