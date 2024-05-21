@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CompanyManagement_CreateCompany_FullMethodName    = "/hestia.v1.com.CompanyManagement/CreateCompany"
-	CompanyManagement_GetCompany_FullMethodName       = "/hestia.v1.com.CompanyManagement/GetCompany"
-	CompanyManagement_UpdateCompany_FullMethodName    = "/hestia.v1.com.CompanyManagement/UpdateCompany"
-	CompanyManagement_CreateLocation_FullMethodName   = "/hestia.v1.com.CompanyManagement/CreateLocation"
-	CompanyManagement_AddUserToCompany_FullMethodName = "/hestia.v1.com.CompanyManagement/AddUserToCompany"
+	CompanyManagement_CreateCompany_FullMethodName    = "/hestia.v1.CompanyManagement/CreateCompany"
+	CompanyManagement_GetCompany_FullMethodName       = "/hestia.v1.CompanyManagement/GetCompany"
+	CompanyManagement_UpdateCompany_FullMethodName    = "/hestia.v1.CompanyManagement/UpdateCompany"
+	CompanyManagement_CreateLocation_FullMethodName   = "/hestia.v1.CompanyManagement/CreateLocation"
+	CompanyManagement_AddUserToCompany_FullMethodName = "/hestia.v1.CompanyManagement/AddUserToCompany"
 )
 
 // CompanyManagementClient is the client API for CompanyManagement service.
@@ -233,7 +233,7 @@ func _CompanyManagement_AddUserToCompany_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var CompanyManagement_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.v1.com.CompanyManagement",
+	ServiceName: "hestia.v1.CompanyManagement",
 	HandlerType: (*CompanyManagementServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

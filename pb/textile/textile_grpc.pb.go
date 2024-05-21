@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Textile_CreateTechnicalModel_FullMethodName = "/hestia.v1.textile.Textile/CreateTechnicalModel"
+	Textile_CreateTechnicalModel_FullMethodName = "/hestia.v1.Textile/CreateTechnicalModel"
 )
 
 // TextileClient is the client API for Textile service.
@@ -96,7 +96,7 @@ func _Textile_CreateTechnicalModel_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Textile_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.v1.textile.Textile",
+	ServiceName: "hestia.v1.Textile",
 	HandlerType: (*TextileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -20,10 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	IdentityManagement_Login_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Login"
-	IdentityManagement_Register_FullMethodName = "/hestia.v1.idm.IdentityManagement/Register"
-	IdentityManagement_Alive_FullMethodName    = "/hestia.v1.idm.IdentityManagement/Alive"
-	IdentityManagement_Logout_FullMethodName   = "/hestia.v1.idm.IdentityManagement/Logout"
+	IdentityManagement_Login_FullMethodName    = "/hestia.v1.IdentityManagement/Login"
+	IdentityManagement_Register_FullMethodName = "/hestia.v1.IdentityManagement/Register"
+	IdentityManagement_Alive_FullMethodName    = "/hestia.v1.IdentityManagement/Alive"
+	IdentityManagement_Logout_FullMethodName   = "/hestia.v1.IdentityManagement/Logout"
 )
 
 // IdentityManagementClient is the client API for IdentityManagement service.
@@ -196,7 +196,7 @@ func _IdentityManagement_Logout_Handler(srv interface{}, ctx context.Context, de
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var IdentityManagement_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "hestia.v1.idm.IdentityManagement",
+	ServiceName: "hestia.v1.IdentityManagement",
 	HandlerType: (*IdentityManagementServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
