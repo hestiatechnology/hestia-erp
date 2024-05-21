@@ -20,8 +20,8 @@ type CompanyManagementServer struct {
 	company.UnimplementedCompanyManagementServer
 }
 
-func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company.CreateCompanyRequest) (*company.IdResponse, error) {
-	return &company.IdResponse{}, nil
+func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company.CreateCompanyRequest) (*company.Id, error) {
+	return &company.Id{Id: uuid.NewString()}, nil
 }
 
 func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *company.AddUserToCompanyRequest) (*emptypb.Empty, error) {
