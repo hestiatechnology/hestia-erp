@@ -6,7 +6,7 @@ import (
 
 	"hestia/api/pb/company"
 	"hestia/api/utils/db"
-	"log"
+	"hestia/api/utils/logger"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -38,28 +38,28 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 	defer tx.Rollback(ctx)
 
 	// Get user id
 	var userId uuid.UUID
-	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", in.GetEmail()).Scan(&userId)
+	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", email).Scan(&userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// TODO: Send an email to the user to invite him to the platform
-			log.Println("IMPLEMENT FUNCTIONALITY TO SEND EMAIL TO INVITE USER")
+			logger.WarningLogger.Println("Implement email sending to invite user to the platform")
 			return nil, status.Error(codes.NotFound, "User not found")
 		} else {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 
@@ -69,7 +69,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 	var count int
 	err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE user_id = $1 AND company_id = $2", userId, in.GetCompanyId()).Scan(&count)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
@@ -82,7 +82,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 		var count int
 		err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1 AND company_id = $2", in.GetEmployeeId(), in.GetCompanyId()).Scan(&count)
 		if err != nil {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 
@@ -100,16 +100,16 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 				//if pgErr.Code == "23505" {
 				//	return nil, status.Error(codes.AlreadyExists, "User already in the company")
 				//}
-				log.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
+				logger.ErrorLogger.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
 			}
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	} else {
 		// Associate user with the company
 		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
 		if err != nil {
-			log.Println(err)
+			logger.ErrorLogger.Println(err)
 			return nil, status.Error(codes.Internal, "Database error")
 		}
 	}
@@ -117,7 +117,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
