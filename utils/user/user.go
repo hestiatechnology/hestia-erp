@@ -4,6 +4,8 @@ import (
 	"context"
 	"hestia/api/utils/db"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func VerifyAuthToken(ctx context.Context, token string) bool {
@@ -23,4 +25,23 @@ func VerifyAuthToken(ctx context.Context, token string) bool {
 	}
 
 	return true
+}
+
+func IsEmployeeIdUsed(ctx context.Context, employeeId uuid.UUID) bool {
+	db, err := db.GetDbPoolConn()
+	if err != nil {
+		return false
+	}
+
+	var count int
+	err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1", employeeId).Scan(&count)
+	if err != nil {
+		return false
+	}
+
+	if count > 0 {
+		return true
+	}
+
+	return false
 }

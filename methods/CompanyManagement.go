@@ -55,6 +55,9 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", email).Scan(&userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
+			// Theres no user with that email
+			// TODO: if employeeId is provided, check if there's a user with that employeeId in the company
+			// if there isnt, create a new user with the email and associate it with the company
 			// TODO: Send an email to the user to invite him to the platform
 			logger.WarningLogger.Println("Implement email sending to invite user to the platform")
 			return nil, status.Error(codes.NotFound, "User not found")
