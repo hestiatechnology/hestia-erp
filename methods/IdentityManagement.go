@@ -207,7 +207,7 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.T
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// For security reasons, we don't want to give the user any information about the token
-			return nil, status.Error(codes.Unauthenticated, "Token expired")
+			return nil, status.Error(codes.Unauthenticated, "Invalid token")
 		} else {
 			// Handle other errors
 			logger.ErrorLogger.Println(err)
