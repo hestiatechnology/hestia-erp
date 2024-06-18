@@ -8,23 +8,24 @@ import (
 	"github.com/google/uuid"
 )
 
-func VerifyAuthToken(ctx context.Context, token string) bool {
+// (bool, bool) = valid, expired
+func VerifyAuthToken(ctx context.Context, token uuid.UUID) (bool, bool) {
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		return false
+		return false, false
 	}
 
 	var expiry_date time.Time
 	err = db.QueryRow(ctx, "SELECT expiry_date FROM users.users_session WHERE id = $1", token).Scan(&expiry_date)
 	if err != nil {
-		return false
+		return false, false
 	}
 
 	if expiry_date.Before(time.Now()) {
-		return false
+		return false, true
 	}
 
-	return true
+	return true, false
 }
 
 func IsEmployeeIdUsed(ctx context.Context, employeeId uuid.UUID) bool {

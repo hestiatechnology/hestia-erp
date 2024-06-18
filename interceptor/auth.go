@@ -5,6 +5,7 @@ import (
 	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/user"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -39,7 +40,14 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 	}
 
 	token := md["authorization"][0]
-	if !user.VerifyAuthToken(ctx, token) {
+	token_uuid, err := uuid.Parse(token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Invalid token")
+	}
+	valid, expired := user.VerifyAuthToken(ctx, token_uuid)
+	if expired {
+		return nil, status.Error(codes.Unauthenticated, "Token expired")
+	} else if !valid {
 		return nil, status.Error(codes.Unauthenticated, "Invalid token")
 	}
 
