@@ -10,7 +10,9 @@ on:
       - 'web/**'
   pull_request:
     branches: [ "main", "develop" ]
-
+    paths:
+      - 'web/**'
+      
 jobs:
   build:
 

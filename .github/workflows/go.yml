@@ -10,6 +10,8 @@ on:
       - 'api/**'
   pull_request:
     branches: [ "main", "develop" ]
+    paths:
+      - 'api/**'
 
 jobs:
 
