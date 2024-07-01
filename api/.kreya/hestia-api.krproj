@@ -8,7 +8,7 @@
       "createMissingOperations": true,
       "options": {
         "files": [
-          "../proto"
+          "../proto/v1"
         ],
         "importPaths": []
       }
