@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v5.27.0
-// source: proto/textile.proto
+// source: textile.proto
 
 package textile
 
@@ -105,5 +105,5 @@ var Textile_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/textile.proto",
+	Metadata: "textile.proto",
 }

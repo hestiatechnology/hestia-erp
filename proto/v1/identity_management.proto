@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package hestia.v1;
 import "google/protobuf/empty.proto";
-import "proto/company_management.proto";
+import "company_management.proto";
 option go_package = "hestia/api/pb/idmanagement";
 
 service IdentityManagement {

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v5.27.0
-// source: proto/company_management.proto
+// source: company_management.proto
 
 package company
 
@@ -295,5 +295,5 @@ var CompanyManagement_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/company_management.proto",
+	Metadata: "company_management.proto",
 }
