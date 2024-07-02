@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "localize": "ng extract-i18n --output-path src/locale",
-    "gen-grpc-web": "protoc --proto_path=../proto/v1  --js_out=import_style=commonjs:src/app/grpc --grpc-web_out=import_style=typescript,mode=grpcwebtext:src/app/grpc ../proto/v1/*.proto"
+    "gen-grpc-web": "protoc --proto_path=../proto/v1  --js_out=import_style=commonjs:src/app/api/grpc --grpc-web_out=import_style=typescript,mode=grpcwebtext:src/app/api/grpc ../proto/v1/*.proto"
   },
   "private": true,
   "dependencies": {
