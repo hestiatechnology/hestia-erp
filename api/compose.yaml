@@ -1,0 +1,17 @@
+services:
+  hestia-api:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+  envoy:
+    depends_on:
+      - hestia-api
+    build:
+      context: ./
+      dockerfile: Dockerfile-envoy
+    ports:
+      - "8080:8080"
+    links:
+      - hestia-api
