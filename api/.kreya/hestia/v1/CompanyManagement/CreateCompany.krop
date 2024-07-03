@@ -7,6 +7,7 @@
       "location": "CreateCompany-request.json"
     }
   ],
+  "authId": "46129ab1-0be6-4840-a7b3-5b71c8205787",
   "operationType": "unary",
   "invokerName": "grpc",
   "importStreamId": "40b92244-b64e-41ae-8f98-223fcfa6467a"
