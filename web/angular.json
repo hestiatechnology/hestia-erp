@@ -68,6 +68,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "prebundle": {
+              "exclude": [
+                "google-protobuf",
+                "google-protobuf/google/protobuf/any_pb.js",
+                "google-protobuf/google/protobuf/empty_pb.js"
+              ]
+            }
+          },
           "configurations": {
             "production": {
               "buildTarget": "hestia-web:build:production"

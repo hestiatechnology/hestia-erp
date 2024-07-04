@@ -12,7 +12,7 @@ export class ApiService {
   getTest() {
     const client = new CompanyManagementClient('http://localhost:8080');
     const req = new CreateCompanyRequest();
-    const md: Metadata = { "authorization": "123" }
+    const md: Metadata = { "authorization": "86bba48a-9612-4cb3-9197-40b3b2b1ee15" }
     client.createCompany(req, md, function (err, response) {
       if (err) {
         console.log(err.code);
