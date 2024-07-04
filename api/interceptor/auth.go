@@ -34,7 +34,6 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 		return nil, status.Error(codes.InvalidArgument, "Missing metadata")
 	}
 
-	// Check if the token is in the metadata md["X-AUTH-TOKEN"][0]
 	if len(md["authorization"]) == 0 {
 		return nil, status.Error(codes.Unauthenticated, "Missing token")
 	}
@@ -42,6 +41,7 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 	token := md["authorization"][0]
 	token_uuid, err := uuid.Parse(token)
 	if err != nil {
+
 		return nil, status.Error(codes.InvalidArgument, "Invalid token")
 	}
 	valid, expired := user.VerifyAuthToken(ctx, token_uuid)
