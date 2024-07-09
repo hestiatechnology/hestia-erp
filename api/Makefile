@@ -4,7 +4,15 @@ run:
 	go run main.go
 
 build:
-	go build -v ./...
+	go build -v hestia/api
+
+build-tools:
+	go build -v -o ./hst-protextil-migration ./cmd/protextil-migration
+	go build -v -o ./hst-macwin-migration ./cmd/macwin-migration
+
+build-tools-win:
+	go build -v -o ./hst-protextil-migration.exe ./cmd/protextil-migration
+	go build -v -o ./hst-macwin-migration.exe ./cmd/macwin-migration
 
 test:
 	go test -v ./...

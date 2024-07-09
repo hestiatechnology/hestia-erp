@@ -23,3 +23,7 @@ go.work.sum
 
 # Logs
 *.log
+
+# Ignore Linux/Unix compiled files
+hst-protextil-migration
+hst-macwin-migration
