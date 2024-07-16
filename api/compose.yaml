@@ -28,10 +28,10 @@ services:
         condition: service_healthy
     command: ["go", "test", "-v", "./..."]
     environment:
-      - DB_HOST=db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=test_db
+      PGHOST: db
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: test_db
     profiles:
       - test
   db:
@@ -41,9 +41,12 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: test_db
     volumes:
-      - type: bind
-        source: ./db/test_data.sql
-        target: /docker-entrypoint-initdb.d/test_data.sql
+    - type: bind
+      source: ./db/test_data.sql
+      target: /test_data.sql
+    - type: bind
+      source: ./db/init-db.sh
+      target: /docker-entrypoint-initdb.d/init-db.sh
     healthcheck:
       test: /usr/bin/pg_isready
       interval: 5s
