@@ -1,6 +1,7 @@
 package idm
 
 import (
+	"context"
 	"testing"
 )
 
@@ -68,6 +69,50 @@ func TestPasswordHash(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := PasswordHash(tt.args.password, tt.args.salt); got != tt.want {
 				t.Errorf("PasswordHash() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetSalt(t *testing.T) {
+	type args struct {
+		ctx   context.Context
+		email string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "Failure",
+			args: args{
+				ctx:   context.Background(),
+				email: "random@email.com",
+			},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name: "Success",
+			args: args{
+				ctx:   context.Background(),
+				email: "valid@test.hestiatechnology.pt",
+			},
+			want:    "4192230aa6421de5c43711119c97056bdf9462099c575dc1651ac9d7e533a5de",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetSalt(tt.args.ctx, tt.args.email)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSalt() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetSalt() = %v, want %v", got, tt.want)
 			}
 		})
 	}

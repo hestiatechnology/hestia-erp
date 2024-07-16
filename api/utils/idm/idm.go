@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"hestia/api/utils/db"
+	"hestia/api/utils/logger"
 	"log"
 )
 
@@ -27,14 +28,14 @@ func RandomSalt() string {
 func GetSalt(ctx context.Context, email string) (string, error) {
 	db, err := db.GetDbPoolConn()
 	if err != nil {
-		log.Println(err)
+		logger.ErrorLogger.Println(err)
 		return "", err
 	}
 
 	var salt string
 	err = db.QueryRow(ctx, "SELECT salt FROM users.users WHERE email = $1", email).Scan(&salt)
 	if err != nil {
-		log.Println("Unable to get salt for "+email+": ", err)
+		logger.InfoLogger.Println("Unable to get salt for "+email+": ", err)
 		return "", err
 	}
 	return salt, nil
