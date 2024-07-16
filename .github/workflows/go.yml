@@ -38,5 +38,5 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Start Docker CI with DB
-      # Start the containers and exit when the tests end
+      # Start the containers and exit when the tests end.
       run: docker compose --profile test up --abort-on-container-exit
