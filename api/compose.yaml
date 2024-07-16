@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9000:9000"
+    profiles:
+      - api-envoy
   envoy:
     depends_on:
       - hestia-api
@@ -15,3 +17,37 @@ services:
       - "8080:8080"
     links:
       - hestia-api
+    profiles:
+      - api-envoy
+  go-test:
+    build: 
+      context: ./
+      dockerfile: Dockerfile-test
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["go", "test", "-v", "./..."]
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=test_db
+    profiles:
+      - test
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_db
+    volumes:
+      - type: bind
+        source: ./db/test_data.sql
+        target: /docker-entrypoint-initdb.d/test_data.sql
+    healthcheck:
+      test: /usr/bin/pg_isready
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    profiles:
+      - test
