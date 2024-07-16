@@ -39,4 +39,5 @@ jobs:
 
     - name: Start Docker CI with DB
       # Start the containers and exit when the tests end.
+      working-directory: ./api
       run: docker compose --profile test up --abort-on-container-exit
