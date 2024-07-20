@@ -3,5 +3,16 @@
 
 
 .primary-bg {
-  background-color: mat.get-theme-color(theme.$theme, primary);
+  background-color: mat.get-theme-color(theme.$dark-theme, primary);
+  @media (prefers-color-scheme: light) {
+    background-color: mat.get-theme-color(theme.$light-theme, primary);
+  }
+}
+
+.hestia-logo {
+  fill: mat.get-theme-color(theme.$dark-theme, background);
+  @media (prefers-color-scheme: light) {
+    fill: mat.get-theme-color(theme.$light-theme, background);
+  }
+  stroke-width: 0px;
 }

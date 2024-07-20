@@ -6,6 +6,10 @@
 @include mat.core();
 
 html {
-  @include mat.all-component-themes(theme.$theme);
+  @include mat.all-component-themes(theme.$dark-theme);
+
+  @media (prefers-color-scheme: light) {
+    @include mat.all-component-colors(theme.$light-theme);
+  }
 }
 
