@@ -9,10 +9,15 @@ import { Router } from '@angular/router';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  test = true;
   constructor(private router: Router) {
   }
 
   ngOnInit(): void {
+    if (this.test) {
+      return;
+    }
+
     if (Date.now() >= parseInt(localStorage.getItem("expiry_time") || '')) {
       // Check if token is expired
       this.router.navigate(['login'], { queryParams: { returnUrl: this.router.url, expired: true } });

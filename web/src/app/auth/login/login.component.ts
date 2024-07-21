@@ -7,7 +7,7 @@ import { ReactiveFormsModule, FormControl, Validators } from "@angular/forms";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
 import { AuthComponent } from "../auth.component";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
@@ -26,7 +26,7 @@ export class LoginComponent {
   buttonDisabled = true;
   hide = true;
 
-  constructor(private _snackBar: MatSnackBar, private route: ActivatedRoute) {
+  constructor(private _snackBar: MatSnackBar, private route: ActivatedRoute, private router: Router) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
@@ -69,5 +69,14 @@ export class LoginComponent {
 
   updateButtonStatus() {
     this.buttonDisabled = !(this.email.valid && this.password.valid);
+  }
+
+  redirectSSO() {
+    // Check if theres an email and redirect to /sso?email
+    if (this.email.value) {
+      this.router.navigate(['/sso'], { queryParams: { email: this.email.value } });
+      return;
+    }
+    this.router.navigate(['/sso']);
   }
 }

@@ -1,0 +1,18 @@
+<app-auth>
+  <h1 class="text-3xl mb-4" i18n>Login empresarial</h1>
+  <div class="w-96">
+    <mat-form-field class="w-full">
+      <mat-label>Email</mat-label>
+      <input matInput placeholder="joao.oliveira@empresa.com" [formControl]="email" (blur)="updateEmailErrorMessage()"
+        required>
+      @if (email.invalid) {
+      <mat-error>{{emailErrorMessage}}</mat-error>
+      }
+    </mat-form-field>
+
+    <!--Actions-->
+    <div class="flex justify-end">
+      <button mat-flat-button [disabled]="buttonDisabled" (click)="submit()">Login</button>
+    </div>
+  </div>
+</app-auth>
