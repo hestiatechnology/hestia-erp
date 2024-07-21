@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule, FormControl, Validators } from "@angular/forms";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
-import { AuthComponent } from "../auth/auth.component";
+import { AuthComponent } from "../auth.component";
 import { RouterModule } from "@angular/router";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';

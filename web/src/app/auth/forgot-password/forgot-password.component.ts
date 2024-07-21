@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthComponent } from "../auth/auth.component";
+import { AuthComponent } from "../auth.component";
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,7 +24,7 @@ export class ForgotPasswordComponent {
   hide = true;
   progressBarVisible = false;
 
-   constructor(private _snackBar: MatSnackBar) {
+  constructor(private _snackBar: MatSnackBar) {
     merge(this.email.statusChanges, this.email.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
