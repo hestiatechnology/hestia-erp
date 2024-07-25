@@ -35,7 +35,7 @@ func IsEmployeeIdUsed(ctx context.Context, employeeId uuid.UUID) bool {
 	}
 
 	var count int
-	err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1", employeeId).Scan(&count)
+	err = db.QueryRow(ctx, "SELECT COUNT(employee_id) FROM users.user_company WHERE employee_id = $1", employeeId).Scan(&count)
 	if err != nil {
 		return false
 	}
