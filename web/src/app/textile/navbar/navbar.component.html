@@ -1,0 +1,51 @@
+<div class="flex flex-col absolute inset-0">
+  <mat-toolbar color="primary" class="z-[2]">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div>
+      <svg class="w-8 h-8" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 333.07 417.87">
+        <defs>
+          <style>
+            .cls-1 {
+              fill: #fff;
+              stroke-width: 0px;
+            }
+          </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer 1">
+          <g>
+            <path class="cls-1" d="M229.5,0v213.95c57.2,0,103.57-46.37,103.57-103.56V0s-103.57,0-103.57,0Z" />
+            <path class="cls-1" d="M0,0v213.95c57.2,0,103.57-46.37,103.57-103.56V0S0,0,0,0Z" />
+            <path class="cls-1"
+              d="M333.07,417.87v-213.95c-57.2,0-103.57,46.37-103.57,103.56v110.39s103.57,0,103.57,0Z" />
+            <path class="cls-1" d="M0,255.7v-103.57h125.94c57.2,0,103.56,46.37,103.56,103.57H0Z" />
+            <path class="cls-1" d="M103.57,417.87H0v-76.87c0-57.2,46.37-103.56,103.57-103.56v180.44Z" />
+          </g>
+        </g>
+      </svg>
+    </div>
+    <a routerLink="/">
+      <h1 class="ml-6">Hestia ERP - Têxtil</h1>
+    </a>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="flex-1">
+    <mat-sidenav #snav fixedTopGap="56" [mode]="'over'">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/project">Projetos</a>
+      </mat-nav-list>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/client">Clientes</a>
+      </mat-nav-list>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/proposal">Orçamentos</a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
