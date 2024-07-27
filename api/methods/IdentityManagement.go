@@ -111,7 +111,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		return nil, status.Error(codes.Internal, "Database error")
 	}
 
-	return &idmanagement.LoginResponse{Token: token.String(), Name: name, Email: in.GetEmail(), Companies: companies}, nil
+	return &idmanagement.LoginResponse{Token: token.String(), Name: name, Email: email, Companies: companies}, nil
 }
 
 func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagement.RegisterRequest) (*emptypb.Empty, error) {
