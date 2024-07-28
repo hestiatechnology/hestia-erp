@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb'; // proto import: "google/protobuf/empty.proto"
 
 
@@ -44,7 +45,7 @@ export namespace CreateCompanyRequest {
     location?: Location.AsObject,
   }
 
-  export enum CommercialnameCase { 
+  export enum CommercialnameCase {
     _COMMERCIALNAME_NOT_SET = 0,
     COMMERCIALNAME = 3,
   }
@@ -223,7 +224,7 @@ export namespace AddUserToCompanyRequest {
     employeeid?: string,
   }
 
-  export enum EmployeeidCase { 
+  export enum EmployeeidCase {
     _EMPLOYEEID_NOT_SET = 0,
     EMPLOYEEID = 3,
   }
