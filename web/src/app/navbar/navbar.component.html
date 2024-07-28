@@ -4,16 +4,8 @@
       <mat-icon>menu</mat-icon>
     </button>
     <div>
-      <svg class="w-8 h-8" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg"
+      <svg class="w-8 h-8 hestia-logo" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 333.07 417.87">
-        <defs>
-          <style>
-            .cls-1 {
-              fill: #fff;
-              stroke-width: 0px;
-            }
-          </style>
-        </defs>
         <g id="Layer_1-2" data-name="Layer 1">
           <g>
             <path class="cls-1" d="M229.5,0v213.95c57.2,0,103.57-46.37,103.57-103.56V0s-103.57,0-103.57,0Z" />
@@ -27,20 +19,22 @@
       </svg>
     </div>
     <a routerLink="/">
-      <h1 class="ml-6">Hestia ERP - Têxtil</h1>
+      <h1 class="ml-6">{{title}}</h1>
     </a>
   </mat-toolbar>
 
   <mat-sidenav-container class="flex-1">
     <mat-sidenav #snav fixedTopGap="56" [mode]="'over'">
       <mat-nav-list>
-        <a mat-list-item routerLink="/project">Projetos</a>
-      </mat-nav-list>
-      <mat-nav-list>
-        <a mat-list-item routerLink="/client">Clientes</a>
-      </mat-nav-list>
-      <mat-nav-list>
-        <a mat-list-item routerLink="/proposal">Orçamentos</a>
+        @for (link of links; track link.title) {
+
+        <a mat-list-item [routerLink]="link.path">
+          @if (link.icon) {
+          <mat-icon matListItemIcon>{{link.icon}}</mat-icon>
+          }
+          {{link.title}}
+        </a>
+        }
       </mat-nav-list>
     </mat-sidenav>
 

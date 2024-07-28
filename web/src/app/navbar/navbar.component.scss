@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+@use '../../theme' as theme;
+
+.hestia-logo {
+  fill: mat.get-theme-color(theme.$dark-theme, primary);
+  @media (prefers-color-scheme: light) {
+    fill: mat.get-theme-color(theme.$light-theme, primary);
+  }
+  stroke-width: 0px;
+}

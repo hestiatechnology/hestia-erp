@@ -5,8 +5,8 @@ import { ForgotPasswordComponent } from "./auth/forgot-password/forgot-password.
 import { SsoComponent } from "./auth/sso/sso.component";
 import { HomeComponent } from "./textile/home/home.component";
 import { HomeComponent as TechPackHomeComponent } from "./textile/techpack/home/home.component";
-import { NavbarComponent as TextileNavbarComponent } from "./textile/navbar/navbar.component";
 import { ViewComponent as TechPackViewComponent } from "./textile/techpack/view/view.component";
+import { TextileComponent } from "./textile/textile.component";
 
 export const routes: Routes = [
   { "path": "login", component: LoginComponent },
@@ -14,7 +14,7 @@ export const routes: Routes = [
   { "path": "forgotpassword", component: ForgotPasswordComponent },
   {
     "path": "textile",
-    component: TextileNavbarComponent,
+    component: TextileComponent,
     children: [
       { "path": "", component: HomeComponent },
       { "path": "techpack", component: TechPackHomeComponent },
