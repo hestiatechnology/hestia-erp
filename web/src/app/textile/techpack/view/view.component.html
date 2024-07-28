@@ -1,19 +1,29 @@
-<div class="flex justify-between gap-12 mx-32">
+<div class="flex items-stretch gap-12 mx-32">
   <div class="flex flex-col flex-1">
+
+    <div class="flex gap-4">
+      <mat-form-field appearance="fill">
+        <mat-label>Código</mat-label>
+        <input matInput placeholder="XYZ78" name="name" required>
+      </mat-form-field>
+      <mat-form-field class="flex flex-1" appearance="fill">
+        <mat-label>Nome</mat-label>
+        <input matInput placeholder="T-Shirt Vermelha" name="name" required>
+      </mat-form-field>
+    </div>
+
+
     <mat-form-field appearance="fill">
       <mat-label>Cliente</mat-label>
-      <input matInput placeholder="Nome" name="name" required>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput placeholder="Name" name="name" required>
+      <input matInput placeholder="Cliente" name="client" required>
     </mat-form-field>
   </div>
-  <mat-card class="w-52 h-52" appearance="raised">
-    <mat-card-header>
+  <mat-card class="w-52" appearance="outlined">
+    <mat-card-header class="mb-2">
       <mat-card-title>Imagem</mat-card-title>
     </mat-card-header>
-    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+    <img mat-card-image class="max-w-52 max-h-52" src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+      alt="Photo of a Shiba Inu">
     <mat-card-actions>
       <button mat-button>Alterar</button>
       <button mat-button>SHARE</button>
