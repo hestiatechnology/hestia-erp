@@ -11,11 +11,39 @@ service Invoicing {
     rpc GetInvoice (hestia.v1.common.Id) returns (Invoice);
 }
 
+enum Units {
+    UNIT = 0;
+    KG = 1;
+    L = 2;
+    M = 3;
+    M2 = 4;
+    M3 = 5;
+    HOUR = 6;
+}
+
 message Invoice {
     optional string id = 1;
     string client_id = 2;
+    repeated ProductQuantityPrice products = 3;
 }
 
 message ListInvoices {
     repeated Invoice invoices = 1;
 }
+
+message Product {
+    optional string id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    Units units = 5;
+    string created = 6;
+    string updated = 7;
+}
+
+message ProductQuantityPrice {
+    string product_id = 1;
+    int32 quantity = 2;
+    optional float price = 3;
+}
+
