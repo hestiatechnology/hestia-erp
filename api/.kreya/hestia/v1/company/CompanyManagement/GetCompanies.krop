@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.CompanyManagement.CreateLocation"
+    "methodFqn": "hestia.v1.company.CompanyManagement.GetCompanies"
   },
   "requests": [
     {
-      "location": "CreateLocation-request.json"
+      "location": "GetCompanies-request.json"
     }
   ],
   "operationType": "unary",

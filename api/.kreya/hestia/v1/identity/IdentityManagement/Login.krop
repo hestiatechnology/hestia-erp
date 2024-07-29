@@ -1,6 +1,6 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.IdentityManagement.Login"
+    "methodFqn": "hestia.v1.identity.IdentityManagement.Login"
   },
   "requests": [
     {

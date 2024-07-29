@@ -1,6 +1,6 @@
 {
-  "address": "Developer",
-  "locality": "Checking Account",
+  "address": "mint green back up",
+  "locality": "transmit transition",
   "postalCode": "{{ faker.address.zip_code }}",
   "country": "{{ faker.address.country }}"
 }

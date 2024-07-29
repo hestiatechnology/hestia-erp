@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -32,7 +33,18 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	if password == "" {
 		return nil, status.Error(codes.InvalidArgument, "Missing password")
 	} else if len(password) != 64 {
-		return nil, status.Error(codes.InvalidArgument, "Invalid password")
+		st := status.New(codes.InvalidArgument, "Invalid password")
+		ds, err := st.WithDetails(&epb.BadRequest{
+			FieldViolations: []*epb.BadRequest_FieldViolation{{
+				Field:       "password",
+				Description: "Password must be 64 characters long",
+			}},
+		})
+		if err != nil {
+			logger.ErrorLogger.Println(err)
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	}
 
 	//Check if user exists in the database

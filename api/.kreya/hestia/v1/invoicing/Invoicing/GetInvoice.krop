@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.Textile.CreateTechnicalModel"
+    "methodFqn": "hestia.v1.invoicing.Invoicing.GetInvoice"
   },
   "requests": [
     {
-      "location": "CreateTechnicalModel-request.json"
+      "location": "GetInvoice-request.json"
     }
   ],
   "operationType": "unary",

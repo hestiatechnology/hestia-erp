@@ -1,0 +1,16 @@
+{
+  "id": "{{ faker.random.uuid }}",
+  "clientId": "{{ faker.random.uuid }}",
+  "products": [
+    {
+      "productId": "{{ faker.random.uuid }}",
+      "quantity": 270,
+      "price": 33.182102
+    },
+    {
+      "productId": "{{ faker.random.uuid }}",
+      "quantity": 742,
+      "price": 682.13763
+    }
+  ]
+}

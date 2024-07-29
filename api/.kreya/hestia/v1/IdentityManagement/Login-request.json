@@ -1,4 +1,0 @@
-{
-  "email": "{{env.EMAIL}}",
-  "password": "{{env.PASSWORD}}"
-}

@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.CompanyManagement.UpdateCompany"
+    "methodFqn": "hestia.v1.company.CompanyManagement.CreateCompany"
   },
   "requests": [
     {
-      "location": "UpdateCompany-request.json"
+      "location": "CreateCompany-request.json"
     }
   ],
   "operationType": "unary",

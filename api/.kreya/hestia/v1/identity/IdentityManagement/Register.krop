@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.CompanyManagement.GetCompany"
+    "methodFqn": "hestia.v1.identity.IdentityManagement.Register"
   },
   "requests": [
     {
-      "location": "GetCompany-request.json"
+      "location": "Register-request.json"
     }
   ],
   "operationType": "unary",

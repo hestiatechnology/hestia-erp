@@ -1,10 +1,10 @@
 {
   "details": {
-    "methodFqn": "hestia.v1.IdentityManagement.Alive"
+    "methodFqn": "hestia.v1.company.CompanyManagement.CreateLocation"
   },
   "requests": [
     {
-      "location": "Alive-request.json"
+      "location": "CreateLocation-request.json"
     }
   ],
   "operationType": "unary",

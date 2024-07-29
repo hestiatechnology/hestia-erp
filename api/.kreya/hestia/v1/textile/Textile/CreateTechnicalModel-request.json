@@ -1,8 +1,8 @@
 {
   "id": "{{ faker.random.uuid }}",
   "name": "{{ faker.name.last_name }}",
-  "description": "SQL secondary silver",
+  "description": "Plastic e-markets",
   "type": "{{ faker.database.type }}",
-  "created": "New Caledonia dynamic circuit",
-  "updated": "Burundi Franc"
+  "created": "Fantastic",
+  "updated": "Cambodia RSS"
 }

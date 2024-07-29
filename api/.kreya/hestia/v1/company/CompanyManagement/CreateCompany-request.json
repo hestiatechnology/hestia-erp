@@ -1,0 +1,13 @@
+{
+  "name": "{{ faker.name.last_name }}",
+  "isSoleTrader": false,
+  "commercialName": "microchip Mountains",
+  "vatId": 254,
+  "ssn": 927,
+  "location": {
+    "address": "Equatorial Guinea Handcrafted Refined Fresh Keyboard",
+    "locality": "orchid Libyan Arab Jamahiriya Centralized",
+    "postalCode": "{{ faker.address.zip_code }}",
+    "country": "{{ faker.address.country }}"
+  }
+}
