@@ -9,5 +9,6 @@ import { NavbarComponent } from "../navbar/navbar.component";
   styleUrl: './textile.component.scss'
 })
 export class TextileComponent {
+  links = [{ name: "Techpacks", path: "techpack" }];
 
 }
