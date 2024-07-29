@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package hestia.v1.invoicing;
+import "google/protobuf/empty.proto";
+import "common.proto";
+option go_package = "hestia/api/pb/invoicing";
+
+service Invoicing {
+    rpc NewInvoice (Invoice) returns (google.protobuf.Empty);
+    rpc GetInvoices (google.protobuf.Empty) returns (ListInvoices);
+    rpc GetInvoice (hestia.v1.common.Id) returns (Invoice);
+}
+
+message Invoice {
+    optional string id = 1;
+    string client_id = 2;
+}
+
+message ListInvoices {
+    repeated Invoice invoices = 1;
+}

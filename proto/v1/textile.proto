@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package hestia.v1;
+package hestia.v1.textile;
 option go_package = "hestia/api/pb/textile";
 
 service Textile {

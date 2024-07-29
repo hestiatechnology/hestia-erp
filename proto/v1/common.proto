@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package hestia.v1.common;
+option go_package = "hestia/api/pb/common";
+
+message Id {
+    string id = 1;
+}
