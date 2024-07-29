@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for hestia.v1
+ * @fileoverview gRPC-Web generated client stub for hestia.v1.company
  * @enhanceable
  * @public
  */
@@ -41,7 +41,7 @@ export class CompanyManagementClient {
   }
 
   methodDescriptorCreateCompany = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/CreateCompany',
+    '/hestia.v1.company.CompanyManagement/CreateCompany',
     grpcWeb.MethodType.UNARY,
     company_management_pb.CreateCompanyRequest,
     company_management_pb.Id,
@@ -69,7 +69,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/CreateCompany',
+          '/hestia.v1.company.CompanyManagement/CreateCompany',
         request,
         metadata || {},
         this.methodDescriptorCreateCompany,
@@ -77,14 +77,14 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/CreateCompany',
+      '/hestia.v1.company.CompanyManagement/CreateCompany',
     request,
     metadata || {},
     this.methodDescriptorCreateCompany);
   }
 
   methodDescriptorGetCompanies = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/GetCompanies',
+    '/hestia.v1.company.CompanyManagement/GetCompanies',
     grpcWeb.MethodType.UNARY,
     google_protobuf_empty_pb.Empty,
     company_management_pb.ListCompaniesResponse,
@@ -112,7 +112,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/GetCompanies',
+          '/hestia.v1.company.CompanyManagement/GetCompanies',
         request,
         metadata || {},
         this.methodDescriptorGetCompanies,
@@ -120,14 +120,14 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/GetCompanies',
+      '/hestia.v1.company.CompanyManagement/GetCompanies',
     request,
     metadata || {},
     this.methodDescriptorGetCompanies);
   }
 
   methodDescriptorGetCompany = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/GetCompany',
+    '/hestia.v1.company.CompanyManagement/GetCompany',
     grpcWeb.MethodType.UNARY,
     company_management_pb.Id,
     company_management_pb.Company,
@@ -155,7 +155,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/GetCompany',
+          '/hestia.v1.company.CompanyManagement/GetCompany',
         request,
         metadata || {},
         this.methodDescriptorGetCompany,
@@ -163,14 +163,14 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/GetCompany',
+      '/hestia.v1.company.CompanyManagement/GetCompany',
     request,
     metadata || {},
     this.methodDescriptorGetCompany);
   }
 
   methodDescriptorUpdateCompany = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/UpdateCompany',
+    '/hestia.v1.company.CompanyManagement/UpdateCompany',
     grpcWeb.MethodType.UNARY,
     company_management_pb.UpdateCompanyRequest,
     google_protobuf_empty_pb.Empty,
@@ -198,7 +198,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/UpdateCompany',
+          '/hestia.v1.company.CompanyManagement/UpdateCompany',
         request,
         metadata || {},
         this.methodDescriptorUpdateCompany,
@@ -206,14 +206,14 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/UpdateCompany',
+      '/hestia.v1.company.CompanyManagement/UpdateCompany',
     request,
     metadata || {},
     this.methodDescriptorUpdateCompany);
   }
 
   methodDescriptorCreateLocation = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/CreateLocation',
+    '/hestia.v1.company.CompanyManagement/CreateLocation',
     grpcWeb.MethodType.UNARY,
     company_management_pb.Location,
     company_management_pb.Id,
@@ -241,7 +241,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/CreateLocation',
+          '/hestia.v1.company.CompanyManagement/CreateLocation',
         request,
         metadata || {},
         this.methodDescriptorCreateLocation,
@@ -249,14 +249,14 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/CreateLocation',
+      '/hestia.v1.company.CompanyManagement/CreateLocation',
     request,
     metadata || {},
     this.methodDescriptorCreateLocation);
   }
 
   methodDescriptorAddUserToCompany = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.CompanyManagement/AddUserToCompany',
+    '/hestia.v1.company.CompanyManagement/AddUserToCompany',
     grpcWeb.MethodType.UNARY,
     company_management_pb.AddUserToCompanyRequest,
     google_protobuf_empty_pb.Empty,
@@ -284,7 +284,7 @@ export class CompanyManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.CompanyManagement/AddUserToCompany',
+          '/hestia.v1.company.CompanyManagement/AddUserToCompany',
         request,
         metadata || {},
         this.methodDescriptorAddUserToCompany,
@@ -292,7 +292,7 @@ export class CompanyManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.CompanyManagement/AddUserToCompany',
+      '/hestia.v1.company.CompanyManagement/AddUserToCompany',
     request,
     metadata || {},
     this.methodDescriptorAddUserToCompany);

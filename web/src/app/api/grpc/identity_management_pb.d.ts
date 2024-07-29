@@ -1,6 +1,5 @@
 import * as jspb from 'google-protobuf'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb'; // proto import: "google/protobuf/empty.proto"
 import * as company_management_pb from './company_management_pb'; // proto import: "company_management.proto"
 

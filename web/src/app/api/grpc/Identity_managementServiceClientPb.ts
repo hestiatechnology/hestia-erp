@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for hestia.v1
+ * @fileoverview gRPC-Web generated client stub for hestia.v1.identity
  * @enhanceable
  * @public
  */
@@ -41,7 +41,7 @@ export class IdentityManagementClient {
   }
 
   methodDescriptorLogin = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.IdentityManagement/Login',
+    '/hestia.v1.identity.IdentityManagement/Login',
     grpcWeb.MethodType.UNARY,
     identity_management_pb.LoginRequest,
     identity_management_pb.LoginResponse,
@@ -69,7 +69,7 @@ export class IdentityManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.IdentityManagement/Login',
+          '/hestia.v1.identity.IdentityManagement/Login',
         request,
         metadata || {},
         this.methodDescriptorLogin,
@@ -77,14 +77,14 @@ export class IdentityManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.IdentityManagement/Login',
+      '/hestia.v1.identity.IdentityManagement/Login',
     request,
     metadata || {},
     this.methodDescriptorLogin);
   }
 
   methodDescriptorRegister = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.IdentityManagement/Register',
+    '/hestia.v1.identity.IdentityManagement/Register',
     grpcWeb.MethodType.UNARY,
     identity_management_pb.RegisterRequest,
     google_protobuf_empty_pb.Empty,
@@ -112,7 +112,7 @@ export class IdentityManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.IdentityManagement/Register',
+          '/hestia.v1.identity.IdentityManagement/Register',
         request,
         metadata || {},
         this.methodDescriptorRegister,
@@ -120,14 +120,14 @@ export class IdentityManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.IdentityManagement/Register',
+      '/hestia.v1.identity.IdentityManagement/Register',
     request,
     metadata || {},
     this.methodDescriptorRegister);
   }
 
   methodDescriptorAlive = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.IdentityManagement/Alive',
+    '/hestia.v1.identity.IdentityManagement/Alive',
     grpcWeb.MethodType.UNARY,
     identity_management_pb.TokenRequest,
     google_protobuf_empty_pb.Empty,
@@ -155,7 +155,7 @@ export class IdentityManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.IdentityManagement/Alive',
+          '/hestia.v1.identity.IdentityManagement/Alive',
         request,
         metadata || {},
         this.methodDescriptorAlive,
@@ -163,14 +163,14 @@ export class IdentityManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.IdentityManagement/Alive',
+      '/hestia.v1.identity.IdentityManagement/Alive',
     request,
     metadata || {},
     this.methodDescriptorAlive);
   }
 
   methodDescriptorLogout = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.IdentityManagement/Logout',
+    '/hestia.v1.identity.IdentityManagement/Logout',
     grpcWeb.MethodType.UNARY,
     identity_management_pb.TokenRequest,
     google_protobuf_empty_pb.Empty,
@@ -198,7 +198,7 @@ export class IdentityManagementClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.IdentityManagement/Logout',
+          '/hestia.v1.identity.IdentityManagement/Logout',
         request,
         metadata || {},
         this.methodDescriptorLogout,
@@ -206,7 +206,7 @@ export class IdentityManagementClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.IdentityManagement/Logout',
+      '/hestia.v1.identity.IdentityManagement/Logout',
     request,
     metadata || {},
     this.methodDescriptorLogout);

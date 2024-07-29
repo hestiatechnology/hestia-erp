@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for hestia.v1
+ * @fileoverview gRPC-Web generated client stub for hestia.v1.textile
  * @enhanceable
  * @public
  */
@@ -40,7 +40,7 @@ export class TextileClient {
   }
 
   methodDescriptorCreateTechnicalModel = new grpcWeb.MethodDescriptor(
-    '/hestia.v1.Textile/CreateTechnicalModel',
+    '/hestia.v1.textile.Textile/CreateTechnicalModel',
     grpcWeb.MethodType.UNARY,
     textile_pb.TechnicalModel,
     textile_pb.TechnicalModel,
@@ -68,7 +68,7 @@ export class TextileClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/hestia.v1.Textile/CreateTechnicalModel',
+          '/hestia.v1.textile.Textile/CreateTechnicalModel',
         request,
         metadata || {},
         this.methodDescriptorCreateTechnicalModel,
@@ -76,7 +76,7 @@ export class TextileClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/hestia.v1.Textile/CreateTechnicalModel',
+      '/hestia.v1.textile.Textile/CreateTechnicalModel',
     request,
     metadata || {},
     this.methodDescriptorCreateTechnicalModel);
