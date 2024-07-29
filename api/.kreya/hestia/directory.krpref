@@ -1,0 +1,15 @@
+{
+  "settings": [
+    {
+      "options": {
+        "grpc": {
+          "endpoint": "http://{{HOST}}:{{PORT}}",
+          "mode": "grpc"
+        },
+        "rest": {
+          "pathParams": []
+        }
+      }
+    }
+  ]
+}
