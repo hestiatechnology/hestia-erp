@@ -6,9 +6,12 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
+	"errors"
 	"hestia/api/utils/db"
 	"hestia/api/utils/logger"
 	"log"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // RandomSalt generates a random salt for password hashing
@@ -35,7 +38,10 @@ func GetSalt(ctx context.Context, email string) (string, error) {
 	var salt string
 	err = db.QueryRow(ctx, "SELECT salt FROM users.users WHERE email = $1", email).Scan(&salt)
 	if err != nil {
-		logger.InfoLogger.Println("Unable to get salt for "+email+": ", err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", errors.New("no rows found")
+		}
+		logger.DebugLogger.Println("Unable to get salt for "+email+": ", err)
 		return "", err
 	}
 	return salt, nil

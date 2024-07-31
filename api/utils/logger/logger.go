@@ -13,6 +13,7 @@ var (
 	WarningLogger *log.Logger
 	InfoLogger    *log.Logger
 	ErrorLogger   *log.Logger
+	DebugLogger   *log.Logger
 )
 
 func generateFileName() string {
@@ -42,4 +43,9 @@ func init() {
 	InfoLogger = log.New(mw, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 	WarningLogger = log.New(mw, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	ErrorLogger = log.New(mwError, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	if os.Getenv("ENV") == "development" || os.Getenv("ENV") == "debug" {
+		DebugLogger = log.New(mw, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+	} else {
+		DebugLogger = log.New(io.Discard, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+	}
 }

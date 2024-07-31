@@ -28,10 +28,32 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	password := in.GetPassword()
 
 	if email == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing email")
+		st := status.New(codes.InvalidArgument, "Missing email")
+		ds, err := st.WithDetails(&epb.BadRequest{
+			FieldViolations: []*epb.BadRequest_FieldViolation{{
+				Field:       "email",
+				Description: "Email is required",
+			}},
+		})
+		if err != nil {
+			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	}
 	if password == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing password")
+		st := status.New(codes.InvalidArgument, "Missing password")
+		ds, err := st.WithDetails(&epb.BadRequest{
+			FieldViolations: []*epb.BadRequest_FieldViolation{{
+				Field:       "password",
+				Description: "Password is required",
+			}},
+		})
+		if err != nil {
+			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	} else if len(password) != 64 {
 		st := status.New(codes.InvalidArgument, "Invalid password")
 		ds, err := st.WithDetails(&epb.BadRequest{
@@ -41,7 +63,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 			}},
 		})
 		if err != nil {
-			logger.ErrorLogger.Println(err)
+			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
 			return nil, st.Err()
 		}
 		return nil, ds.Err()
@@ -51,17 +73,44 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	db, err := db.GetDbPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		st := status.New(codes.Internal, "Database error")
+		ds, err := st.WithDetails(&epb.ErrorInfo{
+			Reason: "Cannot connect to the database",
+			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+		})
+		if err != nil {
+			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	}
 
 	// Get salt from the database
 	salt, err := idm.GetSalt(ctx, email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, status.Error(codes.NotFound, "Wrong email or password")
+			st := status.New(codes.Unauthenticated, "Wrong email or password")
+			ds, err := st.WithDetails(&epb.ErrorInfo{
+				Reason: "Wrong email or password",
+				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+			})
+			if err != nil {
+				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+				return nil, st.Err()
+			}
+			return nil, ds.Err()
 		} else {
 			logger.ErrorLogger.Println(err)
-			return nil, status.Error(codes.Internal, "Database error")
+			st := status.New(codes.Internal, "Database error")
+			ds, err := st.WithDetails(&epb.ErrorInfo{
+				Reason: "Cannot connect to the database",
+				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+			})
+			if err != nil {
+				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+				return nil, st.Err()
+			}
+			return nil, ds.Err()
 		}
 	}
 
@@ -73,10 +122,28 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", email, hashedPassword).Scan(&userId, &name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, status.Error(codes.NotFound, "Wrong email or password")
+			st := status.New(codes.Unauthenticated, "Wrong email or password")
+			ds, err := st.WithDetails(&epb.ErrorInfo{
+				Reason: "Wrong email or password",
+				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+			})
+			if err != nil {
+				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+				return nil, st.Err()
+			}
+			return nil, ds.Err()
 		} else {
 			logger.ErrorLogger.Println(err)
-			return nil, status.Error(codes.Internal, "Database error")
+			st := status.New(codes.Internal, "Database error")
+			ds, err := st.WithDetails(&epb.ErrorInfo{
+				Reason: "Cannot connect to the database",
+				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+			})
+			if err != nil {
+				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+				return nil, st.Err()
+			}
+			return nil, ds.Err()
 		}
 	}
 
@@ -94,8 +161,16 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		var companyName string
 		err = rows.Scan(&companyId, &companyName)
 		if err != nil {
-			logger.ErrorLogger.Println(err)
-			return nil, status.Error(codes.Internal, "Database error")
+			st := status.New(codes.Internal, "Database error")
+			ds, err := st.WithDetails(&epb.ErrorInfo{
+				Reason: "Error while scanning rows",
+				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+			})
+			if err != nil {
+				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+				return nil, st.Err()
+			}
+			return nil, ds.Err()
 		}
 		companies = append(companies, &company.Company{Id: companyId.String(), Name: companyName})
 	}
@@ -104,7 +179,16 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	tx, err := db.Begin(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		st := status.New(codes.Internal, "Database error")
+		ds, err := st.WithDetails(&epb.ErrorInfo{
+			Reason: "Unable to start transaction",
+			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
+		})
+		if err != nil {
+			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	}
 	defer tx.Rollback(ctx)
 
