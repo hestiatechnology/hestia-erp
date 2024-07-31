@@ -13,7 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -29,8 +29,8 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 
 	if email == "" {
 		st := status.New(codes.InvalidArgument, "Missing email")
-		ds, err := st.WithDetails(&epb.BadRequest{
-			FieldViolations: []*epb.BadRequest_FieldViolation{{
+		ds, err := st.WithDetails(&errdetails.BadRequest{
+			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
 				Field:       "email",
 				Description: "Email is required",
 			}},
@@ -43,8 +43,8 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	}
 	if password == "" {
 		st := status.New(codes.InvalidArgument, "Missing password")
-		ds, err := st.WithDetails(&epb.BadRequest{
-			FieldViolations: []*epb.BadRequest_FieldViolation{{
+		ds, err := st.WithDetails(&errdetails.BadRequest{
+			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
 				Field:       "password",
 				Description: "Password is required",
 			}},
@@ -56,8 +56,8 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		return nil, ds.Err()
 	} else if len(password) != 64 {
 		st := status.New(codes.InvalidArgument, "Invalid password")
-		ds, err := st.WithDetails(&epb.BadRequest{
-			FieldViolations: []*epb.BadRequest_FieldViolation{{
+		ds, err := st.WithDetails(&errdetails.BadRequest{
+			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
 				Field:       "password",
 				Description: "Password must be 64 characters long",
 			}},
@@ -74,8 +74,8 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	if err != nil {
 		logger.ErrorLogger.Println(err)
 		st := status.New(codes.Internal, "Database error")
-		ds, err := st.WithDetails(&epb.ErrorInfo{
-			Reason: "Cannot connect to the database",
+		ds, err := st.WithDetails(&errdetails.ErrorInfo{
+			Reason: "DB_CONN_ERROR",
 			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 		})
 		if err != nil {
@@ -90,7 +90,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			st := status.New(codes.Unauthenticated, "Wrong email or password")
-			ds, err := st.WithDetails(&epb.ErrorInfo{
+			ds, err := st.WithDetails(&errdetails.ErrorInfo{
 				Reason: "Wrong email or password",
 				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 			})
@@ -102,7 +102,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		} else {
 			logger.ErrorLogger.Println(err)
 			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&epb.ErrorInfo{
+			ds, err := st.WithDetails(&errdetails.ErrorInfo{
 				Reason: "Cannot connect to the database",
 				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 			})
@@ -123,7 +123,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			st := status.New(codes.Unauthenticated, "Wrong email or password")
-			ds, err := st.WithDetails(&epb.ErrorInfo{
+			ds, err := st.WithDetails(&errdetails.ErrorInfo{
 				Reason: "Wrong email or password",
 				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 			})
@@ -135,7 +135,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		} else {
 			logger.ErrorLogger.Println(err)
 			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&epb.ErrorInfo{
+			ds, err := st.WithDetails(&errdetails.ErrorInfo{
 				Reason: "Cannot connect to the database",
 				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 			})
@@ -162,7 +162,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		err = rows.Scan(&companyId, &companyName)
 		if err != nil {
 			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&epb.ErrorInfo{
+			ds, err := st.WithDetails(&errdetails.ErrorInfo{
 				Reason: "Error while scanning rows",
 				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 			})
@@ -180,7 +180,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	if err != nil {
 		logger.ErrorLogger.Println(err)
 		st := status.New(codes.Internal, "Database error")
-		ds, err := st.WithDetails(&epb.ErrorInfo{
+		ds, err := st.WithDetails(&errdetails.ErrorInfo{
 			Reason: "Unable to start transaction",
 			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
 		})

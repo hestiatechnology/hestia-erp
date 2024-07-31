@@ -4,8 +4,10 @@ import (
 	"context"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/user"
+	"strings"
 
 	"github.com/google/uuid"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -31,7 +33,18 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "Missing metadata")
+		st := status.New(codes.FailedPrecondition, "missing metadata")
+
+		// Get the service by removing the last part of the full method name
+		service := info.FullMethod[:strings.LastIndex(info.FullMethod, "/")]
+		ds, err := st.WithDetails(&errdetails.ErrorInfo{
+			Reason: "MISSING_METADATA",
+			Domain: service,
+		})
+		if err != nil {
+			return nil, st.Err()
+		}
+		return nil, ds.Err()
 	}
 
 	if len(md["authorization"]) == 0 {
