@@ -10,7 +10,7 @@ import (
 
 // (bool, bool) = valid, expired
 func VerifyAuthToken(ctx context.Context, token uuid.UUID) (bool, bool) {
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		return false, false
 	}
@@ -29,7 +29,7 @@ func VerifyAuthToken(ctx context.Context, token uuid.UUID) (bool, bool) {
 }
 
 func IsEmployeeIdUsed(ctx context.Context, employeeId uuid.UUID) bool {
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		return false
 	}

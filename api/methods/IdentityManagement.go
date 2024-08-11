@@ -8,6 +8,7 @@ import (
 	"hestia/api/pb/company"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/utils/db"
+	"hestia/api/utils/herror"
 	"hestia/api/utils/idm"
 	"hestia/api/utils/logger"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -28,89 +28,38 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	password := in.GetPassword()
 
 	if email == "" {
-		st := status.New(codes.InvalidArgument, "Missing email")
-		ds, err := st.WithDetails(&errdetails.BadRequest{
-			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
-				Field:       "email",
-				Description: "Email is required",
-			}},
-		})
-		if err != nil {
-			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-			return nil, st.Err()
-		}
-		return nil, ds.Err()
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing email", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "email",
+			Description: "Email is required",
+		}}).Err()
 	}
 	if password == "" {
-		st := status.New(codes.InvalidArgument, "Missing password")
-		ds, err := st.WithDetails(&errdetails.BadRequest{
-			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
-				Field:       "password",
-				Description: "Password is required",
-			}},
-		})
-		if err != nil {
-			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-			return nil, st.Err()
-		}
-		return nil, ds.Err()
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing password", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "password",
+			Description: "Password is required",
+		}}).Err()
 	} else if len(password) != 64 {
-		st := status.New(codes.InvalidArgument, "Invalid password")
-		ds, err := st.WithDetails(&errdetails.BadRequest{
-			FieldViolations: []*errdetails.BadRequest_FieldViolation{{
-				Field:       "password",
-				Description: "Password must be 64 characters long",
-			}},
-		})
-		if err != nil {
-			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-			return nil, st.Err()
-		}
-		return nil, ds.Err()
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Invalid password", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "password",
+			Description: "Password must be 64 characters long (SHA-256 hash)",
+		}}).Err()
 	}
 
 	//Check if user exists in the database
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		st := status.New(codes.Internal, "Database error")
-		ds, err := st.WithDetails(&errdetails.ErrorInfo{
-			Reason: "DB_CONN_ERROR",
-			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-		})
-		if err != nil {
-			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-			return nil, st.Err()
-		}
-		return nil, ds.Err()
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Get salt from the database
 	salt, err := idm.GetSalt(ctx, email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			st := status.New(codes.Unauthenticated, "Wrong email or password")
-			ds, err := st.WithDetails(&errdetails.ErrorInfo{
-				Reason: "Wrong email or password",
-				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-			})
-			if err != nil {
-				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-				return nil, st.Err()
-			}
-			return nil, ds.Err()
+			return nil, herror.StatusWithInfo(codes.Unauthenticated, "Wrong email or password", herror.AuthWrongCredentialsError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		} else {
 			logger.ErrorLogger.Println(err)
-			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&errdetails.ErrorInfo{
-				Reason: "Cannot connect to the database",
-				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-			})
-			if err != nil {
-				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-				return nil, st.Err()
-			}
-			return nil, ds.Err()
+			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 	}
 
@@ -122,28 +71,11 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	err = db.QueryRow(ctx, "SELECT id, name FROM users.users WHERE email = $1 AND password = $2", email, hashedPassword).Scan(&userId, &name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			st := status.New(codes.Unauthenticated, "Wrong email or password")
-			ds, err := st.WithDetails(&errdetails.ErrorInfo{
-				Reason: "Wrong email or password",
-				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-			})
-			if err != nil {
-				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-				return nil, st.Err()
-			}
-			return nil, ds.Err()
+			logger.DebugLogger.Printf("User with email %s and hashed password %s not found", email, hashedPassword)
+			return nil, herror.StatusWithInfo(codes.Unauthenticated, "Wrong email or password", herror.AuthWrongCredentialsError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		} else {
 			logger.ErrorLogger.Println(err)
-			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&errdetails.ErrorInfo{
-				Reason: "Cannot connect to the database",
-				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-			})
-			if err != nil {
-				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-				return nil, st.Err()
-			}
-			return nil, ds.Err()
+			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 	}
 
@@ -151,7 +83,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	rows, err := db.Query(ctx, "SELECT id, name FROM companies.company WHERE id  = (SELECT company_id FROM users.user_company WHERE user_id = $1)", userId)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer rows.Close()
 
@@ -161,16 +93,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 		var companyName string
 		err = rows.Scan(&companyId, &companyName)
 		if err != nil {
-			st := status.New(codes.Internal, "Database error")
-			ds, err := st.WithDetails(&errdetails.ErrorInfo{
-				Reason: "Error while scanning rows",
-				Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-			})
-			if err != nil {
-				logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-				return nil, st.Err()
-			}
-			return nil, ds.Err()
+			return nil, herror.StatusWithInfo(codes.Internal, "Error scanning DB rows", herror.DatabaseRowScanError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 		companies = append(companies, &company.Company{Id: companyId.String(), Name: companyName})
 	}
@@ -179,16 +102,7 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	tx, err := db.Begin(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		st := status.New(codes.Internal, "Database error")
-		ds, err := st.WithDetails(&errdetails.ErrorInfo{
-			Reason: "Unable to start transaction",
-			Domain: company.CompanyManagement_ServiceDesc.ServiceName,
-		})
-		if err != nil {
-			logger.ErrorLogger.Printf("Error while adding details to err: %v", err)
-			return nil, st.Err()
-		}
-		return nil, ds.Err()
+		return nil, herror.StatusWithInfo(codes.Internal, "Error starting transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer tx.Rollback(ctx)
 
@@ -197,14 +111,14 @@ func (s *IdentityManagementServer) Login(ctx context.Context, in *idmanagement.L
 	_, err = tx.Exec(ctx, "INSERT INTO users.users_session (id, user_id, expiry_date) VALUES ($1, $2, $3)", token, userId, time.Now().Add(time.Hour*72))
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Error while creating user session", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit database transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	return &idmanagement.LoginResponse{Token: token.String(), Name: name, Email: email, Companies: companies}, nil
@@ -217,34 +131,46 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagemen
 	timezone := in.GetTimezone()
 
 	if email == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing email")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing email", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "email",
+			Description: "Email is required",
+		}}).Err()
 	}
 	if password == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing password")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing password", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "password",
+			Description: "Password is required",
+		}}).Err()
 	}
 	if name == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing name")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing name", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "name",
+			Description: "Name is required",
+		}}).Err()
 	}
 	if timezone == "" {
-		return nil, status.Error(codes.InvalidArgument, "Missing timezone")
+		timezone = "Europe/Lisbon"
 	} else {
 		_, err := time.LoadLocation(timezone)
 		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "Timezone "+timezone+" is invalid")
+			return nil, herror.StatusBadRequest(codes.InvalidArgument, "Timezone "+timezone+" is invalid", []*errdetails.BadRequest_FieldViolation{{
+				Field:       "timezone",
+				Description: "Timezone must be a IANA Timezone",
+			}}).Err()
 		}
 	}
 
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Error starting transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer tx.Rollback(ctx)
 
@@ -253,10 +179,10 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagemen
 	err = tx.QueryRow(ctx, "SELECT COUNT(*) FROM users.users WHERE email = $1", email).Scan(&count)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	if count > 0 {
-		return nil, status.Error(codes.AlreadyExists, "User already exists")
+		return nil, herror.StatusWithInfo(codes.AlreadyExists, "User already exists", herror.UserAlreadyExists, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Insert user into the database
@@ -266,14 +192,14 @@ func (s *IdentityManagementServer) Register(ctx context.Context, in *idmanagemen
 	_, err = tx.Exec(ctx, "INSERT INTO users.users (name, email, password, salt, timezone) VALUES ($1, $2, $3, $4, $5)", name, email, hashedPassword, salt, timezone)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to create user", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit database transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -282,19 +208,25 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.T
 
 	token := in.GetToken()
 	if token == "" {
-		return nil, status.Error(codes.Unauthenticated, "Missing token")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing token", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "token",
+			Description: "Token is required",
+		}}).Err()
 	}
 
 	// Convert token to UUID
 	_, err := uuid.Parse(token)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "Not a UUID")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Invalid token", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "token",
+			Description: "Token is not a valid UUID",
+		}}).Err()
 	}
 
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Check if token exists in the database
@@ -303,17 +235,17 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.T
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// For security reasons, we don't want to give the user any information about the token
-			return nil, status.Error(codes.Unauthenticated, "Invalid token")
+			return nil, herror.StatusWithInfo(codes.Unauthenticated, "Invalid token", herror.AuthInvalidTokenError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		} else {
 			// Handle other errors
 			logger.ErrorLogger.Println(err)
-			return nil, status.Error(codes.Internal, "Database error")
+			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 	}
 
 	// Check if token is expired
 	if expiry_date.Before(time.Now()) {
-		return nil, status.Error(codes.Unauthenticated, "Token expired")
+		return nil, herror.StatusWithInfo(codes.Unauthenticated, "Token expired", herror.AuthInvalidTokenError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	return &emptypb.Empty{}, nil
@@ -322,20 +254,23 @@ func (s *IdentityManagementServer) Alive(ctx context.Context, in *idmanagement.T
 func (s *IdentityManagementServer) Logout(ctx context.Context, in *idmanagement.TokenRequest) (*emptypb.Empty, error) {
 	token := in.GetToken()
 	if token == "" {
-		return nil, status.Error(codes.Unauthenticated, "Missing token")
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing token", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "token",
+			Description: "Token is required",
+		}}).Err()
 	}
 
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Error starting transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer tx.Rollback(ctx)
 
@@ -343,14 +278,14 @@ func (s *IdentityManagementServer) Logout(ctx context.Context, in *idmanagement.
 	_, err = tx.Exec(ctx, "DELETE FROM users.users_session WHERE id = $1", token)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Error deleting token", herror.DatabaseError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
 		logger.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, "Database error")
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit database transaction", herror.DatabaseTxError, idmanagement.IdentityManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	return &emptypb.Empty{}, nil

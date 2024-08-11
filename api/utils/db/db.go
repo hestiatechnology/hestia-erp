@@ -13,7 +13,7 @@ import (
 
 var db *pgxpool.Pool
 
-func GetDbPoolConn() (*pgxpool.Pool, error) {
+func GetDBPoolConn() (*pgxpool.Pool, error) {
 	if db != nil {
 		return db, nil
 	}

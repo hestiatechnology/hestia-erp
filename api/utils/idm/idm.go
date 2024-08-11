@@ -29,7 +29,7 @@ func RandomSalt() string {
 
 // GetSalt retrieves the salt for a user from the database using the email
 func GetSalt(ctx context.Context, email string) (string, error) {
-	db, err := db.GetDbPoolConn()
+	db, err := db.GetDBPoolConn()
 	if err != nil {
 		logger.ErrorLogger.Println(err)
 		return "", err
