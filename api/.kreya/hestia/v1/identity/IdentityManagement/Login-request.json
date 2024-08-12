@@ -1,4 +1,4 @@
 {
-  "email": "1",
-  "password": "a95561a33665bf5fa2f320b18205fde1f0f913e72adebbfe73dac56537839355"
+  "email": "{{ faker.internet.example_email }}",
+  "password": "{{ faker.internet.password }}"
 }

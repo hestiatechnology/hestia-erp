@@ -1,6 +1,6 @@
 {
-  "address": "mint green back up",
-  "locality": "transmit transition",
+  "address": "Mount Georgia",
+  "locality": "Re-contextualized Lilangeni value-added",
   "postalCode": "{{ faker.address.zip_code }}",
   "country": "{{ faker.address.country }}"
 }

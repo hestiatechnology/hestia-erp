@@ -3,7 +3,7 @@
   "importStreams": [
     {
       "id": "40b92244-b64e-41ae-8f98-223fcfa6467a",
-      "name": "proto-file",
+      "name": "Proto Files",
       "importerName": "ProtoFile",
       "createMissingOperations": true,
       "options": {

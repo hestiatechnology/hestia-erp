@@ -2,5 +2,5 @@
   "name": "{{ faker.name.last_name }}",
   "email": "{{ faker.internet.example_email }}",
   "password": "{{ faker.internet.password }}",
-  "timezone": "Research Crescent"
+  "timezone": "Meadows Automotive & Beauty"
 }

@@ -1,12 +1,12 @@
 {
   "name": "{{ faker.name.last_name }}",
   "isSoleTrader": false,
-  "commercialName": "microchip Mountains",
-  "vatId": 254,
-  "ssn": 927,
+  "commercialName": "solid state tan",
+  "vatId": 476,
+  "ssn": 398,
   "location": {
-    "address": "Equatorial Guinea Handcrafted Refined Fresh Keyboard",
-    "locality": "orchid Libyan Arab Jamahiriya Centralized",
+    "address": "withdrawal Balanced",
+    "locality": "holistic Bedfordshire",
     "postalCode": "{{ faker.address.zip_code }}",
     "country": "{{ faker.address.country }}"
   }

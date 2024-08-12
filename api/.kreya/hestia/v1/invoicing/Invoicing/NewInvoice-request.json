@@ -4,13 +4,13 @@
   "products": [
     {
       "productId": "{{ faker.random.uuid }}",
-      "quantity": 270,
-      "price": 33.182102
+      "quantity": 589,
+      "price": 284.02557
     },
     {
       "productId": "{{ faker.random.uuid }}",
-      "quantity": 742,
-      "price": 682.13763
+      "quantity": 994,
+      "price": 647.2611
     }
   ]
 }

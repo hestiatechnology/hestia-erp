@@ -1,10 +1,10 @@
 {
   "settings": [
     {
+      "authId": "46129ab1-0be6-4840-a7b3-5b71c8205787",
       "options": {
         "grpc": {
-          "endpoint": "http://{{HOST}}:{{PORT}}",
-          "mode": "grpc"
+          "endpoint": "http://{{HOST}}:{{PORT}}"
         },
         "rest": {
           "pathParams": []
