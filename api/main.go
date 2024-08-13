@@ -3,8 +3,10 @@ package main
 import (
 	"net"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"hestia/api/interceptor"
 	"hestia/api/methods"
@@ -31,6 +33,15 @@ func main() {
 		logger.WarningLogger.Println("Registering reflection service")
 		reflection.Register(s)
 	}
+
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		<-c
+		logger.InfoLogger.Println("Shutting down gracefully...")
+		s.GracefulStop()
+		logger.InfoLogger.Println("Server stopped")
+	}()
 
 	// Service registration
 	idmanagement.RegisterIdentityManagementServer(s, &methods.IdentityManagementServer{})
