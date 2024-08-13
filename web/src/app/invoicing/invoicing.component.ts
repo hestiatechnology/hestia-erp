@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from "../navbar/navbar.component";
 
 @Component({
-  selector: 'app-invoice',
+  selector: 'app-invoicing',
   standalone: true,
   imports: [NavbarComponent],
-  templateUrl: './invoice.component.html',
-  styleUrl: './invoice.component.scss'
+  templateUrl: './invoicing.component.html',
+  styleUrl: './invoicing.component.scss'
 })
-export class InvoiceComponent {
+export class InvoicingComponent {
 
 }

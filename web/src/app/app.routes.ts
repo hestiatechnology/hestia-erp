@@ -7,20 +7,27 @@ import { HomeComponent as TextileHomeComponent } from "./textile/home/home.compo
 import { HomeComponent as TechPackHomeComponent } from "./textile/techpack/home/home.component";
 import { ViewComponent as TechPackViewComponent } from "./textile/techpack/view/view.component";
 import { TextileComponent } from "./textile/textile.component";
-import { InvoiceComponent } from "./invoice/invoice.component";
-import { HomeComponent as InvoiceHomeComponent } from "./invoice/home/home.component";
+import { InvoicingComponent } from "./invoicing/invoicing.component";
+import { InvoicingHomeComponent } from "./invoicing/home/home.component";
+import { FaturaHomeComponent } from "./invoicing/ft/home/home.component";
+import { FaturaSimplificadaHomeComponent } from "./invoicing/fs/home/home.component";
 
 export const routes: Routes = [
   { "path": "login", component: LoginComponent },
   { "path": "sso", component: SsoComponent },
   { "path": "forgotpassword", component: ForgotPasswordComponent },
 
-  // /invoice
+  // /invoicing
   {
-    path: "invoice",
-    component: InvoiceComponent,
+    path: "invoicing",
+    component: InvoicingComponent,
     children: [
-      { "path": "", component: InvoiceHomeComponent },
+      { "path": "", component: InvoicingHomeComponent },
+      // FT -  Faturas (Invoices)
+      { "path": "ft", component: FaturaHomeComponent },
+      { "path": "ft/:id", loadComponent: () => import('./invoicing/ft/document/document.component').then(m => m.FaturaDocumentComponent) },
+      // FS - Faturas Simplificadas (Simplified Invoices)
+      { "path": "fs", component: FaturaSimplificadaHomeComponent }
     ]
   },
 
