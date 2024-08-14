@@ -11,35 +11,40 @@ import { InvoicingComponent } from "./invoicing/invoicing.component";
 import { InvoicingHomeComponent } from "./invoicing/home/home.component";
 import { FaturaHomeComponent } from "./invoicing/ft/home/home.component";
 import { FaturaSimplificadaHomeComponent } from "./invoicing/fs/home/home.component";
+import { FaturaReciboHomeComponent } from "./invoicing/fr/home/home.component";
 
 export const routes: Routes = [
-  { "path": "login", component: LoginComponent },
-  { "path": "sso", component: SsoComponent },
-  { "path": "forgotpassword", component: ForgotPasswordComponent },
+  { path: "login", component: LoginComponent },
+  { path: "sso", component: SsoComponent },
+  { path: "forgotpassword", component: ForgotPasswordComponent },
 
   // /invoicing
   {
     path: "invoicing",
     component: InvoicingComponent,
     children: [
-      { "path": "", component: InvoicingHomeComponent },
+      { path: "", component: InvoicingHomeComponent },
       // FT -  Faturas (Invoices)
-      { "path": "ft", component: FaturaHomeComponent },
-      { "path": "ft/:id", loadComponent: () => import('./invoicing/ft/document/document.component').then(m => m.FaturaDocumentComponent) },
+      { path: "ft", component: FaturaHomeComponent },
+      { path: "ft/:id", loadComponent: () => import('./invoicing/ft/document/document.component').then(m => m.FaturaDocumentComponent) },
       // FS - Faturas Simplificadas (Simplified Invoices)
-      { "path": "fs", component: FaturaSimplificadaHomeComponent }
+      { path: "fs", component: FaturaSimplificadaHomeComponent },
+      { path: "fs/:id", loadComponent: () => import('./invoicing/fs/document/document.component').then(m => m.FaturaSimplificadaDocumentComponent) },
+      // FR - Faturas Recibo (Receipt Invoices)
+      { path: "fr", component: FaturaReciboHomeComponent },
+      { path: "fr/:id", loadComponent: () => import('./invoicing/fr/document/document.component').then(m => m.FaturaReciboDocumentComponent) }
     ]
   },
 
   // /textile
   {
-    "path": "textile",
+    path: "textile",
     component: TextileComponent,
     children: [
-      { "path": "", component: TextileHomeComponent },
-      { "path": "techpack", component: TechPackHomeComponent },
-      { "path": "techpack/new", component: TechPackViewComponent }
+      { path: "", component: TextileHomeComponent },
+      { path: "techpack", component: TechPackHomeComponent },
+      { path: "techpack/new", component: TechPackViewComponent }
     ]
   },
-  { "path": "test", component: TestComponent },
+  { path: "test", component: TestComponent },
 ];
