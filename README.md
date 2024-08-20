@@ -1,6 +1,13 @@
 # Hestia ERP
 Monorepo for Hestia ERP
 
+## Stack
+Angular
+Go
+gRPC
+PostgreSQL
+Istio
+
 ## Packages
 ### [Hestia ERP API](/api/)
 API written in Go using the gRPC framework.
