@@ -173,11 +173,11 @@ type TaxTableEntry struct {
 
 	Description SafpttextTypeMandatoryMax255Car `xml:"Description"`
 
-	TaxExpirationDate SafdateType `xml:"TaxExpirationDate"`
+	TaxExpirationDate *SafdateType `xml:"TaxExpirationDate"`
 
-	TaxPercentage SafdecimalType `xml:"TaxPercentage"`
+	TaxPercentage *SafdecimalType `xml:"TaxPercentage"`
 
-	TaxAmount SafmonetaryType `xml:"TaxAmount"`
+	TaxAmount *SafmonetaryType `xml:"TaxAmount"`
 }
 
 // Element
@@ -217,9 +217,9 @@ type AccountDescription struct {
 type Address struct {
 	XMLName xml.Name `xml:"Address"`
 
-	BuildingNumber SafpttextTypeMandatoryMax10Car `xml:"BuildingNumber"`
+	BuildingNumber *SafpttextTypeMandatoryMax10Car `xml:"BuildingNumber"`
 
-	StreetName SafpttextTypeMandatoryMax200Car `xml:"StreetName"`
+	StreetName *SafpttextTypeMandatoryMax200Car `xml:"StreetName"`
 
 	AddressDetail SafpttextTypeMandatoryMax210Car `xml:"AddressDetail"`
 
@@ -1259,9 +1259,9 @@ type GeneralLedgerAccountsAccount struct {
 
 	GroupingCategory string `xml:"GroupingCategory"`
 
-	GroupingCode SafptglaccountId `xml:"GroupingCode"`
+	GroupingCode *SafptglaccountId `xml:"GroupingCode"`
 
-	TaxonomyCode SafpttaxonomyCode `xml:"TaxonomyCode"`
+	TaxonomyCode *SafpttaxonomyCode `xml:"TaxonomyCode"`
 }
 
 // Element
@@ -1848,9 +1848,9 @@ type SourceDocumentsPayments struct {
 type AddressStructure struct {
 	XMLName xml.Name
 
-	BuildingNumber SafpttextTypeMandatoryMax10Car `xml:"BuildingNumber"`
+	BuildingNumber *SafpttextTypeMandatoryMax10Car `xml:"BuildingNumber"`
 
-	StreetName SafpttextTypeMandatoryMax200Car `xml:"StreetName"`
+	StreetName *SafpttextTypeMandatoryMax200Car `xml:"StreetName"`
 
 	AddressDetail SafpttextTypeMandatoryMax210Car `xml:"AddressDetail"`
 
