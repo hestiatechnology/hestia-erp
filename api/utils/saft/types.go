@@ -1329,8 +1329,9 @@ type JournalTransaction struct {
 
 	Lines TransactionLines `xml:"Lines"`
 
+	// Either CustomerId or SupplierId must be present
 	CustomerId *SafpttextTypeMandatoryMax30Car `xml:"CustomerID"`
-
+	// Either CustomerId or SupplierId must be present
 	SupplierId *SafpttextTypeMandatoryMax30Car `xml:"SupplierID"`
 }
 
