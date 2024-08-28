@@ -12,9 +12,21 @@ var (
 	ErrorUQCustomerId                 = errors.New("saft: unique constraint violation - customer id")
 	ErrorUQSupplierId                 = errors.New("saft: unique constraint violation - supplier id")
 	ErrorUQProductCode                = errors.New("saft: unique constraint violation - product code")
+	ErrorUQJournalId                  = errors.New("saft: unique constraint violation - journal id")
+	ErrorUQTransactionId              = errors.New("saft: unique constraint violation - transaction id")
+	ErrorUQInvoiceNo                  = errors.New("saft: unique constraint violation - invoice no")
+	ErrorUQDocumentNo                 = errors.New("saft: unique constraint violation - document no")
+	ErrorUQWorkDocNo                  = errors.New("saft: unique constraint violation - work document no")
+	ErrorKRGenLedgerEntriesSupplierID = errors.New("saft: key reference violation - general ledger entries supplier id")
 	ErrorKRGenLedgerEntriesAccountID  = errors.New("saft: key reference violation - general ledger entries account id")
 	ErrorKRGenLedgerEntriesCustomerID = errors.New("saft: key reference violation - general ledger entries customer id")
-	ErrorUQJournalId                  = errors.New("saft: unique constraint violation - journal id")
+	ErrorKRInvoiceCustomerID          = errors.New("saft: key reference violation - invoice customer id")
+	ErrorKRInvoiceProductCode         = errors.New("saft: key reference violation - invoice product code")
+	ErrorKRStockMovementCustomerID    = errors.New("saft: key reference violation - stock movement customer id")
+	ErrorKRStockMovementSupplierID    = errors.New("saft: key reference violation - stock movement supplier id")
+	ErrorKRStockMovementProductCode   = errors.New("saft: key reference violation - stock movement product code")
+	ErrorKRWorkDocumentCustomerID     = errors.New("saft: key reference violation - work document customer id")
+	ErrorKRWorkDocumentProductCode    = errors.New("saft: key reference violation - work document product code")
 )
 
 func (a *AuditFile) Validate() error {
@@ -106,6 +118,110 @@ func (a *AuditFile) CheckConstraints() error {
 			return ErrorUQJournalId
 		}
 		journals[entry.JournalId] = true
+	}
+
+	// GeneralLedgerEntriesSupplierIDConstraint
+	for _, entry := range a.GeneralLedgerEntries.Journal {
+		for _, line := range entry.Transaction {
+			if line.SupplierId != nil && *line.SupplierId != "" {
+				if _, ok := suppliers[*line.SupplierId]; !ok {
+					return ErrorKRGenLedgerEntriesSupplierID
+				}
+			}
+		}
+	}
+
+	// GeneralLedgerEntriesTransactionIdConstraint
+	transactions := make(map[SafpttransactionId]bool)
+	for _, entry := range a.GeneralLedgerEntries.Journal {
+		for _, line := range entry.Transaction {
+			if _, ok := transactions[line.TransactionId]; ok {
+				return ErrorUQTransactionId
+			}
+			transactions[line.TransactionId] = true
+		}
+	}
+
+	// InvoiceNoConstraint
+	invoices := make(map[string]bool)
+	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
+		if _, ok := invoices[invoice.InvoiceNo]; ok {
+			return ErrorUQInvoiceNo
+		}
+		invoices[invoice.InvoiceNo] = true
+	}
+
+	// InvoiceCustomerIDConstraint
+	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
+		if _, ok := customers[invoice.CustomerId]; !ok {
+			return ErrorKRInvoiceCustomerID
+		}
+	}
+
+	// InvoiceProductCodeConstraint
+	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
+		for _, line := range invoice.Line {
+			if _, ok := products[line.ProductCode]; !ok {
+				return ErrorKRInvoiceProductCode
+			}
+		}
+	}
+
+	// DocumentNumberConstraint
+	documents := make(map[string]bool)
+	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
+		if _, ok := documents[stock.DocumentNumber]; !ok {
+			return ErrorUQDocumentNo
+		}
+		documents[stock.DocumentNumber] = true
+	}
+
+	// StockMovementCustomerIDConstraint
+	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
+		if _, ok := customers[*stock.CustomerId]; !ok {
+			return ErrorKRStockMovementCustomerID
+		}
+	}
+
+	// StockMovementSupplierIDConstraint
+	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
+		if _, ok := suppliers[*stock.SupplierId]; !ok {
+			return ErrorKRStockMovementSupplierID
+		}
+	}
+
+	// StockMovementProductCodeConstraint
+	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
+		for _, line := range stock.Line {
+			if _, ok := products[line.ProductCode]; !ok {
+				return ErrorKRStockMovementProductCode
+			}
+		}
+	}
+
+	// WorkDocumentDocumentNumberConstraint
+	workDocs := make(map[string]bool)
+	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
+		if _, ok := workDocs[workDoc.DocumentNumber]; !ok {
+			return ErrorUQWorkDocNo
+		}
+		workDocs[workDoc.DocumentNumber] = true
+	}
+
+	// WorkDocumentDocumentCustomerIDConstraint
+	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
+		if _, ok := customers[workDoc.CustomerId]; !ok {
+			return ErrorKRWorkDocumentCustomerID
+		}
+	}
+
+	// WorkDocumentDocumentProductCodeConstraint
+	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
+		for _, line := range workDoc.Line {
+			if _, ok := products[line.ProductCode]; !ok {
+				return ErrorKRWorkDocumentProductCode
+			}
+		}
 	}
 
 	return nil
