@@ -2,35 +2,36 @@ package saft
 
 import (
 	"encoding/xml"
-	"errors"
-)
-
-// UQ = Unique Constraint
-// KR = Key Reference
-var (
-	ErrorUQAccountId                  = errors.New("saft: unique constraint violation - account id")
-	ErrorUQCustomerId                 = errors.New("saft: unique constraint violation - customer id")
-	ErrorUQSupplierId                 = errors.New("saft: unique constraint violation - supplier id")
-	ErrorUQProductCode                = errors.New("saft: unique constraint violation - product code")
-	ErrorUQJournalId                  = errors.New("saft: unique constraint violation - journal id")
-	ErrorUQTransactionId              = errors.New("saft: unique constraint violation - transaction id")
-	ErrorUQInvoiceNo                  = errors.New("saft: unique constraint violation - invoice no")
-	ErrorUQDocumentNo                 = errors.New("saft: unique constraint violation - document no")
-	ErrorUQWorkDocNo                  = errors.New("saft: unique constraint violation - work document no")
-	ErrorKRGenLedgerEntriesSupplierID = errors.New("saft: key reference violation - general ledger entries supplier id")
-	ErrorKRGenLedgerEntriesAccountID  = errors.New("saft: key reference violation - general ledger entries account id")
-	ErrorKRGenLedgerEntriesCustomerID = errors.New("saft: key reference violation - general ledger entries customer id")
-	ErrorKRInvoiceCustomerID          = errors.New("saft: key reference violation - invoice customer id")
-	ErrorKRInvoiceProductCode         = errors.New("saft: key reference violation - invoice product code")
-	ErrorKRStockMovementCustomerID    = errors.New("saft: key reference violation - stock movement customer id")
-	ErrorKRStockMovementSupplierID    = errors.New("saft: key reference violation - stock movement supplier id")
-	ErrorKRStockMovementProductCode   = errors.New("saft: key reference violation - stock movement product code")
-	ErrorKRWorkDocumentCustomerID     = errors.New("saft: key reference violation - work document customer id")
-	ErrorKRWorkDocumentProductCode    = errors.New("saft: key reference violation - work document product code")
+	"hestia/api/utils/logger"
+	"hestia/api/utils/saft/errorcodes"
 )
 
 func (a *AuditFile) Validate() error {
-	// Validate the AuditFile
+	if a.Header.AuditFileVersion != "1.04_01" {
+		return errorcodes.ErrorUnsupportedSAFTVersion
+	}
+
+	// Check the tests of the AuditFile
+	if a.MasterFiles.GeneralLedgerAccounts != nil {
+		for _, account := range a.MasterFiles.GeneralLedgerAccounts.Account {
+			// Test 1
+			if (account.GroupingCategory == "GM" && account.TaxonomyCode == nil) || (account.GroupingCategory != "GM" && account.TaxonomyCode != nil) {
+				logger.DebugLogger.Println("Error: Grouping category GM and taxonomy code must be present together")
+				return errorcodes.ErrorGroupingCategoryTaxonomyCode
+			}
+			// Test 2
+			if (account.GroupingCategory == "GR" && account.GroupingCode != nil) ||
+				(account.GroupingCategory == "AR" && account.GroupingCode != nil) ||
+				(account.GroupingCategory == "GA" && account.GroupingCode == nil) ||
+				(account.GroupingCategory == "AA" && account.GroupingCode == nil) ||
+				(account.GroupingCategory == "GM" && account.GroupingCode == nil) ||
+				(account.GroupingCategory == "AM" && account.GroupingCode == nil) {
+				logger.DebugLogger.Println("Error: Invalid GroupingCategory and GroupingCode combination: ", account.GroupingCategory, *account.GroupingCode)
+				return errorcodes.ErrorGroupingCategoryGroupingCode
+			}
+		}
+	}
+
 	if err := a.CheckConstraints(); err != nil {
 		return err
 	}
@@ -42,20 +43,25 @@ func (a *AuditFile) CheckConstraints() error {
 	accounts := make(map[SafptglaccountId]bool)
 	for _, account := range a.MasterFiles.GeneralLedgerAccounts.Account {
 		if _, ok := accounts[account.AccountId]; ok {
-			return ErrorUQAccountId
+			return errorcodes.ErrorUQAccountId
 		}
 		accounts[account.AccountId] = true
 	}
 
-	// TODO: GroupingCodeConstraint
-	// ????????? Unsure
-	// Should just do a match, however PDF docs dont support this
+	// GroupingCodeConstraint
+	for _, account := range a.MasterFiles.GeneralLedgerAccounts.Account {
+		if account.GroupingCode != nil && *account.GroupingCode != "" {
+			if _, ok := accounts[SafptglaccountId(*account.GroupingCode)]; !ok {
+				return errorcodes.ErrorKRGenLedgerEntriesAccountID
+			}
+		}
+	}
 
 	// CustomerIDConstraint
 	customers := make(map[SafpttextTypeMandatoryMax30Car]bool)
 	for _, customer := range a.MasterFiles.Customer {
 		if _, ok := customers[customer.CustomerId]; ok {
-			return ErrorUQCustomerId
+			return errorcodes.ErrorUQCustomerId
 		}
 		customers[customer.CustomerId] = true
 	}
@@ -64,7 +70,7 @@ func (a *AuditFile) CheckConstraints() error {
 	suppliers := make(map[SafpttextTypeMandatoryMax30Car]bool)
 	for _, supplier := range a.MasterFiles.Supplier {
 		if _, ok := suppliers[supplier.SupplierId]; ok {
-			return ErrorUQSupplierId
+			return errorcodes.ErrorUQSupplierId
 		}
 		suppliers[supplier.SupplierId] = true
 	}
@@ -73,7 +79,7 @@ func (a *AuditFile) CheckConstraints() error {
 	products := make(map[SafpttextTypeMandatoryMax60Car]bool)
 	for _, product := range a.MasterFiles.Product {
 		if _, ok := products[product.ProductCode]; ok {
-			return ErrorUQProductCode
+			return errorcodes.ErrorUQProductCode
 		}
 		products[product.ProductCode] = true
 	}
@@ -83,7 +89,7 @@ func (a *AuditFile) CheckConstraints() error {
 		for _, line := range entry.Transaction {
 			for _, debit := range line.Lines.DebitLine {
 				if _, ok := accounts[debit.AccountId]; !ok {
-					return ErrorKRGenLedgerEntriesAccountID
+					return errorcodes.ErrorKRGenLedgerEntriesAccountID
 				}
 			}
 		}
@@ -94,7 +100,7 @@ func (a *AuditFile) CheckConstraints() error {
 		for _, line := range entry.Transaction {
 			for _, credit := range line.Lines.CreditLine {
 				if _, ok := accounts[credit.AccountId]; !ok {
-					return ErrorKRGenLedgerEntriesAccountID
+					return errorcodes.ErrorKRGenLedgerEntriesAccountID
 				}
 			}
 		}
@@ -105,7 +111,7 @@ func (a *AuditFile) CheckConstraints() error {
 		for _, line := range entry.Transaction {
 			if line.CustomerId != nil && *line.CustomerId != "" {
 				if _, ok := customers[*line.CustomerId]; !ok {
-					return ErrorKRGenLedgerEntriesCustomerID
+					return errorcodes.ErrorKRGenLedgerEntriesCustomerID
 				}
 			}
 		}
@@ -115,7 +121,7 @@ func (a *AuditFile) CheckConstraints() error {
 	journals := make(map[SafptjournalId]bool)
 	for _, entry := range a.GeneralLedgerEntries.Journal {
 		if _, ok := journals[entry.JournalId]; ok {
-			return ErrorUQJournalId
+			return errorcodes.ErrorUQJournalId
 		}
 		journals[entry.JournalId] = true
 	}
@@ -125,7 +131,7 @@ func (a *AuditFile) CheckConstraints() error {
 		for _, line := range entry.Transaction {
 			if line.SupplierId != nil && *line.SupplierId != "" {
 				if _, ok := suppliers[*line.SupplierId]; !ok {
-					return ErrorKRGenLedgerEntriesSupplierID
+					return errorcodes.ErrorKRGenLedgerEntriesSupplierID
 				}
 			}
 		}
@@ -136,7 +142,7 @@ func (a *AuditFile) CheckConstraints() error {
 	for _, entry := range a.GeneralLedgerEntries.Journal {
 		for _, line := range entry.Transaction {
 			if _, ok := transactions[line.TransactionId]; ok {
-				return ErrorUQTransactionId
+				return errorcodes.ErrorUQTransactionId
 			}
 			transactions[line.TransactionId] = true
 		}
@@ -146,7 +152,7 @@ func (a *AuditFile) CheckConstraints() error {
 	invoices := make(map[string]bool)
 	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
 		if _, ok := invoices[invoice.InvoiceNo]; ok {
-			return ErrorUQInvoiceNo
+			return errorcodes.ErrorUQInvoiceNo
 		}
 		invoices[invoice.InvoiceNo] = true
 	}
@@ -154,7 +160,7 @@ func (a *AuditFile) CheckConstraints() error {
 	// InvoiceCustomerIDConstraint
 	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
 		if _, ok := customers[invoice.CustomerId]; !ok {
-			return ErrorKRInvoiceCustomerID
+			return errorcodes.ErrorKRInvoiceCustomerID
 		}
 	}
 
@@ -162,7 +168,7 @@ func (a *AuditFile) CheckConstraints() error {
 	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
 		for _, line := range invoice.Line {
 			if _, ok := products[line.ProductCode]; !ok {
-				return ErrorKRInvoiceProductCode
+				return errorcodes.ErrorKRInvoiceProductCode
 			}
 		}
 	}
@@ -171,7 +177,7 @@ func (a *AuditFile) CheckConstraints() error {
 	documents := make(map[string]bool)
 	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
 		if _, ok := documents[stock.DocumentNumber]; !ok {
-			return ErrorUQDocumentNo
+			return errorcodes.ErrorUQDocumentNo
 		}
 		documents[stock.DocumentNumber] = true
 	}
@@ -179,14 +185,14 @@ func (a *AuditFile) CheckConstraints() error {
 	// StockMovementCustomerIDConstraint
 	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
 		if _, ok := customers[*stock.CustomerId]; !ok {
-			return ErrorKRStockMovementCustomerID
+			return errorcodes.ErrorKRStockMovementCustomerID
 		}
 	}
 
 	// StockMovementSupplierIDConstraint
 	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
 		if _, ok := suppliers[*stock.SupplierId]; !ok {
-			return ErrorKRStockMovementSupplierID
+			return errorcodes.ErrorKRStockMovementSupplierID
 		}
 	}
 
@@ -194,7 +200,7 @@ func (a *AuditFile) CheckConstraints() error {
 	for _, stock := range a.SourceDocuments.MovementOfGoods.StockMovement {
 		for _, line := range stock.Line {
 			if _, ok := products[line.ProductCode]; !ok {
-				return ErrorKRStockMovementProductCode
+				return errorcodes.ErrorKRStockMovementProductCode
 			}
 		}
 	}
@@ -203,7 +209,7 @@ func (a *AuditFile) CheckConstraints() error {
 	workDocs := make(map[string]bool)
 	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
 		if _, ok := workDocs[workDoc.DocumentNumber]; !ok {
-			return ErrorUQWorkDocNo
+			return errorcodes.ErrorUQWorkDocNo
 		}
 		workDocs[workDoc.DocumentNumber] = true
 	}
@@ -211,7 +217,7 @@ func (a *AuditFile) CheckConstraints() error {
 	// WorkDocumentDocumentCustomerIDConstraint
 	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
 		if _, ok := customers[workDoc.CustomerId]; !ok {
-			return ErrorKRWorkDocumentCustomerID
+			return errorcodes.ErrorKRWorkDocumentCustomerID
 		}
 	}
 
@@ -219,12 +225,46 @@ func (a *AuditFile) CheckConstraints() error {
 	for _, workDoc := range a.SourceDocuments.WorkingDocuments.WorkDocument {
 		for _, line := range workDoc.Line {
 			if _, ok := products[line.ProductCode]; !ok {
-				return ErrorKRWorkDocumentProductCode
+				return errorcodes.ErrorKRWorkDocumentProductCode
 			}
 		}
 	}
 
+	// PaymentPaymentRefNoConstraint
+	payments := make(map[string]bool)
+	for _, payment := range a.SourceDocuments.Payments.Payment {
+		if _, ok := payments[payment.PaymentRefNo]; ok {
+			return errorcodes.ErrorUQPaymentRefNo
+		}
+		payments[payment.PaymentRefNo] = true
+	}
+
+	// PaymentPaymentRefNoCustomerIDConstraint
+	for _, payment := range a.SourceDocuments.Payments.Payment {
+		if _, ok := customers[payment.CustomerId]; !ok {
+			return errorcodes.ErrorKRStockMovementCustomerID
+		}
+	}
+
 	return nil
+}
+
+func (a *AuditFile) CheckTypes() (string, error) {
+	// Check the types of the AuditFile
+	return "", nil
+}
+
+func (a *AuditFile) ExportInvoicing() (string, error) {
+	a.MasterFiles.GeneralLedgerAccounts = nil
+	a.GeneralLedgerEntries = nil
+	a.MasterFiles.Supplier = nil
+
+	// Export the AuditFile to a file
+	if err := a.Validate(); err != nil {
+		return "", err
+	}
+
+	return "", nil
 }
 
 func (a *AuditFile) ToXML() (string, error) {
