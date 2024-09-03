@@ -1501,7 +1501,7 @@
             <xs:maxInclusive value="999999999"/>
         </xs:restriction>
     </xs:simpleType>
-    <!-- Descrição do produto ou servico -->
+    <!-- Descriï¿½ï¿½o do produto ou servico -->
     <xs:simpleType name="SAFPTProductDescription">
         <xs:annotation/>
         <xs:restriction base="xs:string">

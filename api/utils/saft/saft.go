@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"hestia/api/utils/logger"
 	"hestia/api/utils/saft/errorcodes"
+	"regexp"
 )
 
 func (a *AuditFile) Validate() error {
@@ -29,6 +30,20 @@ func (a *AuditFile) Validate() error {
 				logger.DebugLogger.Println("Error: Invalid GroupingCategory and GroupingCode combination: ", account.GroupingCategory, *account.GroupingCode)
 				return errorcodes.ErrorGroupingCategoryGroupingCode
 			}
+		}
+	}
+
+	for _, customer := range a.MasterFiles.Customer {
+		r := regexp.MustCompile(`([^^]*)`)
+		// Check if it doesnt match Desconhecido or the regex
+		if customer.AccountId != "Desconhecido" && !r.MatchString(customer.AccountId) {
+			return errorcodes.ErrorValidationAccountId
+		}
+	}
+
+	for _, invoice := range a.SourceDocuments.SalesInvoices.Invoice {
+		if invoice.SpecialRegimes.CashVatschemeIndicator != CashVatschemeIndicatorNo && invoice.SpecialRegimes.CashVatschemeIndicator != CashVatschemeIndicatorYes {
+			return errorcodes.ErrorCashVatschemeIndicator
 		}
 	}
 

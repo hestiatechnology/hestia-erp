@@ -1993,7 +1993,7 @@ type SpecialRegimes struct {
 
 	SelfBillingIndicator string `xml:"SelfBillingIndicator"`
 
-	CashVatschemeIndicator string `xml:"CashVATSchemeIndicator"`
+	CashVatschemeIndicator uint `xml:"CashVATSchemeIndicator"`
 
 	ThirdPartiesBillingIndicator string `xml:"ThirdPartiesBillingIndicator"`
 }
@@ -2131,3 +2131,6 @@ type SafpttransactionId string
 type Safptunnumber string
 
 type TaxTableEntryTaxCode string
+
+const CashVatschemeIndicatorYes uint = 1
+const CashVatschemeIndicatorNo uint = 0

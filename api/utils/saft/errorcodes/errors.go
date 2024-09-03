@@ -27,6 +27,8 @@ var (
 	ErrorKRWorkDocumentCustomerID     = errors.New("saft: key reference violation - work document customer id")
 	ErrorKRWorkDocumentProductCode    = errors.New("saft: key reference violation - work document product code")
 	ErrorKRPaymentCustomerID          = errors.New("saft: key reference violation - payment customer id")
+	ErrorValidationAccountId          = errors.New("saft: account id validation error")
+	ErrorCashVatschemeIndicator       = errors.New("saft: cash vat scheme indicator validation error")
 )
 
 // Other errors
