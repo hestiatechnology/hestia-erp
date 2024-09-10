@@ -17,7 +17,7 @@ require (
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.6.0
+	github.com/jackc/pgx/v5 v5.7.0
 	github.com/microsoft/go-mssqldb v1.7.2
 	github.com/shopspring/decimal v1.4.0
 	github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0
