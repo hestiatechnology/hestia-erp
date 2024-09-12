@@ -6,6 +6,7 @@ import (
 	"hestia/api/utils/logger"
 	"os"
 
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
@@ -27,7 +28,7 @@ func GetDBPoolConn() (*pgxpool.Pool, error) {
 		logger.ErrorLogger.Fatal("Missing one or more environment variables for database connection")
 	}
 
-	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia_api", dbUser, dbPass, dbHost, dbName)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia-erp", dbUser, dbPass, dbHost, dbName)
 
 	// Open a connection to the database
 	dbconfig, err := pgxpool.ParseConfig(connStr)
@@ -38,6 +39,7 @@ func GetDBPoolConn() (*pgxpool.Pool, error) {
 	dbconfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
 		// Allows to use Google's UUIDs
 		pgxUUID.Register(conn.TypeMap())
+		pgxdecimal.Register(conn.TypeMap())
 		return nil
 	}
 
