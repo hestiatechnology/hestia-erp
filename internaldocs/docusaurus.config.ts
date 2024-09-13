@@ -99,7 +99,7 @@ const config: Config = {
           items: [
             {
               label: 'Bem-vindo',
-              to: '/docs/intro',
+              to: '/docs/',
             },
           ],
         },
