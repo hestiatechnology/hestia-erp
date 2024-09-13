@@ -8,7 +8,13 @@ updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/web" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/internaldocs" # Location of package manifests
+    schedule:
+      interval: "monthly"
     open-pull-requests-limit: 5
     versioning-strategy: increase
   - package-ecosystem: "gomod"
