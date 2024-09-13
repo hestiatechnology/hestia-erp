@@ -3,8 +3,8 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Hestia ERP',
+  tagline: 'Documentação Interna',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -15,8 +15,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'hestiatechnology', // Usually your GitHub org/user name.
+  projectName: 'hestia-erp', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -25,10 +25,9 @@ const config: Config = {
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'pt-PT',
+    locales: ['pt-PT', 'en'],
   },
-
   presets: [
     [
       'classic',
@@ -38,7 +37,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/hestiatechnology/hestia-erp/tree/develop/internaldocs/',
         },
         blog: {
           showReadingTime: true,
@@ -49,7 +48,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/hestiatechnology/hestia-erp/tree/develop/internaldocs/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -66,22 +65,28 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Hestia ERP -  Documentação Interna',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Hestia Technology Logo',
         src: 'img/logo.svg',
       },
       items: [
+
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'idmSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Identidade',
+          
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/hestiatechnology/hestia-erp',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],
@@ -93,13 +98,13 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Bem-vindo',
               to: '/docs/intro',
             },
           ],
         },
-        {
-          title: 'Community',
+       /*  {
+          title: 'Comunidade',
           items: [
             {
               label: 'Stack Overflow',
@@ -114,7 +119,7 @@ const config: Config = {
               href: 'https://twitter.com/docusaurus',
             },
           ],
-        },
+        }, */
         {
           title: 'More',
           items: [
@@ -124,12 +129,12 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/hestiatechnology/hestia-erp',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Hestia Technology Unipessoal Lda. Construído com Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
