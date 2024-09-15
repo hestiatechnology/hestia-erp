@@ -17,17 +17,17 @@ A documentação poderá não existir ou estar incompleta.
 ### Módulos para os utilizadores
 | Módulo                            | Descrição                  |
 |-----------------------------------|----------------------------|
-| [Faturação](/docs/invoicing)      | Módulo de faturação e SAFT |
-| [Contabilidade](/docs/accounting) | Contabilidade              |
-| [Financeiro](/docs/financial)     | Operações financeiras      |
-| [Recursos Humanos](/docs/hr)      | Recursos Humanos           |
-| [Logística](/docs/logistics)      | Logística                  |
-| [Encomendas](/docs/orders)        | Gestão de encomendas       |
+| [Faturação]        | Módulo de faturação e SAFT |
+| [Contabilidade]    | Contabilidade              |
+| [Financeiro]       | Operações financeiras      |
+| [Recursos Humanos] | Recursos Humanos           |
+| [Logística]        | Logística                  |
+| [Encomendas]       | Gestão de encomendas       |
 
 ### Módulos internos
 | Módulo                             | Descrição                                              |
 |------------------------------------|--------------------------------------------------------|
-| [Subscrições](/docs/subscriptions) | Gestão das subscrições                                 |
-| [Gestão de identidade](/docs/idm)  | Gestão de Identidade (IDM), Autenticação e Autorização |
+| [Subscrições]          | Gestão das subscrições                                 |
+| [Gestão de identidade] | Gestão de Identidade (IDM), Autenticação e Autorização |
 
 
