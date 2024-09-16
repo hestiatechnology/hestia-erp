@@ -74,12 +74,23 @@ const config: Config = {
 
         {
           type: 'docSidebar',
-          sidebarId: 'idmSidebar',
+          sidebarId: 'extmodSidebar',
           position: 'left',
-          label: 'Identidade',
-          
+          label: 'Módulos Externos',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          type: 'docSidebar',
+          sidebarId: 'intmodSidebar',
+          position: 'left',
+          label: 'Módulos Internos',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'atSidebar',
+          position: 'left',
+          label: 'Autoridade Tributária',
+        },
+        {to: '/blog', label: 'Blog', position: 'right'},
         {
           href: 'https://github.com/hestiatechnology/hestia-erp',
           label: 'GitHub',
