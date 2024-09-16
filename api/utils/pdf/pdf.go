@@ -157,12 +157,8 @@ func getTransactions() []core.Row {
 	return rows
 }
 
-func getPageHeader(img []byte) (core.Row, core.Row) {
-	atcud := row.New(10).Add(
-		col.New(10),
-		text.NewCol(2, "CSDF7T5H-0000000008"),
-	)
-	companyInfo := row.New(20).Add(
+func getPageHeader(img []byte) core.Row {
+	return row.New(20).Add(
 
 		col.New(3).Add(
 			image.NewFromBytes(img, extension.Png, props.Rect{
@@ -184,12 +180,11 @@ func getPageHeader(img []byte) (core.Row, core.Row) {
 			code.NewQr("ABCD23EF-12345", props.Rect{}),
 		),
 	)
-	return atcud, companyInfo
 }
 
 func getPageFooter() core.Row {
 	return row.New(20).Add(
-		col.New(12).Add(
+		col.New(10).Add(
 			text.New("Tel: 55 024 12345-1234", props.Text{
 				Top:   13,
 				Style: fontstyle.BoldItalic,
@@ -204,6 +199,14 @@ func getPageFooter() core.Row {
 				Align: align.Left,
 				Color: getBlueColor(),
 			}),
+		),
+		col.New(2).Add(
+			text.New("Page: {Page}", props.Text{
+				Style: fontstyle.Bold,
+				Size:  8,
+				Align: align.Center,
+			}),
+			code.NewQr("ABCD23EF-12345fhisdbk*sfgf;FGdF;GFDG;df;Gdf;GFDG;DAG;fdG;dfg", props.Rect{Top: 4}),
 		),
 	)
 }
