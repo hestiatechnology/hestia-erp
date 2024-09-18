@@ -18,12 +18,16 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/f-amaral/go-async v0.3.0 h1:h4kLsX7aKfdWaHvV0lf+/EE3OIeCzyeDYJDb/vDZUyg=
 github.com/f-amaral/go-async v0.3.0/go.mod h1:Hz5Qr6DAWpbTTUjytnrg1WIsDgS7NtOei5y8SipYS7U=
+github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=
+github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/golang-jwt/jwt/v5 v5.2.0 h1:d/ix8ftRUorsN+5eMIlF4T6J8CAt9rch3My2winC1Jw=
 github.com/golang-jwt/jwt/v5 v5.2.0/go.mod h1:pqrtFR0X4osieyHYxtmOUWsAWrfe1Q5UVIyoH402zdk=
 github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0ktxqI+Sida1w446QrXBRJ0nee3SNZlA=
 github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
 github.com/golang-sql/sqlexp v0.1.0 h1:ZCD6MBpcuOVfGVqsEmY5/4FtYiKz6tSyUv9LPEDei6A=
 github.com/golang-sql/sqlexp v0.1.0/go.mod h1:J4ad9Vo8ZCWQ2GMrC4UCQy1JpCbwU9m3EOqtpKwwwHI=
+github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF08vX0COfcOBJRhZ8lUbR+ZWIs0Y5g=
+github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
@@ -89,6 +93,8 @@ github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0 h1:EhPtK0mgrgaTMXpegE69hvoSOVC1Ah
 github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0/go.mod h1:5LtFrNEkgzxHvXPO9eOvcXsSn9/KeKYgx9kjeI2oXQI=
 github.com/yeqown/go-qrcode/v2 v2.2.4 h1:cXdYlrhzHzVAnJHiwr/T6lAUmS9MtEStjEZBjArrvnc=
 github.com/yeqown/go-qrcode/v2 v2.2.4/go.mod h1:uHpt9CM0V1HeXLz+Wg5MN50/sI/fQhfkZlOM+cOTHxw=
+github.com/yeqown/go-qrcode/writer/standard v1.2.4 h1:41e/aLr1AMVWlug6oUMkDg2r0+dv5ofB7UaTkekKZBc=
+github.com/yeqown/go-qrcode/writer/standard v1.2.4/go.mod h1:H8nLSGYUWBpNyBPjDcJzAanMzYBBYMFtrU2lwoSRn+k=
 github.com/yeqown/reedsolomon v1.0.0 h1:x1h/Ej/uJnNu8jaX7GLHBWmZKCAWjEJTetkqaabr4B0=
 github.com/yeqown/reedsolomon v1.0.0/go.mod h1:P76zpcn2TCuL0ul1Fso373qHRc69LKwAw/Iy6g1WiiM=
 golang.org/x/crypto v0.27.0 h1:GXm2NjJrPaiv/h1tb2UH8QfgC/hOf/+z0p6PT8o1w7A=

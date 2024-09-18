@@ -3,8 +3,10 @@
 
 import (
 	"hestia/api/utils/logger"
-	"log"
+	"hestia/api/utils/pdf/codes/qrcode"
 	"os"
+
+	"log"
 
 	"github.com/johnfercher/maroto/v2"
 
@@ -51,11 +53,11 @@ func GetMaroto() core.Maroto {
 	darkGrayColor := getDarkGrayColor()
 	mrt := maroto.New(cfg)
 	m := maroto.NewMetricsDecorator(mrt)
-	img, err := os.ReadFile("FB_cover.png")
+	img, err := os.ReadFile("FB_Cover.png")
 	if err != nil {
 		logger.ErrorLogger.Println(err)
 	}
-	err = m.RegisterHeader(getPageHeader(img))
+	err = m.RegisterHeader(getPageHeader(img, extension.Png))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -157,11 +159,11 @@ func getTransactions() []core.Row {
 	return rows
 }
 
-func getPageHeader(img []byte) core.Row {
+func getPageHeader(img []byte, ext extension.Type) core.Row {
 	return row.New(20).Add(
 
 		col.New(3).Add(
-			image.NewFromBytes(img, extension.Png, props.Rect{
+			image.NewFromBytes(img, ext, props.Rect{
 				Center:  true,
 				Percent: 80,
 			}),
@@ -183,8 +185,8 @@ func getPageHeader(img []byte) core.Row {
 }
 
 func getPageFooter() core.Row {
-	return row.New(20).Add(
-		col.New(10).Add(
+	return row.New(50).Add(
+		col.New(8).Add(
 			text.New("Tel: 55 024 12345-1234", props.Text{
 				Top:   13,
 				Style: fontstyle.BoldItalic,
@@ -200,13 +202,16 @@ func getPageFooter() core.Row {
 				Color: getBlueColor(),
 			}),
 		),
-		col.New(2).Add(
-			text.New("Page: {Page}", props.Text{
+		col.New(4).Add(
+			text.New("ATCUD: IUSDIUSFD-02389", props.Text{
 				Style: fontstyle.Bold,
 				Size:  8,
 				Align: align.Center,
 			}),
-			code.NewQr("ABCD23EF-12345fhisdbk*sfgf;FGdF;GFDG;df;Gdf;GFDG;DAG;fdG;dfg", props.Rect{Top: 4}),
+			image.NewFromBytes(qrcode.Qr(), extension.Jpeg, props.Rect{
+				Percent: 70,
+				Center:  true,
+			}),
 		),
 	)
 }
