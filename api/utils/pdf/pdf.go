@@ -3,7 +3,7 @@
 
 import (
 	"hestia/api/utils/logger"
-	"hestia/api/utils/pdf/codes/qrcode"
+	qrcode "hestia/api/utils/pdf/codes/at-qrcode"
 	"os"
 
 	"log"
@@ -31,7 +31,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	err = document.Save("billingv2.pdf")
+	err = document.Save("billingv2.pdf") //.Save("billingv2.pdf")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -44,10 +44,11 @@ func main() {
 
 func GetMaroto() core.Maroto {
 	cfg := config.NewBuilder().
+		WithLeftMargin(5).
+		WithTopMargin(0).
+		WithRightMargin(5).
+		WithBottomMargin(6).
 		WithPageNumber().
-		WithLeftMargin(10).
-		WithTopMargin(15).
-		WithRightMargin(10).
 		Build()
 
 	darkGrayColor := getDarkGrayColor()
@@ -110,10 +111,12 @@ func GetMaroto() core.Maroto {
 func getTransactions() []core.Row {
 	rows := []core.Row{
 		row.New(5).Add(
-			col.New(3),
-			text.NewCol(4, "Product", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(2, "Quantity", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(3, "Price", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			//col.New(3),
+			text.NewCol(2, "Código", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Cod. Barras", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Artigo", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Uni", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Quant.", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
 		),
 	}
 
@@ -125,9 +128,9 @@ func getTransactions() []core.Row {
 
 	for i, content := range contents {
 		r := row.New(4).Add(
-			col.New(3),
-			text.NewCol(4, content[1], props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(2, content[2], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, content[0], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, content[1], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(3, content[2], props.Text{Size: 8, Align: align.Center}),
 			text.NewCol(3, content[3], props.Text{Size: 8, Align: align.Center}),
 		)
 		if i%2 == 0 {
@@ -179,14 +182,14 @@ func getPageHeader(img []byte, ext extension.Type) core.Row {
 				Color: getRedColor(),
 			}),
 
-			code.NewQr("ABCD23EF-12345", props.Rect{}),
+			//code.NewQr("ABCD23EF-12345", props.Rect{}),
 		),
 	)
 }
 
 func getPageFooter() core.Row {
 	return row.New(50).Add(
-		col.New(8).Add(
+		col.New(9).Add(
 			text.New("Tel: 55 024 12345-1234", props.Text{
 				Top:   13,
 				Style: fontstyle.BoldItalic,
@@ -209,7 +212,7 @@ func getPageFooter() core.Row {
 				Align: align.Center,
 			}),
 			image.NewFromBytes(qrcode.Qr(), extension.Jpeg, props.Rect{
-				Percent: 70,
+				Percent: 80,
 				Center:  true,
 			}),
 		),
@@ -250,7 +253,7 @@ func getRedColor() *props.Color {
 
 func getContents() [][]string {
 	return [][]string{
-		{"", "Swamp", "12", "R$ 4,00"},
+		{"72347823746", "Swamp", "12", "R$ 4,00"},
 		{"", "Sorin, A Planeswalker", "4", "R$ 90,00"},
 		{"", "Tassa", "4", "R$ 30,00"},
 		{"", "Skinrender", "4", "R$ 9,00"},
