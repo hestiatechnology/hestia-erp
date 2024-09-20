@@ -160,22 +160,22 @@ func getTransactions() [][]core.Col {
 				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
 				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
 				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, "kilo", textStyle).WithStyle(&colStyleGrayBg),
 				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
 				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, "23%", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"€ ", textStyle).WithStyle(&colStyleGrayBg),
 			}
 		} else {
 			col = []core.Col{
 				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(colStyle),
 				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
 				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(colStyle),
+				text.NewCol(1, "kilo", textStyle).WithStyle(colStyle),
 				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
 				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
+				text.NewCol(1, "23%", textStyle).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"€ ", textStyle).WithStyle(colStyle),
 			}
 		}
 
@@ -274,27 +274,52 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 		Align: align.Left,
 	}))
 
-	r = row.New(10).Add(
-		col.New(12).Add(
-			text.New("Cliente ABC XYZ Unipessoal Lda", props.Text{
-				Top:   2,
-				Style: fontstyle.Bold,
-				Size:  10,
-				Align: align.Right,
-			}),
-		),
-	)
+	rows = append(rows, text.NewRow(4, "Cliente ABC XYZ Unipessoal Lda", props.Text{
+		Top:   3,
+		Style: fontstyle.Bold,
+		Size:  10,
+		Align: align.Right,
+	}))
 
-	rows = append(rows, r)
-	rows = append(rows, row.New(7).Add(
-		text.NewCol(3, "Transactions", props.Text{
-			Top:   1.5,
-			Size:  9,
-			Style: fontstyle.Bold,
-			Align: align.Center,
-			Color: &props.WhiteColor,
-		}),
-	).WithStyle(&props.Cell{BackgroundColor: getDarkGrayColor()}))
+	rows = append(rows, text.NewRow(4, "Rua de Rio Covo 62", props.Text{
+		Top:   3,
+		Style: fontstyle.Normal,
+		Size:  8,
+		Align: align.Right,
+	}))
+
+	rows = append(rows, text.NewRow(4, "4755-466 Rio Covo Santa Eugénia", props.Text{
+		Top:   3,
+		Style: fontstyle.Normal,
+		Size:  8,
+		Align: align.Right,
+	}))
+
+	rows = append(rows, text.NewRow(4, "Portugal", props.Text{
+		Top:   3,
+		Style: fontstyle.Normal,
+		Size:  8,
+		Align: align.Right,
+	}))
+	// r =
+
+	rows = append(rows, text.NewRow(4, "Tel: 55 024 12345-1234", props.Text{
+		Top:   3,
+		Style: fontstyle.Normal,
+		Size:  8,
+		Align: align.Right,
+	}))
+
+	rows = append(rows, row.New(7))
+	//rows = append(rows, r)
+	rows = append(rows, text.NewRow(6, "Transactions", props.Text{
+		Top:   1.5,
+		Size:  9,
+		Style: fontstyle.Bold,
+		Align: align.Center,
+		Color: &props.WhiteColor,
+	}).WithStyle(&props.Cell{BackgroundColor: getDarkGrayColor()}),
+	)
 
 	rows = append(rows, row.New(5).Add(
 		//col.New(3),
