@@ -26,6 +26,14 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
+var colStyle = &props.Cell{
+	//BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
+	BorderType:      border.Full,
+	BorderColor:     &props.Color{Red: 0, Green: 0, Blue: 0},
+	LineStyle:       linestyle.Solid,
+	BorderThickness: 0.25,
+}
+
 func main() {
 	m := GetMaroto()
 	document, err := m.Generate()
@@ -81,17 +89,8 @@ func GetMaroto() core.Maroto {
 
 	transactions := getTransactions()
 
-	for i, transaction := range transactions {
-		//logger.DebugLogger.Println(transaction)
-		if i%2 != 0 {
-			// gray := getGrayColor()
-			m.AddRow(4, transaction...) /* .WithStyle(&props.Cell{
-				BackgroundColor: gray,
-			}) */
-
-		} else {
-			m.AddRow(4, transaction...)
-		}
+	for _, transaction := range transactions {
+		m.AddRow(4, transaction...)
 	}
 
 	/* m.AddRow(15,
@@ -117,22 +116,23 @@ func GetMaroto() core.Maroto {
 }
 
 func getTransactions() [][]core.Col {
-	colStyle := &props.Cell{
-		//BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
-		BorderType:      border.Full,
-		BorderColor:     &props.Color{Red: 0, Green: 0, Blue: 0},
-		LineStyle:       linestyle.Solid,
-		BorderThickness: 0.25,
-	}
-	colStyleGrayBg := &props.Cell{
+	// dereference the pointer colStyle
+	colStyleGrayBg := *colStyle
+	colStyleGrayBg.BackgroundColor = getGrayColor()
+
+	/* 	colStyleGrayBg := &props.Cell{
 		//BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
 		BackgroundColor: getGrayColor(),
 		BorderType:      border.Full,
 		BorderColor:     &props.Color{Red: 0, Green: 0, Blue: 0},
 		LineStyle:       linestyle.Solid,
 		BorderThickness: 0.25,
-	}
+	} */
 
+	textStyle := props.Text{
+		Size:  8,
+		Align: align.Center,
+	}
 	/* 	rows := []core.Row{
 		row.New(5).Add(
 			//col.New(3),
@@ -157,19 +157,25 @@ func getTransactions() [][]core.Col {
 		var col []core.Col
 		if i%2 != 0 {
 			col = []core.Col{
-				text.NewCol(2, content[0]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyleGrayBg),
+				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
 				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
-				text.NewCol(3, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(colStyleGrayBg),
-				text.NewCol(3, content[3]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyleGrayBg),
-				text.NewCol(3, content[3]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyleGrayBg),
+				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
 			}
 		} else {
 			col = []core.Col{
-				text.NewCol(2, content[0]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
+				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(colStyle),
 				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
-				text.NewCol(3, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(colStyle),
-				text.NewCol(3, content[3]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
-				text.NewCol(3, content[3]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
+				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
+				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
 			}
 		}
 
@@ -292,11 +298,14 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 
 	rows = append(rows, row.New(5).Add(
 		//col.New(3),
-		text.NewCol(2, "Código", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+		text.NewCol(2, "Código", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
 		// text.NewCol(2, "Cod. Barras", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-		text.NewCol(3, "Artigo", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-		text.NewCol(3, "Uni", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-		text.NewCol(3, "Quant.", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+		text.NewCol(5, "Artigo", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
+		text.NewCol(1, "Uni", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
+		text.NewCol(1, "Quant.", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
+		text.NewCol(1, "€/Uni", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
+		text.NewCol(1, "IVA", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
+		text.NewCol(1, "Total", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).WithStyle(colStyle),
 	))
 	return rows
 }
@@ -368,7 +377,7 @@ func getBlueColor() *props.Color {
 func getContents() [][]string {
 	return [][]string{
 		{"72347823746", "1234567890123", "Swamp", "12", "R$ 4,00"},
-		/* {"23453675869", "1234567890123", "Sorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A Planeswalker", "4", "R$ 90,00"}, */
+		/* 		{"23453675869", "1234567890123", "Sorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A Planeswalker", "4", "R$ 90,00"}, */
 		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
 		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
 		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
