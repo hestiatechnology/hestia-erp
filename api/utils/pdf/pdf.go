@@ -237,7 +237,7 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 	//r =
 
 	rows = append(rows, text.NewRow(4, "Hestia Technology & Daniel Pereira Unipessoal Lda", props.Text{
-		Top:   2,
+		Top:   3,
 		Style: fontstyle.Bold,
 		Size:  10,
 		Align: align.Left,
@@ -246,30 +246,30 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 	// r =
 
 	rows = append(rows, text.NewRow(4, "Rua de Rio Covo 62", props.Text{
-		Top:   2,
-		Style: fontstyle.Bold,
+		Top:   3,
+		Style: fontstyle.Normal,
 		Size:  8,
 		Align: align.Left,
 	}))
 
 	rows = append(rows, text.NewRow(4, "4755-466 Rio Covo Santa Eugénia", props.Text{
-		Top:   2,
-		Style: fontstyle.Bold,
+		Top:   3,
+		Style: fontstyle.Normal,
 		Size:  8,
 		Align: align.Left,
 	}))
 
 	rows = append(rows, text.NewRow(4, "Portugal", props.Text{
-		Top:   2,
-		Style: fontstyle.Bold,
+		Top:   3,
+		Style: fontstyle.Normal,
 		Size:  8,
 		Align: align.Left,
 	}))
 	// r =
 
 	rows = append(rows, text.NewRow(4, "Tel: 55 024 12345-1234", props.Text{
-		Top:   2,
-		Style: fontstyle.Bold,
+		Top:   3,
+		Style: fontstyle.Normal,
 		Size:  8,
 		Align: align.Left,
 	}))
