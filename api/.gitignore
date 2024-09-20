@@ -27,3 +27,5 @@ go.work.sum
 # Ignore Linux/Unix compiled files
 hst-protextil-migration
 hst-macwin-migration
+
+utils/pdf/*.pdf
