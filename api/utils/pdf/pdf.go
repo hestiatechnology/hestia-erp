@@ -125,7 +125,7 @@ func getTransactions() [][]core.Col {
 
 func getPageHeader(img []byte, ext extension.Type) []core.Row {
 	var rows []core.Row
-	rows = append(rows, row.New(10).Add(
+	rows = append(rows, row.New(20).Add(
 
 		col.New(3).Add(
 			image.NewFromBytes(img, ext, props.Rect{
@@ -141,6 +141,18 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 				Style: fontstyle.Bold,
 				Size:  13,
 				Align: align.Right,
+			}),
+			text.New("Original", props.Text{
+				Top:   8,
+				Style: fontstyle.Bold,
+				Align: align.Right,
+				Size:  9,
+			}),
+			text.New("27/06/2004", props.Text{
+				Top:   13,
+				Style: fontstyle.Normal,
+				Align: align.Right,
+				Size:  7,
 			}),
 		),
 	))
