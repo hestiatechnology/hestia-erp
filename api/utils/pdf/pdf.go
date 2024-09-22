@@ -28,7 +28,7 @@ import (
 
 var colStyle = &props.Cell{
 	//BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
-	BorderType:      border.Full,
+	BorderType:      border.Bottom,
 	BorderColor:     &props.Color{Red: 0, Green: 0, Blue: 0},
 	LineStyle:       linestyle.Solid,
 	BorderThickness: 0.25,
@@ -81,137 +81,51 @@ func GetMaroto() core.Maroto {
 		log.Fatal(err.Error())
 	}
 
-	/* 	m.AddRows(text.NewRow(10, "Invoice ABC123456789", props.Text{
-		Top:   3,
-		Style: fontstyle.Bold,
-		Align: align.Center,
-	})) */
-
 	transactions := getTransactions()
 
 	for _, transaction := range transactions {
-		m.AddRow(4, transaction...)
+		m.AddAutoRow(transaction...)
 	}
 
-	/* m.AddRow(15,
-		col.New(6).Add(
-			code.NewBar("5123.151231.512314.1251251.123215", props.Barcode{
-				Percent: 0,
-				Proportion: props.Proportion{
-					Width:  20,
-					Height: 2,
-				},
-			}),
-			text.New("5123.151231.512314.1251251.123215", props.Text{
-				Top:    12,
-				Family: "",
-				Style:  fontstyle.Bold,
-				Size:   9,
-				Align:  align.Center,
-			}),
-		),
-		col.New(6),
-	) */
 	return m
 }
 
 func getTransactions() [][]core.Col {
-	// dereference the pointer colStyle
-	colStyleGrayBg := *colStyle
-	colStyleGrayBg.BackgroundColor = getGrayColor()
-
-	/* 	colStyleGrayBg := &props.Cell{
-		//BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
-		BackgroundColor: getGrayColor(),
-		BorderType:      border.Full,
-		BorderColor:     &props.Color{Red: 0, Green: 0, Blue: 0},
-		LineStyle:       linestyle.Solid,
-		BorderThickness: 0.25,
-	} */
-
 	textStyle := props.Text{
+		/* 		Top:   1, */
 		Size:  8,
 		Align: align.Center,
 	}
-	/* 	rows := []core.Row{
-		row.New(5).Add(
-			//col.New(3),
-			text.NewCol(1, "Código", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(2, "Cod. Barras", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(3, "Artigo", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(3, "Uni", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(3, "Quant.", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-		),
-	} */
 
-	/* 	var contentsRow []core.Row */
+	textStyleProduct := textStyle
+	textStyleProduct.Align = align.Left
+	textStyleProduct.Left = 1
+
 	contents := getContents()
-	//for i := 0; i < 8; i++ {
-	//	contents = append(contents, contents...)
-	//}
 
 	var cols [][]core.Col
-	for i, content := range contents {
+	for _, content := range contents {
 		logger.DebugLogger.Println(content)
 
-		var col []core.Col
-		if i%2 != 0 {
-			col = []core.Col{
-				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
-				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, "kilo", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, "23%", textStyle).WithStyle(&colStyleGrayBg),
-				text.NewCol(1, content[3]+"€ ", textStyle).WithStyle(&colStyleGrayBg),
-			}
-		} else {
-			col = []core.Col{
-				text.NewCol(2, content[0]+"\n ", textStyle).WithStyle(colStyle),
-				// text.NewCol(2, content[1]+"\n ", props.Text{Size: 8, Align: align.Center}).WithStyle(colStyle),
-				text.NewCol(5, content[2]+"\n ", props.Text{Size: 8, Align: align.Left, Left: 1}).WithStyle(colStyle),
-				text.NewCol(1, "kilo", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"\n ", textStyle).WithStyle(colStyle),
-				text.NewCol(1, "23%", textStyle).WithStyle(colStyle),
-				text.NewCol(1, content[3]+"€ ", textStyle).WithStyle(colStyle),
-			}
+		col := []core.Col{
+			text.NewCol(0, ""),
+			text.NewCol(2, content[0]+"\n ", textStyle),
+			text.NewCol(5, content[2]+"\n ", textStyleProduct),
+			text.NewCol(1, "kilo", textStyle),
+			text.NewCol(1, content[3]+"\n ", textStyle),
+			text.NewCol(1, content[3]+"\n ", textStyle),
+			text.NewCol(1, "23%", textStyle),
+			text.NewCol(1, content[3]+"€ ", textStyle),
 		}
 
 		cols = append(cols, col)
 	}
-
-	/* 		if i%2 == 0 {
-		gray := getGrayColor()
-		r.WithStyle(&props.Cell{BackgroundColor: gray})
-	} */
-
-	/* contentsRow = append(contentsRow, r) */
-
-	/* 	rows = append(rows, contentsRow...)
-
-	   	rows = append(rows, row.New(20).Add(
-	   		col.New(7),
-	   		text.NewCol(2, "Total:", props.Text{
-	   			Top:   5,
-	   			Style: fontstyle.Bold,
-	   			Size:  8,
-	   			Align: align.Right,
-	   		}),
-	   		text.NewCol(3, "R$ 2.567,00", props.Text{
-	   			Top:   5,
-	   			Style: fontstyle.Bold,
-	   			Size:  8,
-	   			Align: align.Center,
-	   		}),
-	   	)) */
 	return cols
 }
 
 func getPageHeader(img []byte, ext extension.Type) []core.Row {
 	var rows []core.Row
-	r := row.New(10).Add(
+	rows = append(rows, row.New(10).Add(
 
 		col.New(3).Add(
 			image.NewFromBytes(img, ext, props.Rect{
@@ -228,13 +142,8 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 				Size:  13,
 				Align: align.Right,
 			}),
-
-			//code.NewQr("ABCD23EF-12345", props.Rect{}),
 		),
-	)
-	rows = append(rows, r)
-
-	//r =
+	))
 
 	rows = append(rows, text.NewRow(4, "Hestia Technology & Daniel Pereira Unipessoal Lda", props.Text{
 		Top:   3,
@@ -242,8 +151,6 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 		Size:  10,
 		Align: align.Left,
 	}))
-
-	// r =
 
 	rows = append(rows, text.NewRow(4, "Rua de Rio Covo 62", props.Text{
 		Top:   3,
@@ -265,7 +172,6 @@ func getPageHeader(img []byte, ext extension.Type) []core.Row {
 		Size:  8,
 		Align: align.Left,
 	}))
-	// r =
 
 	rows = append(rows, text.NewRow(4, "Tel: 55 024 12345-1234", props.Text{
 		Top:   3,
@@ -375,14 +281,15 @@ func getDarkGrayColor() *props.Color {
 	}
 }
 
-func getGrayColor() *props.Color {
-	return &props.Color{
-		Red:   200,
-		Green: 200,
-		Blue:  200,
+/*
+	 func getGrayColor() *props.Color {
+		return &props.Color{
+			Red:   200,
+			Green: 200,
+			Blue:  200,
+		}
 	}
-}
-
+*/
 func getBlueColor() *props.Color {
 	return &props.Color{
 		Red:   10,
@@ -401,8 +308,8 @@ func getBlueColor() *props.Color {
 
 func getContents() [][]string {
 	return [][]string{
-		{"72347823746", "1234567890123", "Swamp", "12", "R$ 4,00"},
-		/* 		{"23453675869", "1234567890123", "Sorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A PlaneswalkerSorin, A Planeswalker", "4", "R$ 90,00"}, */
+		{"P029029", "1234567890123", "Aspirador Robô Xiaomi ", "12", "R$ 4,00"},
+		{"P030592", "1234567890123", "Coluna Xiaomi Mi Smart ", "4", "R$ 90,00"},
 		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
 		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
 		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
@@ -426,207 +333,5 @@ func getContents() [][]string {
 		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
 		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
 		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
-		{"23453675869", "1234567890123", "Tassa", "4", "R$ 30,00"},
-		{"23453675869", "1234567890123", "Skinrender", "4", "R$ 9,00"},
-		{"23453675869", "1234567890123", "Island", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Mountain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Plain", "12", "R$ 4,00"},
-		{"23453675869", "1234567890123", "Black Lotus", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Time Walk", "1", "R$ 1.000,00"},
-		{"23453675869", "1234567890123", "Emberclave", "4", "R$ 44,00"},
-		{"23453675869", "1234567890123", "Anax", "4", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Murderous Rider", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "dfsdjlsbfrhasdasdaaaaaa", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"23453675869", "1234567890123", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"23453675869", "1234567890123", "Tymarett", "4", "R$ 13,00"},
-		{"23453675869", "1234567890123", "Doom Blade", "4", "R$ 5,00"},
-		{"23453675869", "1234567890123", "Dark Lord", "3", "R$ 7,00"},
-		{"23453675869", "1234567890123", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"23453675869", "1234567890123", "Poring", "4", "R$ 1,00"},
-		{"23453675869", "1234567890123", "Deviling", "4", "R$ 99,00"},
-		{"23453675869", "1234567890123", "Seiya", "4", "R$ 45,00"},
-		{"23453675869", "1234567890123", "Harry Potter", "4", "R$ 62,00"},
-		{"23453675869", "1234567890123", "Goku", "4", "R$ 77,00"},
-		{"23453675869", "1234567890123", "Phreoni", "4", "R$ 22,00"},
-		{"23453675869", "1234567890123", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"23453675869", "1234567890123", "Lord Seyren", "4", "R$ 55,00"},
 	}
 }
