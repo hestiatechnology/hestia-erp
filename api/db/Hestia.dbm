@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="48"
-	 last-position="79,385" last-zoom="0.7" scene-rect="0,0,6780.55,2058.92"
+<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="50"
+	 last-position="272,789" last-zoom="1" scene-rect="0,0,6780.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -147,7 +147,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="employee" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="hr"/>
 	<role name="postgres"/>
-	<position x="4560" y="60"/>
+	<position x="2780" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 		<comment> <![CDATA[HR's employee internal id]]> </comment>
@@ -188,7 +188,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="timesheet" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="4960" y="60"/>
+	<position x="3180" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -212,7 +212,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="vacation" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5420" y="60"/>
+	<position x="3640" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -236,7 +236,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="employee_identification_doc" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5880" y="60"/>
+	<position x="4100" y="120"/>
 	<column name="employee_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -254,7 +254,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="identification_doc" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="6460" y="60"/>
+	<position x="4680" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -275,7 +275,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="device" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="4560" y="360"/>
+	<position x="2780" y="420"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -302,7 +302,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="timesheet_type" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5000" y="420"/>
+	<position x="3220" y="480"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -317,15 +317,24 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="document" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="document" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
-	<position x="600" y="980"/>
+	<position x="600" y="940"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="company_id" not-null="true">
 		<type name="uuid" length="0"/>
+	</column>
+	<column name="series_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="number" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="timestamptz" length="0"/>
 	</column>
 	<constraint name="pk_document" type="pk-constr" table="sales.document">
 		<columns names="id" ref-type="src-columns"/>
@@ -788,7 +797,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="type" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
-	<position x="960" y="1140"/>
+	<position x="1020" y="1160"/>
 	<column name="id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -815,7 +824,7 @@ FTR is of type FT]]> </comment>
 <table name="series_type_code" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
-	<position x="600" y="1180"/>
+	<position x="520" y="1200"/>
 	<column name="series_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -1068,6 +1077,18 @@ FTR is of type FT]]> </comment>
 <constraint name="fk_type_type" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.type" table="sales.type">
 	<columns names="type" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_series_type_code_series" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.series" table="sales.series_type_code">
+	<columns names="series_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_series_type_code_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.type" table="sales.series_type_code">
+	<columns names="type_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1325,10 +1346,22 @@ FTR is of type FT]]> </comment>
 	 dst-table="sales.type" reference-fk="fk_type_type"
 	 src-required="false" dst-required="false">
 	<line>
-		<position x="1281.3" y="1210.91"/>
-	<position x="1281.3" y="1107"/>
-	<position x="1152.2" y="1107"/>
+		<position x="1341.3" y="1230.91"/>
+	<position x="1341.3" y="1127"/>
+	<position x="1212.2" y="1127"/>
 	</line>
 </relationship>
+
+<relationship name="rel_series_type_code_series" type="relfk" layers="0"
+	 custom-color="#fb6f7b"
+	 src-table="sales.series_type_code"
+	 dst-table="sales.series" reference-fk="fk_series_type_code_series"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_series_type_code_type" type="relfk" layers="0"
+	 custom-color="#cdb6d3"
+	 src-table="sales.series_type_code"
+	 dst-table="sales.type" reference-fk="fk_series_type_code_type"
+	 src-required="false" dst-required="true"/>
 
 </dbmodel>
