@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.4" use-changelog="true" max-obj-count="56"
-	 last-position="111,1454" last-zoom="1.35" scene-rect="0,0,5000.55,2058.92"
+<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="57"
+	 last-position="620,615" last-zoom="0.8" scene-rect="0,0,5000.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -852,7 +852,7 @@ FTR is of type FT]]> </comment>
 	</constraint>
 </table>
 
-<table name="vat_rate" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="vat_rate" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="accounting"/>
 	<role name="hestia_erp_internal"/>
 	<position x="3560" y="1120"/>
@@ -867,6 +867,9 @@ FTR is of type FT]]> </comment>
 	</column>
 	<column name="rate" not-null="true">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="vat_type_id" not-null="true">
+		<type name="uuid" length="0"/>
 	</column>
 	<column name="country" not-null="true">
 		<type name="text" length="0"/>
@@ -933,6 +936,26 @@ FTR is of type FT]]> </comment>
 		<type name="timestamptz" length="0"/>
 	</column>
 	<constraint name="pk_vat_exemption" type="pk-constr" table="accounting.vat_exemption">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="vat_type" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="accounting"/>
+	<role name="hestia_erp_internal"/>
+	<comment> <![CDATA[Column to define type such as
+NOR, INT, RED]]> </comment>
+	<position x="3600" y="1460"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_vat_type" type="pk-constr" table="accounting.vat_type">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -1207,6 +1230,12 @@ FTR is of type FT]]> </comment>
 	<columns names="code" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fk_vat_rate_vat_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_type" table="accounting.vat_rate">
+	<columns names="vat_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="fk_document_line_document" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.document" table="sales.document_line">
 	<columns names="document_id" ref-type="src-columns"/>
@@ -1453,7 +1482,11 @@ FTR is of type FT]]> </comment>
 	 custom-color="#e1a152"
 	 src-table="itv.gender"
 	 dst-table="companies.company" reference-fk="fk_gender_company"
-	 src-required="false" dst-required="true"/>
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="4.91547" y="-0.25299"/>
+	</label>
+</relationship>
 
 <relationship name="rel_series_company" type="relfk" layers="0"
 	 custom-color="#c86b39"
@@ -1529,55 +1562,14 @@ FTR is of type FT]]> </comment>
 	 dst-table="inventory.product" reference-fk="fk_document_line_product"
 	 src-required="false" dst-required="true"/>
 
+<relationship name="rel_vat_rate_vat_type" type="relfk" layers="0"
+	 custom-color="#f57f08"
+	 src-table="accounting.vat_rate"
+	 dst-table="accounting.vat_type" reference-fk="fk_vat_rate_vat_type"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="27.4333" y="-30.053"/>
+	</label>
+</relationship>
 
-<changelog>
-	<entry date="2024-09-25T21:13:03" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:03" signature="accounting.vat_exemption.start_date" type="column" action="created"/>
-	<entry date="2024-09-25T21:13:14" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:14" signature="accounting.vat_exemption.end_date" type="column" action="created"/>
-	<entry date="2024-09-25T21:13:38" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:38" signature="accounting.vat_exemption.description" type="column" action="created"/>
-	<entry date="2024-09-25T21:13:43" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:43" signature="accounting.vat_exemption.description" type="column" action="updated"/>
-	<entry date="2024-09-25T21:13:44" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:44" signature="accounting.vat_exemption" type="table" action="updated"/>
-	<entry date="2024-09-25T21:13:44" signature="accounting.vat_exemption.pk_vat_exemption" type="constraint" action="updated"/>
-	<entry date="2024-09-25T21:21:01" signature="sales.document_lines" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:01" signature="sales.document_lines.pk_document_line" type="constraint" action="created"/>
-	<entry date="2024-09-25T21:21:04" signature="sales.document_lines" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:04" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:04" signature="sales.document_line.pk_document_line" type="constraint" action="updated"/>
-	<entry date="2024-09-25T21:21:26" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:26" signature="sales.document_line.fk_document_line_document" type="constraint" action="created"/>
-	<entry date="2024-09-25T21:21:48" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:48" signature="sales.document_line.fk_document_line_product" type="constraint" action="created"/>
-	<entry date="2024-09-25T21:21:49" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:49" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-25T21:21:49" signature="sales.document_line.pk_document_line" type="constraint" action="updated"/>
-	<entry date="2024-09-26T14:40:05" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T14:40:05" signature="sales.document_line.vat_exemption_id" type="column" action="updated"/>
-	<entry date="2024-09-26T14:43:59" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T14:43:59" signature="sales.document_line.ck_document_line_vat_rate_vat_exemption" type="constraint" action="created"/>
-	<entry date="2024-09-26T14:49:39" signature="inventory.product" type="table" action="updated"/>
-	<entry date="2024-09-26T14:49:39" signature="inventory.product.stock" type="column" action="updated"/>
-	<entry date="2024-09-26T14:49:42" signature="inventory.product" type="table" action="updated"/>
-	<entry date="2024-09-26T14:49:42" signature="inventory.product" type="table" action="updated"/>
-	<entry date="2024-09-26T14:49:42" signature="inventory.product.pk_product" type="constraint" action="updated"/>
-	<entry date="2024-09-26T14:56:37" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T14:56:37" signature="sales.document_line.quantity" type="column" action="created"/>
-	<entry date="2024-09-26T15:03:32" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:03:32" signature="sales.document_line.price" type="column" action="created"/>
-	<entry date="2024-09-26T15:11:41" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:11:41" signature="sales.document_line.total" type="column" action="created"/>
-	<entry date="2024-09-26T15:11:47" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:11:47" signature="sales.document_line.quantity" type="column" action="updated"/>
-	<entry date="2024-09-26T15:11:50" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:11:50" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:11:50" signature="sales.document_line.pk_document_line" type="constraint" action="updated"/>
-	<entry date="2024-09-26T15:24:57" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:24:57" signature="sales.document_line.total" type="column" action="updated"/>
-	<entry date="2024-09-26T15:25:00" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:25:00" signature="sales.document_line" type="table" action="updated"/>
-	<entry date="2024-09-26T15:25:00" signature="sales.document_line.pk_document_line" type="constraint" action="updated"/>
-</changelog>
 </dbmodel>
