@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx-shopspring-decimal v0.0.0-20220624020537-1d36b5a1853e
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/johnfercher/maroto/v2 v2.1.3
+	github.com/johnfercher/maroto/v2 v2.1.4
 	github.com/microsoft/go-mssqldb v1.7.2
 	github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1
