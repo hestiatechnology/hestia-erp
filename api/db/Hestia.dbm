@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="57"
-	 last-position="620,615" last-zoom="0.8" scene-rect="0,0,5000.55,2058.92"
+<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="60"
+	 last-position="3874,2013" last-zoom="1.85" scene-rect="0,0,5000.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -321,7 +321,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="document" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="document" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
 	<position x="600" y="900"/>
@@ -343,6 +343,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="year" default-value="EXTRACT(YEAR FROM date AT TIME ZONE 'Europe/Lisbon')" generated="true">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="hash" not-null="true">
+		<type name="text" length="0"/>
 	</column>
 	<constraint name="pk_document" type="pk-constr" table="sales.document">
 		<columns names="id" ref-type="src-columns"/>
@@ -862,7 +865,7 @@ FTR is of type FT]]> </comment>
 	<column name="start_date" not-null="true">
 		<type name="timestamptz" length="0"/>
 	</column>
-	<column name="end_date" not-null="true">
+	<column name="end_date">
 		<type name="timestamptz" length="0"/>
 	</column>
 	<column name="rate" not-null="true">
@@ -879,7 +882,7 @@ FTR is of type FT]]> </comment>
 	</constraint>
 </table>
 
-<table name="document_line" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+<table name="document_line" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
 	<position x="480" y="1260"/>
@@ -902,8 +905,12 @@ FTR is of type FT]]> </comment>
 		<type name="numeric" length="0"/>
 		<comment> <![CDATA[price per unit]]> </comment>
 	</column>
-	<column name="total" default-value="quantity * price" generated="true">
+	<column name="net_total" default-value="quantity * price" generated="true">
 		<type name="numeric" length="0"/>
+	</column>
+	<column name="gross_total" not-null="true">
+		<type name="numeric" length="0"/>
+		<comment> <![CDATA[Needs to be calculated by the backend]]> </comment>
 	</column>
 	<constraint name="pk_document_line" type="pk-constr" table="sales.document_line">
 		<columns names="document_id,product_id" ref-type="src-columns"/>
@@ -1248,6 +1255,18 @@ NOR, INT, RED]]> </comment>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fk_document_line_vat_rate" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_rate" table="sales.document_line">
+	<columns names="vat_rate_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_line_vat_exemption" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_exemption" table="sales.document_line">
+	<columns names="vat_exemption_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_employee_company" type="relfk" layers="0"
 	 custom-color="#83c25d"
 	 src-table="hr.employee"
@@ -1406,7 +1425,11 @@ NOR, INT, RED]]> </comment>
 	 custom-color="#3934a7"
 	 src-table="sales.client"
 	 dst-table="companies.company" reference-fk="fk_client_company"
-	 src-required="false" dst-required="true"/>
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="5.79613" y="5.89578"/>
+	</label>
+</relationship>
 
 <relationship name="rel_supplier_country" type="relfk" layers="0"
 	 custom-color="#e3cd85"
@@ -1571,5 +1594,17 @@ NOR, INT, RED]]> </comment>
 		<position x="27.4333" y="-30.053"/>
 	</label>
 </relationship>
+
+<relationship name="rel_document_line_vat_rate" type="relfk" layers="0"
+	 custom-color="#529fa6"
+	 src-table="sales.document_line"
+	 dst-table="accounting.vat_rate" reference-fk="fk_document_line_vat_rate"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_document_line_vat_exemption" type="relfk" layers="0"
+	 custom-color="#fc6574"
+	 src-table="sales.document_line"
+	 dst-table="accounting.vat_exemption" reference-fk="fk_document_line_vat_exemption"
+	 src-required="false" dst-required="false"/>
 
 </dbmodel>
