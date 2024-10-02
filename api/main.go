@@ -10,6 +10,7 @@ import (
 
 	"hestia/api/interceptor"
 	"hestia/api/methods"
+	"hestia/api/pb/accounting"
 	"hestia/api/pb/company"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/pb/textile"
@@ -47,6 +48,7 @@ func main() {
 	idmanagement.RegisterIdentityManagementServer(s, &methods.IdentityManagementServer{})
 	textile.RegisterTextileServer(s, &methods.TextileServer{})
 	company.RegisterCompanyManagementServer(s, &methods.CompanyManagementServer{})
+	accounting.RegisterTaxServer(s, &methods.TaxServer{})
 	if err := s.Serve(lis); err != nil {
 		logger.ErrorLogger.Fatalf("failed to serve: %v", err)
 	}
