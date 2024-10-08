@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.2" use-changelog="false" max-obj-count="44"
-	 last-position="8,18" last-zoom="0.8" scene-rect="0,0,6780.55,2058.92"
+<dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="60"
+	 last-position="3874,2013" last-zoom="1.85" scene-rect="0,0,5000.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -56,6 +56,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </schema>
 
 <schema name="itv" layers="0" rect-visible="true" fill-color="#00ff7f" name-color="#000000">
+	<role name="hestia_erp_internal"/>
+</schema>
+
+<schema name="accounting" layers="0" rect-visible="true" fill-color="#c4689e" name-color="#e7e7e7">
 	<role name="hestia_erp_internal"/>
 </schema>
 
@@ -147,7 +151,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="employee" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="hr"/>
 	<role name="postgres"/>
-	<position x="4560" y="60"/>
+	<position x="2780" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 		<comment> <![CDATA[HR's employee internal id]]> </comment>
@@ -188,7 +192,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="timesheet" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="4960" y="60"/>
+	<position x="3180" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -212,7 +216,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="vacation" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5420" y="60"/>
+	<position x="3640" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -236,7 +240,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="employee_identification_doc" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5880" y="60"/>
+	<position x="4100" y="120"/>
 	<column name="employee_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -254,7 +258,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="identification_doc" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="6460" y="60"/>
+	<position x="4680" y="120"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -275,7 +279,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="device" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="4560" y="360"/>
+	<position x="2780" y="420"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -302,7 +306,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="timesheet_type" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="hr"/>
 	<role name="hestia_erp_internal"/>
-	<position x="5000" y="420"/>
+	<position x="3220" y="480"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -317,18 +321,38 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="document" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+<table name="document" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
-	<position x="540" y="1000"/>
+	<position x="600" y="900"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="company_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
+	<column name="series_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="num" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[number of the invoice]]> </comment>
+	</column>
+	<column name="date" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="year" default-value="EXTRACT(YEAR FROM date AT TIME ZONE 'Europe/Lisbon')" generated="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="hash" not-null="true">
+		<type name="text" length="0"/>
+	</column>
 	<constraint name="pk_document" type="pk-constr" table="sales.document">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_document_series_num_year" type="uq-constr" table="sales.document">
+		<columns names="company_id,series_id,num,year" ref-type="src-columns"/>
+		<comment> <![CDATA[Because the YEAR column is generated using the Europe/Lisbon timezone people in the Azores timnezone will have a problem when creating new series at 23:00 of 31st of december]]> </comment>
 	</constraint>
 </table>
 
@@ -371,7 +395,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="text" length="0"/>
 	</column>
 	<column name="stock">
-		<type name="numeric" length="14" precision="5"/>
+		<type name="numeric" length="0" precision="0"/>
 		<comment> <![CDATA[If stock is null then stock is not enabled
 100 digits good enough no?]]> </comment>
 	</column>
@@ -415,7 +439,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="subscription" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="subscriptions"/>
 	<role name="hestia_erp_internal"/>
-	<position x="80" y="1400"/>
+	<position x="60" y="1640"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -448,7 +472,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="module" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="subscriptions"/>
 	<role name="hestia_erp_internal"/>
-	<position x="1360" y="1440"/>
+	<position x="1340" y="1680"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -469,7 +493,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="subscription_module" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="subscriptions"/>
 	<role name="hestia_erp_internal"/>
-	<position x="780" y="1440"/>
+	<position x="760" y="1680"/>
 	<column name="subscription_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
@@ -484,21 +508,28 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="doccument_series" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="series" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="sales"/>
 	<role name="hestia_erp_internal"/>
-	<position x="1060" y="920"/>
+	<position x="1160" y="920"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
+	<column name="company_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
 	<column name="code" not-null="true" default-value="'H'">
-		<type name="character varying" length="80"/>
+		<type name="text" length="80"/>
+		<comment> <![CDATA[FT code/number]]> </comment>
 	</column>
 	<column name="description">
 		<type name="text" length="0"/>
 	</column>
-	<constraint name="pk_document_series" type="pk-constr" table="sales.doccument_series">
+	<constraint name="pk_series" type="pk-constr" table="sales.series">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_series_code" type="uq-constr" table="sales.series">
+		<columns names="code" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -581,7 +612,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="client" layers="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="sales"/>
 	<role name="postgres"/>
-	<position x="60" y="920"/>
+	<position x="120" y="960"/>
 	<column name="id" not-null="true" default-value="gen_random_uuid()">
 		<type name="uuid" length="0"/>
 	</column>
@@ -609,13 +640,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="country" not-null="true">
 		<type name="varchar" length="2"/>
 	</column>
-	<constraint name="pk_supplier" type="pk-constr" table="sales.client">
+	<constraint name="pk_client" type="pk-constr" table="sales.client">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="uq_supplier_code" type="uq-constr" table="sales.client">
+	<constraint name="uq_client_code" type="uq-constr" table="sales.client">
 		<columns names="company_id,code" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="uq_supplier_vat_id" type="uq-constr" table="sales.client">
+	<constraint name="uq_client_vat_id" type="uq-constr" table="sales.client">
 		<columns names="company_id,vat_id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -778,6 +809,164 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
+<table name="type" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="sales"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1000" y="1220"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="company_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="type">
+		<type name="uuid" length="0"/>
+		<comment> <![CDATA[Example:
+type: FTR
+FTR is of type FT]]> </comment>
+	</column>
+	<constraint name="type_pk" type="pk-constr" table="sales.type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_type_code" type="uq-constr" table="sales.type">
+		<columns names="company_id,code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="series_type_code" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="sales"/>
+	<role name="hestia_erp_internal"/>
+	<position x="1440" y="1240"/>
+	<column name="series_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="type_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+		<comment> <![CDATA[Validation code provided by AT]]> </comment>
+	</column>
+	<constraint name="pk_series_type_code" type="pk-constr" table="sales.series_type_code">
+		<columns names="series_id,type_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="vat_rate" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="accounting"/>
+	<role name="hestia_erp_internal"/>
+	<position x="3560" y="1120"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="end_date">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="rate" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="vat_type_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="country" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_vat_rate" type="pk-constr" table="accounting.vat_rate">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="document_line" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="sales"/>
+	<role name="hestia_erp_internal"/>
+	<position x="480" y="1260"/>
+	<column name="document_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="product_id" not-null="true">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="vat_rate_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="vat_exemption_id">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="quantity" not-null="true">
+		<type name="numeric" length="0" precision="0"/>
+	</column>
+	<column name="price" not-null="true">
+		<type name="numeric" length="0"/>
+		<comment> <![CDATA[price per unit]]> </comment>
+	</column>
+	<column name="net_total" default-value="quantity * price" generated="true">
+		<type name="numeric" length="0"/>
+	</column>
+	<column name="gross_total" not-null="true">
+		<type name="numeric" length="0"/>
+		<comment> <![CDATA[Needs to be calculated by the backend]]> </comment>
+	</column>
+	<constraint name="pk_document_line" type="pk-constr" table="sales.document_line">
+		<columns names="document_id,product_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="ck_document_line_vat_rate_vat_exemption" type="ck-constr" table="sales.document_line">
+			<expression> <![CDATA[    (vat_rate_id IS NOT NULL AND vat_exemption_id IS NULL) 
+    OR 
+    (vat_rate_id IS NULL AND vat_exemption_id IS NOT NULL)]]> </expression>
+	</constraint>
+</table>
+
+<table name="vat_exemption" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="accounting"/>
+	<role name="hestia_erp_internal"/>
+	<comment> <![CDATA[Exemption reasons provided by AT]]> </comment>
+	<position x="3920" y="1120"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<column name="end_date">
+		<type name="timestamptz" length="0"/>
+	</column>
+	<constraint name="pk_vat_exemption" type="pk-constr" table="accounting.vat_exemption">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="vat_type" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="accounting"/>
+	<role name="hestia_erp_internal"/>
+	<comment> <![CDATA[Column to define type such as
+NOR, INT, RED]]> </comment>
+	<position x="3600" y="1460"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="pk_vat_type" type="pk-constr" table="accounting.vat_type">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
 <constraint name="fk_company_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="companies.company">
 	<columns names="country_code" ref-type="src-columns"/>
@@ -862,6 +1051,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fk_document_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="sales.document">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_series" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.series" table="sales.document">
+	<columns names="series_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="fk_product_category" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="inventory.category" table="inventory.product">
 	<columns names="category_id" ref-type="src-columns"/>
@@ -904,6 +1105,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="fk_series_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="sales.series">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <constraint name="fk_location_company" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="companies.location">
 	<columns names="company_id" ref-type="src-columns"/>
@@ -922,13 +1129,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="fk_supplier_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+<constraint name="fk_client_company" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="sales.client">
 	<columns names="company_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="fk_supplier_country" type="fk-constr" comparison-type="MATCH SIMPLE"
+<constraint name="fk_client_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="sales.client">
 	<columns names="country" ref-type="src-columns"/>
 	<columns names="code" ref-type="dst-columns"/>
@@ -997,6 +1204,66 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <constraint name="fk_gender_company" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="itv.gender">
 	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_type_company" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="companies.company" table="sales.type">
+	<columns names="company_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_type_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.type" table="sales.type">
+	<columns names="type" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_series_type_code_series" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.series" table="sales.series_type_code">
+	<columns names="series_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_series_type_code_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.type" table="sales.series_type_code">
+	<columns names="type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_vat_rate_country" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="accounting.vat_rate">
+	<columns names="country" ref-type="src-columns"/>
+	<columns names="code" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_vat_rate_vat_type" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_type" table="accounting.vat_rate">
+	<columns names="vat_type_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_line_document" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="sales.document" table="sales.document_line">
+	<columns names="document_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_line_product" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="inventory.product" table="sales.document_line">
+	<columns names="product_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_line_vat_rate" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_rate" table="sales.document_line">
+	<columns names="vat_rate_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_document_line_vat_exemption" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="accounting.vat_exemption" table="sales.document_line">
+	<columns names="vat_exemption_id" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1157,20 +1424,28 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_supplier_company" type="relfk" layers="0"
 	 custom-color="#3934a7"
 	 src-table="sales.client"
-	 dst-table="companies.company" reference-fk="fk_supplier_company"
-	 src-required="false" dst-required="true"/>
+	 dst-table="companies.company" reference-fk="fk_client_company"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="5.79613" y="5.89578"/>
+	</label>
+</relationship>
 
 <relationship name="rel_supplier_country" type="relfk" layers="0"
 	 custom-color="#e3cd85"
 	 src-table="sales.client"
-	 dst-table="general.country" reference-fk="fk_supplier_country"
+	 dst-table="general.country" reference-fk="fk_client_country"
 	 src-required="false" dst-required="true"/>
 
 <relationship name="rel_technical_file_company" type="relfk" layers="0"
 	 custom-color="#dee4d9"
 	 src-table="itv.technical_file"
 	 dst-table="companies.company" reference-fk="fk_technical_file_company"
-	 src-required="false" dst-required="true"/>
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-2.9134" y="9.74701"/>
+	</label>
+</relationship>
 
 <relationship name="rel_technical_file_client" type="relfk" layers="0"
 	 custom-color="#c4e551"
@@ -1230,6 +1505,106 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 custom-color="#e1a152"
 	 src-table="itv.gender"
 	 dst-table="companies.company" reference-fk="fk_gender_company"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="4.91547" y="-0.25299"/>
+	</label>
+</relationship>
+
+<relationship name="rel_series_company" type="relfk" layers="0"
+	 custom-color="#c86b39"
+	 src-table="sales.series"
+	 dst-table="companies.company" reference-fk="fk_series_company"
 	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_type_company" type="relfk" layers="0"
+	 custom-color="#cb6cd4"
+	 src-table="sales.type"
+	 dst-table="companies.company" reference-fk="fk_type_company"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_type_type" type="relfk" layers="0"
+	 custom-color="#93c93f"
+	 src-table="sales.type"
+	 dst-table="sales.type" reference-fk="fk_type_type"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1321.3" y="1290.91"/>
+	<position x="1321.3" y="1187"/>
+	<position x="1192.2" y="1187"/>
+	</line>
+</relationship>
+
+<relationship name="rel_series_type_code_series" type="relfk" layers="0"
+	 custom-color="#fb6f7b"
+	 src-table="sales.series_type_code"
+	 dst-table="sales.series" reference-fk="fk_series_type_code_series"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="-58.2049" y="56.6742"/>
+	</label>
+</relationship>
+
+<relationship name="rel_series_type_code_type" type="relfk" layers="0"
+	 custom-color="#cdb6d3"
+	 src-table="sales.series_type_code"
+	 dst-table="sales.type" reference-fk="fk_series_type_code_type"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_document_company" type="relfk" layers="0"
+	 custom-color="#12c088"
+	 src-table="sales.document"
+	 dst-table="companies.company" reference-fk="fk_document_company"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_document_series" type="relfk" layers="0"
+	 custom-color="#3f485d"
+	 src-table="sales.document"
+	 dst-table="sales.series" reference-fk="fk_document_series"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_vat_rate_country" type="relfk" layers="0"
+	 custom-color="#80b45b"
+	 src-table="accounting.vat_rate"
+	 dst-table="general.country" reference-fk="fk_vat_rate_country"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_document_line_document" type="relfk" layers="0"
+	 custom-color="#6578ff"
+	 src-table="sales.document_line"
+	 dst-table="sales.document" reference-fk="fk_document_line_document"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="23.868" y="-39.353"/>
+	</label>
+</relationship>
+
+<relationship name="rel_document_line_product" type="relfk" layers="0"
+	 custom-color="#9d3c81"
+	 src-table="sales.document_line"
+	 dst-table="inventory.product" reference-fk="fk_document_line_product"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="rel_vat_rate_vat_type" type="relfk" layers="0"
+	 custom-color="#f57f08"
+	 src-table="accounting.vat_rate"
+	 dst-table="accounting.vat_type" reference-fk="fk_vat_rate_vat_type"
+	 src-required="false" dst-required="true">
+	<label ref-type="name-label">
+		<position x="27.4333" y="-30.053"/>
+	</label>
+</relationship>
+
+<relationship name="rel_document_line_vat_rate" type="relfk" layers="0"
+	 custom-color="#529fa6"
+	 src-table="sales.document_line"
+	 dst-table="accounting.vat_rate" reference-fk="fk_document_line_vat_rate"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_document_line_vat_exemption" type="relfk" layers="0"
+	 custom-color="#fc6574"
+	 src-table="sales.document_line"
+	 dst-table="accounting.vat_exemption" reference-fk="fk_document_line_vat_exemption"
+	 src-required="false" dst-required="false"/>
 
 </dbmodel>
