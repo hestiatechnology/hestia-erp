@@ -47,3 +47,35 @@ func (s *TaxServer) GetVatRates(ctx context.Context, _ *emptypb.Empty) (*account
 
 	return &vatRates, nil
 }
+
+func (s *TaxServer) GetVatExemptions(ctx context.Context, _ *emptypb.Empty) (*accounting.VatExemptions, error) {
+	db, err := db.GetDBPoolConn()
+	if err != nil {
+		logger.ErrorLogger.Println("Unable to connect to db: ", err)
+		return nil, status.Error(codes.Internal, "Unable to connect to db")
+	}
+
+	rows, err := db.Query(ctx, "SELECT id, code, description FROM accounting.vat_exemption WHERE end_date IS NULL OR end_date > NOW()")
+	if err != nil {
+		logger.ErrorLogger.Println("Unable to query db: ", err)
+		return nil, status.Error(codes.Internal, "Something went wrong")
+	}
+
+	defer rows.Close()
+
+	var vatExemptions accounting.VatExemptions
+	for rows.Next() {
+		var vatExemption accounting.VatExemption
+		// convert uuid to string
+		var id uuid.UUID
+		err = rows.Scan(&id, &vatExemption.Code, &vatExemption.Description)
+		if err != nil {
+			logger.ErrorLogger.Println("Unable to scan row: ", err)
+			return nil, status.Error(codes.Internal, "Something went wrong")
+		}
+		vatExemption.Id = id.String()
+		vatExemptions.VatExemptions = append(vatExemptions.VatExemptions, &vatExemption)
+	}
+
+	return &vatExemptions, nil
+}
