@@ -23,7 +23,7 @@ func (s *TaxServer) GetVatRates(ctx context.Context, _ *emptypb.Empty) (*account
 		return nil, status.Error(codes.Internal, "Unable to connect to db")
 	}
 
-	rows, err := db.Query(ctx, "SELECT r.id, r.rate, t.code, r.country FROM accounting.vat_rate r LEFT JOIN accounting.vat_type t ON r.vat_type_id = t.id")
+	rows, err := db.Query(ctx, "SELECT r.id, r.rate, t.code, r.country FROM accounting.vat_rate r LEFT JOIN accounting.vat_type t ON r.vat_type_id = t.id WHERE (r.start_date < NOW() AND (r.end_date IS NULL OR r.end_date > NOW()))")
 	if err != nil {
 		logger.ErrorLogger.Println("Unable to query db: ", err)
 		return nil, status.Error(codes.Internal, "Something went wrong")
@@ -55,7 +55,7 @@ func (s *TaxServer) GetVatExemptions(ctx context.Context, _ *emptypb.Empty) (*ac
 		return nil, status.Error(codes.Internal, "Unable to connect to db")
 	}
 
-	rows, err := db.Query(ctx, "SELECT id, code, description FROM accounting.vat_exemption WHERE end_date IS NULL OR end_date > NOW()")
+	rows, err := db.Query(ctx, "SELECT id, code, description FROM accounting.vat_exemption WHERE (start_date < NOW() AND (end_date IS NULL OR end_date > NOW()))")
 	if err != nil {
 		logger.ErrorLogger.Println("Unable to query db: ", err)
 		return nil, status.Error(codes.Internal, "Something went wrong")
