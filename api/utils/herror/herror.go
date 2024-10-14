@@ -34,6 +34,12 @@ const (
 	InvalidUser       = "INVALID_USER"
 )
 
+// Company Errors
+const (
+	CompanyAlreadyExists = "COMPANY_ALREADY_EXISTS"
+	InvalidCompany       = "INVALID_COMPANY"
+)
+
 // Employee Errors
 const (
 	EmployeeAlreadyExists = "EMPLOYEE_ALREADY_EXISTS"
