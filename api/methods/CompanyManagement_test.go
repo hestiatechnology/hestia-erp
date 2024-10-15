@@ -87,3 +87,175 @@ func TestCompanyManagementServer_AddUserToCompany(t *testing.T) {
 		})
 	}
 }
+
+func TestCompanyManagementServer_CreateCompany(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		in  *company.CreateCompanyRequest
+	}
+	tests := []struct {
+		name    string
+		s       *CompanyManagementServer
+		args    args
+		want    *company.Id
+		wantErr bool
+	}{
+		{
+			name: "Missing company name",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in:  &company.CreateCompanyRequest{},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing VAT ID",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name: "Test Company",
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing SSN",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing location",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+					Ssn:   123456789,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing address",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+					Ssn:   123456789,
+					Location: &company.Location{
+						Locality:   "Test Locality",
+						PostalCode: "1234-567",
+						Country:    "PT",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing locality",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:    "Test Address",
+						PostalCode: "1234-567",
+						Country:    "PT",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing Postal Code",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:  "Test Address",
+						Locality: "Test Locality",
+						Country:  "PT",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Missing Country",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456789,
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:    "Test Address",
+						Locality:   "Test Locality",
+						PostalCode: "1234-567",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Success",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: 123456778,
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:    "Test Address",
+						Locality:   "Test Locality",
+						PostalCode: "1234-567",
+						Country:    "PT",
+					},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.s.CreateCompany(tt.args.ctx, tt.args.in)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CompanyManagementServer.CreateCompany() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			// if doesnt want error, check if a uuid was returned
+			if !tt.wantErr && got.GetId() == "" {
+				t.Errorf("CompanyManagementServer.CreateCompany() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
