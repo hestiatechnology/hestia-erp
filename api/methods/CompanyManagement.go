@@ -22,6 +22,82 @@ type CompanyManagementServer struct {
 }
 
 func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company.CreateCompanyRequest) (*company.Id, error) {
+	//  Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Indicates whether the company is a sole trader or not
+	// IsSoleTrader   bool      `protobuf:"varint,2,opt,name=isSoleTrader,proto3" json:"isSoleTrader,omitempty"`
+	// CommercialName *string   `protobuf:"bytes,3,opt,name=commercialName,proto3,oneof" json:"commercialName,omitempty"`
+	// VatId          int32     `protobuf:"varint,4,opt,name=vatId,proto3" json:"vatId,omitempty"`
+	// Ssn            int32     `protobuf:"varint,5,opt,name=ssn,proto3" json:"ssn,omitempty"`
+	// Location
+	name := in.GetName()
+	//isSoleTrader := in.GetIsSoleTrader()
+	//commercialName := in.GetCommercialName()
+	vatId := in.GetVatId()
+	ssn := in.GetSsn()
+	location := in.GetLocation()
+
+	if name == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing name", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "name",
+			Description: "Name is required",
+		}}).Err()
+	}
+
+	if vatId == 0 {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing VAT ID", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "vatId",
+			Description: "VAT ID is required",
+		}}).Err()
+	}
+
+	// TODO: Implement the validation function on autoridadetributaria package
+
+	if ssn == 0 {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing SSN", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "ssn",
+			Description: "SSN is required",
+		}}).Err()
+	}
+	// TODO: Implement the validation function on fiscal package
+
+	if location == nil {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing location", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location",
+			Description: "Location is required",
+		}}).Err()
+	}
+
+	if location.GetAddress() == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing address", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.address",
+			Description: "Address is required",
+		}}).Err()
+	}
+	if location.GetLocality() == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing city", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.city",
+			Description: "City is required",
+		}}).Err()
+	}
+	if location.GetCountry() == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing country", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.country",
+			Description: "Country is required",
+		}}).Err()
+	}
+	if location.GetPostalCode() == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing postal code", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.postalCode",
+			Description: "Postal code is required",
+		}}).Err()
+	}
+	if location.GetCountry() == "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing country", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.country",
+			Description: "Country is required",
+		}}).Err()
+	}
+
 	return &company.Id{Id: uuid.NewString()}, nil
 }
 
