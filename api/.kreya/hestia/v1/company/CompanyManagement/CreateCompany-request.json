@@ -1,5 +1,5 @@
 {
-  "name": "{{ faker.name.last_name }}",
+  "name": "Test",
   "isSoleTrader": false,
   "commercialName": "solid state tan",
   "vatId": 476,
@@ -8,6 +8,6 @@
     "address": "withdrawal Balanced",
     "locality": "holistic Bedfordshire",
     "postalCode": "{{ faker.address.zip_code }}",
-    "country": "{{ faker.address.country }}"
+    "country": "PT"
   }
 }
