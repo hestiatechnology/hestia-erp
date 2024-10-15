@@ -30,11 +30,15 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 	// Ssn            int32     `protobuf:"varint,5,opt,name=ssn,proto3" json:"ssn,omitempty"`
 	// Location
 	name := in.GetName()
-	//isSoleTrader := in.GetIsSoleTrader()
-	//commercialName := in.GetCommercialName()
+	isSoleTrader := in.GetIsSoleTrader()
+	commercialName := in.GetCommercialName()
 	vatId := in.GetVatId()
 	ssn := in.GetSsn()
 	location := in.GetLocation()
+	address := location.GetAddress()
+	locality := location.GetLocality()
+	postalCode := location.GetPostalCode()
+	country := location.GetCountry()
 
 	if name == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing name", []*errdetails.BadRequest_FieldViolation{{
@@ -67,38 +71,78 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 		}}).Err()
 	}
 
-	if location.GetAddress() == "" {
+	if address == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing address", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "location.address",
 			Description: "Address is required",
 		}}).Err()
 	}
-	if location.GetLocality() == "" {
+	if locality == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing city", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "location.city",
 			Description: "City is required",
 		}}).Err()
 	}
-	if location.GetCountry() == "" {
-		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing country", []*errdetails.BadRequest_FieldViolation{{
-			Field:       "location.country",
-			Description: "Country is required",
-		}}).Err()
-	}
-	if location.GetPostalCode() == "" {
+	if postalCode == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing postal code", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "location.postalCode",
 			Description: "Postal code is required",
 		}}).Err()
 	}
-	if location.GetCountry() == "" {
+	if country == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing country", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "location.country",
 			Description: "Country is required",
 		}}).Err()
 	}
 
-	return &company.Id{Id: uuid.NewString()}, nil
+	db, err := db.GetDBPoolConn()
+	if err != nil {
+		logger.ErrorLogger.Println(err)
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+	}
+
+	// Start a transaction
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		logger.ErrorLogger.Println(err)
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to start transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+	}
+	defer tx.Rollback(ctx)
+
+	// Insert the company
+	companyId := uuid.NewString()
+	_, err = tx.Exec(ctx, "INSERT INTO users.company (id, name, vat_id, ssn, street, locality, postal_code, country_code) VALUES ($1, $2, $3, $4, $5)", companyId, name, vatId, ssn, address, locality, postalCode, country)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.ConstraintName == "pk_company_id" {
+				return nil, herror.StatusWithInfo(codes.AlreadyExists, "Company already exists", herror.CompanyAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			} else if pgErr.ConstraintName == "uq_company_vat_id" {
+				return nil, herror.StatusWithInfo(codes.AlreadyExists, "VAT ID already exists", herror.CompanyAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			} else if pgErr.ConstraintName == "uq_company_ssn" {
+				return nil, herror.StatusWithInfo(codes.AlreadyExists, "SSN already exists", herror.CompanyAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			}
+		}
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+	}
+
+	if commercialName != "" {
+		_, err = tx.Exec(ctx, "UPDATE users.company SET commercial_name = $1 WHERE id = $2", commercialName, companyId)
+		if err != nil {
+			logger.ErrorLogger.Println(err)
+			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+		}
+	}
+	if isSoleTrader {
+		_, err = tx.Exec(ctx, "UPDATE users.company SET is_sole_trader = $1 WHERE id = $2", isSoleTrader, companyId)
+		if err != nil {
+			logger.ErrorLogger.Println(err)
+			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+		}
+	}
+
+	return &company.Id{Id: companyId}, nil
 }
 
 func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *company.AddUserToCompanyRequest) (*emptypb.Empty, error) {
