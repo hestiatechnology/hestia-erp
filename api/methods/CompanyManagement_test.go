@@ -31,7 +31,7 @@ func TestCompanyManagementServer_AddUserToCompany(t *testing.T) {
 					CompanyId: "6c8f45be-808c-4162-9f4c-b9783b55d21f",
 				},
 			},
-			want:    &emptypb.Empty{},
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -44,7 +44,7 @@ func TestCompanyManagementServer_AddUserToCompany(t *testing.T) {
 					CompanyId: "",
 				},
 			},
-			want:    &emptypb.Empty{},
+			want:    nil,
 			wantErr: true,
 		},
 		{
@@ -57,7 +57,7 @@ func TestCompanyManagementServer_AddUserToCompany(t *testing.T) {
 					CompanyId: "6c8f45be-808c-4162-9f4c-b9783b55d21f",
 				},
 			},
-			want:    &emptypb.Empty{},
+			want:    nil,
 			wantErr: true,
 		},
 		{
