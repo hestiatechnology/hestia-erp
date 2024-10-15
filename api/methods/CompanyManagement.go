@@ -70,11 +70,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 	err = db.QueryRow(ctx, "SELECT id FROM users.users WHERE email = $1", email).Scan(&userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			// Theres no user with that email
-			// TODO: if employeeId is provided, check if there's a user with that employeeId in the company
-			// if there isnt, create a new user with the email and associate it with the company
-			// TODO: Send an email to the user to invite him to the platform
-			logger.WarningLogger.Println("Implement email sending to invite user to the platform")
+			// Frontend should ask the user for an invite to the company
 			return nil, herror.StatusWithInfo(codes.NotFound, "User not found", herror.InvalidUser, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		} else {
 			logger.ErrorLogger.Println(err)
@@ -83,53 +79,43 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 
 	}
 
-	// Check if the user is already in the company
-	var count int
-	err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE user_id = $1 AND company_id = $2", userId, companyUuid).Scan(&count)
+	employeeUuid, err := uuid.Parse(employeeId)
+	if err != nil && employeeId != "" {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Invalid employee ID", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "employeeId",
+			Description: "Employee Id is not a valid UUID",
+		}}).Err()
+	}
+
 	if err != nil {
-		logger.ErrorLogger.Println(err)
-		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
-	}
-
-	if count > 0 {
-		return nil, herror.StatusWithInfo(codes.AlreadyExists, "User already in the company", herror.UserAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
-	}
-
-	// if employeeId is provided, check if the there's already a user with that employeeId in the company
-	if employeeId != "" {
-		var count int
-		err = db.QueryRow(ctx, "SELECT COUNT(*) FROM users.user_company WHERE employee_id = $1 AND company_id = $2", in.GetEmployeeId(), in.GetCompanyId()).Scan(&count)
-		if err != nil {
-			logger.ErrorLogger.Println(err)
-			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
-		}
-
-		if count > 0 {
-			return nil, herror.StatusWithInfo(codes.AlreadyExists, "Employee already in the company", herror.EmployeeAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
-		}
-
-		// Associate user with the company
-		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id, employee_id) VALUES ($1, $2, $3)", userId, in.GetCompanyId(), in.GetEmployeeId())
-
-		if err != nil {
-			var pgErr *pgconn.PgError
-			if errors.As(err, &pgErr) {
-				//// Check if the error also sho
-				//if pgErr.Code == "23505" {
-				//	return nil, status.Error(codes.AlreadyExists, "User already in the company")
-				//}
-				logger.ErrorLogger.Println(pgErr.ColumnName, pgErr.ConstraintName, pgErr.Error())
-			}
-			logger.ErrorLogger.Println(err)
-			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
-		}
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id, employee_id) VALUES ($1, $2, $3)", userId, companyUuid, nil)
 	} else {
-		// Associate user with the company
-		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id) VALUES ($1, $2)", userId, in.GetCompanyId())
-		if err != nil {
-			logger.ErrorLogger.Println(err)
-			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+		_, err = tx.Exec(ctx, "INSERT INTO users.user_company (user_id, company_id, employee_id) VALUES ($1, $2, $3)", userId, companyUuid, employeeUuid)
+	}
+
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.ConstraintName == "pk_user_company" {
+				if employeeId != "" {
+					_, err = tx.Exec(ctx, "UPDATE users.user_company SET employee_id = $1 WHERE user_id = $2 AND company_id = $3", employeeUuid, userId, companyUuid)
+					if err != nil {
+						logger.DebugLogger.Println(err)
+						return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+					}
+					return &emptypb.Empty{}, nil
+				}
+				return nil, herror.StatusWithInfo(codes.AlreadyExists, "User already in the company", herror.UserAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			} else if pgErr.ConstraintName == "fk_user_company_company" {
+				return nil, herror.StatusWithInfo(codes.NotFound, "Company not found", herror.InvalidCompany, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			} else if pgErr.ConstraintName == "fk_user_company_users" {
+				return nil, herror.StatusWithInfo(codes.NotFound, "User not found", herror.InvalidUser, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			} else if pgErr.ConstraintName == "fk_user_company_users_employee_id" {
+				return nil, herror.StatusWithInfo(codes.NotFound, "Employee not found", herror.InvalidEmployee, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
+			}
 		}
+
+		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Commit the transaction

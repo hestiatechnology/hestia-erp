@@ -1,5 +1,5 @@
 {
-  "email": "{{ faker.internet.example_email }}",
-  "companyId": "{{ faker.random.uuid }}",
-  "employeeId": "{{ faker.random.uuid }}"
+  "email": "valid@test.hestiatechnology.pt",
+  "companyId": "6c8f45be-808c-4162-9f4c-b9783b55d28f",
+  "employeeId": "9f8c37dc-f28e-4524-90fb-dc6c72ba51f7"
 }
