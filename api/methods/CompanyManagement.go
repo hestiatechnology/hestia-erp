@@ -3,7 +3,6 @@ package methods
 import (
 	"context"
 	"errors"
-	"strconv"
 
 	"hestia/api/pb/company"
 	"hestia/api/utils/db"
@@ -48,7 +47,7 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 		}}).Err()
 	}
 
-	if vatId == 0 {
+	if vatId == "" {
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing VAT ID", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "vatId",
 			Description: "VAT ID is required",
@@ -113,7 +112,7 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 
 	// Insert the company
 	companyId := uuid.NewString()
-	_, err = tx.Exec(ctx, "INSERT INTO companies.company (id, name, vat_id, ssn, street, locality, postal_code, country_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", companyId, name, strconv.Itoa(int(vatId)), strconv.Itoa(int(ssn)), address, locality, postalCode, country)
+	_, err = tx.Exec(ctx, "INSERT INTO companies.company (id, name, vat_id, ssn, street, locality, postal_code, country_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", companyId, name, vatId, ssn, address, locality, postalCode, country)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {

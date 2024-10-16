@@ -129,7 +129,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
+					VatId: "123456789",
 				},
 			},
 			want:    nil,
@@ -142,8 +142,8 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
-					Ssn:   123456789,
+					VatId: "123456789",
+					Ssn:   12345678911,
 				},
 			},
 			want:    nil,
@@ -156,8 +156,8 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
-					Ssn:   123456789,
+					VatId: "123456789",
+					Ssn:   12345678911,
 					Location: &company.Location{
 						Locality:   "Test Locality",
 						PostalCode: "1234-567",
@@ -175,7 +175,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
+					VatId: "123456789",
 					Ssn:   123456789,
 					Location: &company.Location{
 						Address:    "Test Address",
@@ -194,7 +194,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
+					VatId: "123456789",
 					Ssn:   123456789,
 					Location: &company.Location{
 						Address:  "Test Address",
@@ -213,7 +213,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456789,
+					VatId: "123456789",
 					Ssn:   123456789,
 					Location: &company.Location{
 						Address:    "Test Address",
@@ -232,7 +232,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 				ctx: context.Background(),
 				in: &company.CreateCompanyRequest{
 					Name:  "Test Company",
-					VatId: 123456778,
+					VatId: "123456778",
 					Ssn:   123456789,
 					Location: &company.Location{
 						Address:    "Test Address",
