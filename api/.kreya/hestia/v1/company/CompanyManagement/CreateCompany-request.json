@@ -2,7 +2,7 @@
   "name": "Test",
   "isSoleTrader": false,
   "commercialName": "solid state tan",
-  "vatId": 476,
+  "vatId": "12345678",
   "ssn": 398,
   "location": {
     "address": "withdrawal Balanced",

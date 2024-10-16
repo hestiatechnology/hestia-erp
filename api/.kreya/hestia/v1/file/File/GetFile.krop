@@ -1,0 +1,13 @@
+{
+  "details": {
+    "methodFqn": "hestia.v1.file.File.GetFile"
+  },
+  "requests": [
+    {
+      "location": "GetFile-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc",
+  "importStreamId": "40b92244-b64e-41ae-8f98-223fcfa6467a"
+}

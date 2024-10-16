@@ -1,0 +1,5 @@
+{
+  "token": "Associate",
+  "fileId": "{{ faker.random.uuid }}",
+  "type": "FISCAL_DOCUMENT"
+}

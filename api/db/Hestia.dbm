@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="1.1.4" use-changelog="false" max-obj-count="60"
-	 last-position="3874,2013" last-zoom="1.85" scene-rect="0,0,5000.55,2058.92"
+	 last-position="273,0" last-zoom="0.7" scene-rect="0,0,5000.55,2058.92"
 	 default-schema="public" default-owner="hestia_erp_internal"
 	 layers="Default layer"
 	 active-layers="0"
@@ -134,17 +134,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="postal_code" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="country_code" not-null="true">
-		<type name="varchar" length="2"/>
+	<column name="country_id" not-null="true" default-value="'5ffaa112-01e6-41ba-b621-a62e57158385'">
+		<type name="uuid" length="2"/>
 	</column>
 	<constraint name="pk_company_id" type="pk-constr" table="companies.company">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="uq_company_vat_id" type="uq-constr" table="companies.company">
-		<columns names="vat_id" ref-type="src-columns"/>
+		<columns names="vat_id,country_id" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="uq_company_ssn" type="uq-constr" table="companies.company">
-		<columns names="ssn" ref-type="src-columns"/>
+		<columns names="ssn,country_id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -556,18 +556,21 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="postal_code" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="country_code" not-null="true" default-value="'PT'">
-		<type name="character varying" length="2"/>
+	<column name="country_id" not-null="true">
+		<type name="uuid" length="2"/>
 	</column>
 	<constraint name="pk_location" type="pk-constr" table="companies.location">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<table name="country" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="3" z-value="0">
+<table name="country" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="4" z-value="0">
 	<schema name="general"/>
 	<role name="hestia_erp_internal"/>
 	<position x="1900" y="1020"/>
+	<column name="id" not-null="true" default-value="gen_random_uuid()">
+		<type name="uuid" length="0"/>
+	</column>
 	<column name="code" not-null="true">
 		<type name="character varying" length="2"/>
 		<comment> <![CDATA[ISO 3166-1 alpha-2 code]]> </comment>
@@ -581,6 +584,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<comment> <![CDATA[Is the Country active? Say the country was abolished]]> </comment>
 	</column>
 	<constraint name="pk_country" type="pk-constr" table="general.country">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="uq_country_code" type="uq-constr" table="general.country">
 		<columns names="code" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -637,8 +643,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="locality" not-null="true">
 		<type name="text" length="0"/>
 	</column>
-	<column name="country" not-null="true">
-		<type name="varchar" length="2"/>
+	<column name="country_id" not-null="true">
+		<type name="uuid" length="2"/>
 	</column>
 	<constraint name="pk_client" type="pk-constr" table="sales.client">
 		<columns names="id" ref-type="src-columns"/>
@@ -874,8 +880,8 @@ FTR is of type FT]]> </comment>
 	<column name="vat_type_id" not-null="true">
 		<type name="uuid" length="0"/>
 	</column>
-	<column name="country" not-null="true">
-		<type name="text" length="0"/>
+	<column name="country_id" not-null="true">
+		<type name="uuid" length="0"/>
 	</column>
 	<constraint name="pk_vat_rate" type="pk-constr" table="accounting.vat_rate">
 		<columns names="id" ref-type="src-columns"/>
@@ -969,8 +975,8 @@ NOR, INT, RED]]> </comment>
 
 <constraint name="fk_company_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="companies.company">
-	<columns names="country_code" ref-type="src-columns"/>
-	<columns names="code" ref-type="dst-columns"/>
+	<columns names="country_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="fk_employee_company" type="fk-constr" comparison-type="MATCH SIMPLE"
@@ -1119,8 +1125,8 @@ NOR, INT, RED]]> </comment>
 
 <constraint name="fk_location_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="companies.location">
-	<columns names="country_code" ref-type="src-columns"/>
-	<columns names="code" ref-type="dst-columns"/>
+	<columns names="country_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="fk_preference_company" type="fk-constr" comparison-type="MATCH SIMPLE"
@@ -1137,8 +1143,8 @@ NOR, INT, RED]]> </comment>
 
 <constraint name="fk_client_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="sales.client">
-	<columns names="country" ref-type="src-columns"/>
-	<columns names="code" ref-type="dst-columns"/>
+	<columns names="country_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="fk_technical_file_company" type="fk-constr" comparison-type="MATCH SIMPLE"
@@ -1233,8 +1239,8 @@ NOR, INT, RED]]> </comment>
 
 <constraint name="fk_vat_rate_country" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="general.country" table="accounting.vat_rate">
-	<columns names="country" ref-type="src-columns"/>
-	<columns names="code" ref-type="dst-columns"/>
+	<columns names="country_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
 <constraint name="fk_vat_rate_vat_type" type="fk-constr" comparison-type="MATCH SIMPLE"
