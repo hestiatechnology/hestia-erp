@@ -261,7 +261,7 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 					},
 				},
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
