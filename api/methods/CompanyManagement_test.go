@@ -244,6 +244,25 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "Company already added via VAT ID or SSN",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: "123456778",
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:    "Test Address",
+						Locality:   "Test Locality",
+						PostalCode: "1234-567",
+						Country:    "PT",
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
