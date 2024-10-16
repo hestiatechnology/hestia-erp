@@ -3,6 +3,7 @@ package methods
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"hestia/api/pb/company"
 	"hestia/api/utils/db"
@@ -112,7 +113,7 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 
 	// Insert the company
 	companyId := uuid.NewString()
-	_, err = tx.Exec(ctx, "INSERT INTO companies.company (id, name, vat_id, ssn, street, locality, postal_code, country_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)", companyId, name, vatId, ssn, address, locality, postalCode, country)
+	_, err = tx.Exec(ctx, "INSERT INTO companies.company (id, name, vat_id, ssn, street, locality, postal_code, country_id) VALUES ($1, $2, $3, $4, $5, $6, $7, (SELECT id FROM general.country WHERE code = $8))", companyId, name, vatId, strconv.Itoa(int(ssn)), address, locality, postalCode, country)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -141,6 +142,13 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 			logger.ErrorLogger.Println(err)
 			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		}
+	}
+
+	// Commit the transaction
+	err = tx.Commit(ctx)
+	if err != nil {
+		logger.ErrorLogger.Println(err)
+		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	return &company.Id{Id: companyId}, nil
