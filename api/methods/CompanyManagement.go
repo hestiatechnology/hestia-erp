@@ -10,6 +10,8 @@ import (
 	"hestia/api/utils/herror"
 	"hestia/api/utils/logger"
 
+	"github.com/hestiatechnology/autoridadetributaria/common"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -94,6 +96,21 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Missing country", []*errdetails.BadRequest_FieldViolation{{
 			Field:       "location.country",
 			Description: "Country is required",
+		}}).Err()
+	}
+
+	countryFound := false
+	for _, c := range common.CountryCodes {
+		if country == c {
+			countryFound = true
+			break
+		}
+	}
+
+	if !countryFound {
+		return nil, herror.StatusBadRequest(codes.InvalidArgument, "Invalid country code", []*errdetails.BadRequest_FieldViolation{{
+			Field:       "location.country",
+			Description: "Country code is invalid",
 		}}).Err()
 	}
 

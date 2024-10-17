@@ -226,6 +226,26 @@ func TestCompanyManagementServer_CreateCompany(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "Wrong Country",
+			s:    &CompanyManagementServer{},
+			args: args{
+				ctx: context.Background(),
+				in: &company.CreateCompanyRequest{
+					Name:  "Test Company",
+					VatId: "123456789",
+					Ssn:   123456789,
+					Location: &company.Location{
+						Address:    "Test Address",
+						Locality:   "Test Locality",
+						PostalCode: "1234-567",
+						Country:    "YA",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
 			name: "Success",
 			s:    &CompanyManagementServer{},
 			args: args{
