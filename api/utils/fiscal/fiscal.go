@@ -46,7 +46,7 @@ type CheckVatResponse struct {
 // CheckVatNumber sends a POST request to check the validity of a VAT number
 func CheckVatNumber(ctx context.Context, req CheckVatRequest) (*CheckVatResponse, error) {
 	// Prepare the URL
-	url := "https://your-vat-checking-api.com/check-vat-number"
+	url := "https://ec.europa.eu/taxation_customs/vies/rest-api/check-vat-number"
 
 	// Serialize the request body into JSON
 	jsonData, err := json.Marshal(req)
