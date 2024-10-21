@@ -50,8 +50,8 @@ github.com/jackc/puddle/v2 v2.2.2 h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo
 github.com/jackc/puddle/v2 v2.2.2/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
 github.com/johnfercher/go-tree v1.0.5 h1:zpgVhJsChavzhKdxhQiCJJzcSY3VCT9oal2JoA2ZevY=
 github.com/johnfercher/go-tree v1.0.5/go.mod h1:DUO6QkXIFh1K7jeGBIkLCZaeUgnkdQAsB64FDSoHswg=
-github.com/johnfercher/maroto/v2 v2.1.5 h1:m6MyOlVfUmD/Acj/pxKHR+NOwj2y8L2QI2F8aISt9Fw=
-github.com/johnfercher/maroto/v2 v2.1.5/go.mod h1:/LfW6AQGZzsG6xUixcfyxkKztDoszdwC+G2jNRl8bss=
+github.com/johnfercher/maroto/v2 v2.2.1 h1:uEYaX9TFJis2LQ5GylpneYgnaAAlf1hGVIsvfKLe42w=
+github.com/johnfercher/maroto/v2 v2.2.1/go.mod h1:/LfW6AQGZzsG6xUixcfyxkKztDoszdwC+G2jNRl8bss=
 github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/jung-kurt/gofpdf v1.16.2 h1:jgbatWHfRlPYiK85qgevsZTHviWXKwB1TTiKdz5PtRc=
 github.com/jung-kurt/gofpdf v1.16.2/go.mod h1:1hl7y57EsiPAkLbOwzpzqgx1A30nQCk/YmFV8S2vmK0=
