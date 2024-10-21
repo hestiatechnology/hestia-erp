@@ -17,6 +17,8 @@ require (
 require (
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 )
 
@@ -37,6 +39,7 @@ require (
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/rs/zerolog v1.33.0
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/yeqown/go-qrcode/v2 v2.2.4
 	github.com/yeqown/go-qrcode/writer/standard v1.2.4

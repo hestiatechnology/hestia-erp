@@ -4,9 +4,9 @@ import (
 	"context"
 	"hestia/api/pb/accounting"
 	"hestia/api/utils/db"
-	"hestia/api/utils/logger"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -19,13 +19,13 @@ type TaxServer struct {
 func (s *TaxServer) GetVatRates(ctx context.Context, _ *emptypb.Empty) (*accounting.VatRates, error) {
 	db, err := db.GetDBPoolConn()
 	if err != nil {
-		logger.ErrorLogger.Println("Unable to connect to db: ", err)
+		log.Error().Err(err).Msg("Unable to connect to db")
 		return nil, status.Error(codes.Internal, "Unable to connect to db")
 	}
 
 	rows, err := db.Query(ctx, "SELECT r.id, r.rate, t.code, r.country FROM accounting.vat_rate r LEFT JOIN accounting.vat_type t ON r.vat_type_id = t.id WHERE (r.start_date < NOW() AND (r.end_date IS NULL OR r.end_date > NOW()))")
 	if err != nil {
-		logger.ErrorLogger.Println("Unable to query db: ", err)
+		log.Error().Err(err).Msg("Unable to query db")
 		return nil, status.Error(codes.Internal, "Something went wrong")
 	}
 
@@ -38,7 +38,7 @@ func (s *TaxServer) GetVatRates(ctx context.Context, _ *emptypb.Empty) (*account
 		var id uuid.UUID
 		err = rows.Scan(&id, &vatRate.Rate, &vatRate.Code, &vatRate.Country)
 		if err != nil {
-			logger.ErrorLogger.Println("Unable to scan row: ", err)
+			log.Error().Err(err).Msg("Unable to scan row")
 			return nil, status.Error(codes.Internal, "Something went wrong")
 		}
 		vatRate.Id = id.String()
@@ -51,13 +51,13 @@ func (s *TaxServer) GetVatRates(ctx context.Context, _ *emptypb.Empty) (*account
 func (s *TaxServer) GetVatExemptions(ctx context.Context, _ *emptypb.Empty) (*accounting.VatExemptions, error) {
 	db, err := db.GetDBPoolConn()
 	if err != nil {
-		logger.ErrorLogger.Println("Unable to connect to db: ", err)
+		log.Error().Err(err).Msg("Unable to connect to db")
 		return nil, status.Error(codes.Internal, "Unable to connect to db")
 	}
 
 	rows, err := db.Query(ctx, "SELECT id, code, description FROM accounting.vat_exemption WHERE (start_date < NOW() AND (end_date IS NULL OR end_date > NOW()))")
 	if err != nil {
-		logger.ErrorLogger.Println("Unable to query db: ", err)
+		log.Error().Err(err).Msg("Unable to query db")
 		return nil, status.Error(codes.Internal, "Something went wrong")
 	}
 
@@ -70,7 +70,7 @@ func (s *TaxServer) GetVatExemptions(ctx context.Context, _ *emptypb.Empty) (*ac
 		var id uuid.UUID
 		err = rows.Scan(&id, &vatExemption.Code, &vatExemption.Description)
 		if err != nil {
-			logger.ErrorLogger.Println("Unable to scan row: ", err)
+			log.Error().Err(err).Msg("Unable to scan row")
 			return nil, status.Error(codes.Internal, "Something went wrong")
 		}
 		vatExemption.Id = id.String()

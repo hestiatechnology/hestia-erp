@@ -17,24 +17,36 @@ import (
 	"hestia/api/pb/company"
 	"hestia/api/pb/idmanagement"
 	"hestia/api/pb/textile"
-	"hestia/api/utils/logger"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 func main() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.With().Caller().Logger()
+	// Check if env is set to dev or args --dev is passed
+	if strings.ToLower(os.Getenv("ENV")) == "dev" || len(os.Args) > 1 && os.Args[1] == "--dev" {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	} else {
+		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	}
+
 	PORT := 9000
 	lis, err := net.Listen("tcp", ":"+strconv.Itoa(PORT))
 	if err != nil {
-		logger.ErrorLogger.Fatalf("failed to listen: %v", err)
+		log.Fatal().Err(err).Msg("failed to listen")
 	}
-	logger.InfoLogger.Println("Server listening on port", PORT)
+	log.Info().Int("port", PORT).Msg("Server listening")
 	s := grpc.NewServer(grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor))
 
-	if strings.ToLower(os.Getenv("ENV")) == "development" {
-		logger.WarningLogger.Println("Running in development mode")
-		logger.WarningLogger.Println("Registering reflection service")
+	if strings.ToLower(os.Getenv("ENV")) == "dev" || len(os.Args) > 1 && os.Args[1] == "--dev" {
+		log.Info().Msg("Running in development mode")
+		log.Info().Msg("Registering reflection service")
 		reflection.Register(s)
 	}
 
@@ -42,9 +54,9 @@ func main() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 		<-c
-		logger.InfoLogger.Println("Shutting down gracefully...")
+		log.Info().Msg("Shutting down gracefully...")
 		s.GracefulStop()
-		logger.InfoLogger.Println("Server stopped")
+		log.Info().Msg("Server stopped")
 	}()
 
 	// Service registration
@@ -53,6 +65,6 @@ func main() {
 	company.RegisterCompanyManagementServer(s, &mcompany.CompanyManagementServer{})
 	accounting.RegisterTaxServer(s, &maccounting.TaxServer{})
 	if err := s.Serve(lis); err != nil {
-		logger.ErrorLogger.Fatalf("failed to serve: %v", err)
+		log.Fatal().Err(err).Msg("failed to serve")
 	}
 }

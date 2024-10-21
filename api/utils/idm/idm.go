@@ -8,10 +8,9 @@ import (
 	"encoding/hex"
 	"errors"
 	"hestia/api/utils/db"
-	"hestia/api/utils/logger"
-	"log"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog/log"
 )
 
 // RandomSalt generates a random salt for password hashing
@@ -21,7 +20,7 @@ func RandomSalt() string {
 	bytes := make([]byte, saltLength)
 	_, err := rand.Read(bytes)
 	if err != nil {
-		log.Println("An error occured while generating random bytes:", err)
+		log.Error().Err(err).Msg("Error generating random salt")
 		return ""
 	}
 	return hex.EncodeToString(bytes)
@@ -31,7 +30,7 @@ func RandomSalt() string {
 func GetSalt(ctx context.Context, email string) (string, error) {
 	db, err := db.GetDBPoolConn()
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error getting database connection")
 		return "", err
 	}
 
@@ -41,7 +40,7 @@ func GetSalt(ctx context.Context, email string) (string, error) {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return "", errors.New("no rows found")
 		}
-		logger.DebugLogger.Println("Unable to get salt for "+email+": ", err)
+		log.Error().Err(err).Str("email", email).Msg("Error getting salt from database")
 		return "", err
 	}
 	return salt, nil
@@ -51,10 +50,12 @@ func GetSalt(ctx context.Context, email string) (string, error) {
 func PasswordHash(password string, salt string) string {
 	// First we verify that the password is a SHA-256 hash
 	if len(password) != 64 {
+		log.Warn().Msg("Password is not a SHA-256 hash")
 		return ""
 	}
 	// Verify the salt isn't empty
 	if salt == "" {
+		log.Warn().Msg("Salt is empty")
 		return ""
 	}
 

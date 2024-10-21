@@ -3,12 +3,12 @@ package db
 import (
 	"context"
 	"fmt"
-	"hestia/api/utils/logger"
 	"os"
 
 	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
 
@@ -25,7 +25,7 @@ func GetDBPoolConn() (*pgxpool.Pool, error) {
 	dbHost := os.Getenv("PGHOST")
 
 	if dbUser == "" || dbPass == "" || dbName == "" || dbHost == "" {
-		logger.ErrorLogger.Fatal("Missing one or more environment variables for database connection")
+		log.Fatal().Msg("Missing one or more environment variables for database connection")
 	}
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&application_name=hestia-erp", dbUser, dbPass, dbHost, dbName)
@@ -33,7 +33,8 @@ func GetDBPoolConn() (*pgxpool.Pool, error) {
 	// Open a connection to the database
 	dbconfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		logger.ErrorLogger.Fatal("Wrong connetion string", err)
+		log.Fatal().Err(err).Str("connStr", connStr).Msg("Wrong connetion string")
+		// logger.ErrorLogger.Fatal("Wrong connetion string", err)
 	}
 
 	dbconfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
@@ -45,9 +46,10 @@ func GetDBPoolConn() (*pgxpool.Pool, error) {
 
 	db, err = pgxpool.NewWithConfig(context.Background(), dbconfig)
 	if err != nil {
+		log.Error().Err(err).Msg("Unable to connect to database")
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
-	logger.InfoLogger.Println("First connection to the database successful")
+	log.Info().Msg("First connection to the database successful")
 	return db, nil
 }
