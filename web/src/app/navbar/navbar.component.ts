@@ -26,7 +26,7 @@ export class NavbarComponent implements OnInit {
 
 
   constructor(private navbarService: NavbarService) {
-    this.dataSource.data = this.links;
+    this.dataSource = this.links;
   }
 
   ngOnInit() {
@@ -34,13 +34,13 @@ export class NavbarComponent implements OnInit {
       this.title = title;
     });
 
-    /* this.navbarService.links$.subscribe(links => {
-      this.links = links;
-    }); */
+    /*     this.navbarService.links$.subscribe(links => {
+          this.links = links;
+        }); */
   }
 
-  treeControl = new NestedTreeControl<Link>(node => node.children);
-  dataSource = new MatTreeNestedDataSource<Link>();
+  childrenAccessor = (node: Link) => node.children ?? [];
+  dataSource = this.links;
 
 
   hasChild = (_: number, node: Link) => !!node.children && node.children.length > 0;
