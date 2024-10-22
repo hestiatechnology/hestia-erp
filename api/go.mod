@@ -17,12 +17,14 @@ require (
 require (
 	github.com/fogleman/gg v1.3.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 )
 
 require (
+	github.com/aws/aws-sdk-go v1.55.5
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/f-amaral/go-async v0.3.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
