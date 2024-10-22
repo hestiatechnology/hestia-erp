@@ -2,14 +2,10 @@
  */package main
 
 import (
-	"hestia/api/utils/logger"
 	qrcode "hestia/api/utils/pdf/codes/at-qrcode"
 	"os"
 
-	"log"
-
 	"github.com/johnfercher/maroto/v2"
-
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
 	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/row"
@@ -20,6 +16,7 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontfamily"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
 	"github.com/johnfercher/maroto/v2/pkg/consts/linestyle"
+	"github.com/rs/zerolog/log"
 
 	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/core"
@@ -38,17 +35,17 @@ func main() {
 	m := GetMaroto()
 	document, err := m.Generate()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal().Err(err).Msg("Error generating pdf")
 	}
 
 	err = document.Save("billingv2.pdf") //.Save("billingv2.pdf")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal().Err(err).Msg("Error saving pdf")
 	}
 
 	err = document.GetReport().Save("billingv2.txt")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal().Err(err).Msg("Error saving report")
 	}
 }
 
@@ -69,16 +66,16 @@ func GetMaroto() core.Maroto {
 	m := maroto.NewMetricsDecorator(mrt)
 	img, err := os.ReadFile("FB_Cover.png")
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error reading image")
 	}
 	err = m.RegisterHeader(getPageHeader(img, extension.Png)...)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal().Err(err).Msg("Error registering header")
 	}
 
 	err = m.RegisterFooter(getPageFooter())
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal().Err(err).Msg("Error registering footer")
 	}
 
 	transactions := getTransactions()
@@ -105,7 +102,7 @@ func getTransactions() [][]core.Col {
 
 	var cols [][]core.Col
 	for _, content := range contents {
-		logger.DebugLogger.Println(content)
+		log.Debug().Msgf("Content: %v", content)
 
 		col := []core.Col{
 			text.NewCol(0, ""),
