@@ -1,7 +1,7 @@
 package main
 
-import "hestia/api/utils/logger"
+import "github.com/rs/zerolog/log"
 
 func main() {
-	logger.InfoLogger.Println("Hello World")
+	log.Info().Msg("Hello, World!")
 }

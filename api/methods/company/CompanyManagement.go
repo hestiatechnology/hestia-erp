@@ -8,9 +8,9 @@ import (
 	"hestia/api/pb/company"
 	"hestia/api/utils/db"
 	"hestia/api/utils/herror"
-	"hestia/api/utils/logger"
 
 	"github.com/hestiatechnology/autoridadetributaria/common"
+	"github.com/rs/zerolog/log"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -116,20 +116,20 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 
 	db, err := db.GetDBPoolConn()
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error getting database connection")
 		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error starting transaction")
 		return nil, herror.StatusWithInfo(codes.Internal, "Unable to start transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer tx.Rollback(ctx)
 
 	// Insert the company
-	companyId := uuid.NewString()
+	companyId := uuid.New()
 	_, err = tx.Exec(ctx, "INSERT INTO companies.company (id, name, vat_id, ssn, street, locality, postal_code, country_id) VALUES ($1, $2, $3, $4, $5, $6, $7, (SELECT id FROM general.country WHERE code = $8))", companyId, name, vatId, strconv.Itoa(int(ssn)), address, locality, postalCode, country)
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -142,21 +142,22 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 				return nil, herror.StatusWithInfo(codes.AlreadyExists, "SSN already exists", herror.CompanyAlreadyExists, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 			}
 		}
-		logger.ErrorLogger.Println(err)
+
+		log.Error().Err(err).Msg("Error inserting company")
 		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	if commercialName != "" {
 		_, err = tx.Exec(ctx, "UPDATE companies.company SET commercial_name = $1 WHERE id = $2", commercialName, companyId)
 		if err != nil {
-			logger.ErrorLogger.Println(err)
+			log.Error().Err(err).Str("companyId", companyId.String()).Str("commercialName", commercialName).Msg("Error updating commercial name")
 			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 	}
 	if isSoleTrader {
 		_, err = tx.Exec(ctx, "UPDATE companies.company SET is_sole_trader = $1 WHERE id = $2", isSoleTrader, companyId)
 		if err != nil {
-			logger.ErrorLogger.Println(err)
+			log.Error().Err(err).Str("companyId", companyId.String()).Bool("isSoleTrader", isSoleTrader).Msg("Error updating is_sole_trader")
 			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 	}
@@ -164,11 +165,11 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error committing transaction")
 		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
-	return &company.Id{Id: companyId}, nil
+	return &company.Id{Id: companyId.String()}, nil
 }
 
 func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *company.AddUserToCompanyRequest) (*emptypb.Empty, error) {
@@ -199,14 +200,14 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 
 	db, err := db.GetDBPoolConn()
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error getting database connection")
 		return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseConnError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 
 	// Start a transaction
 	tx, err := db.Begin(ctx)
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error starting transaction")
 		return nil, herror.StatusWithInfo(codes.Internal, "Unable to start transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 	defer tx.Rollback(ctx)
@@ -219,7 +220,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 			// Frontend should ask the user for an invite to the company
 			return nil, herror.StatusWithInfo(codes.NotFound, "User not found", herror.InvalidUser, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		} else {
-			logger.ErrorLogger.Println(err)
+			log.Error().Err(err).Str("email", email).Msg("Error getting user id")
 			return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 		}
 
@@ -246,7 +247,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 				if employeeId != "" {
 					_, err = tx.Exec(ctx, "UPDATE users.user_company SET employee_id = $1 WHERE user_id = $2 AND company_id = $3", employeeUuid, userId, companyUuid)
 					if err != nil {
-						logger.DebugLogger.Println(err)
+						log.Error().Err(pgErr).Str("employeeId", employeeId).Str("userId", userId.String()).Str("companyId", companyId).Msg("Error updating employee id")
 						return nil, herror.StatusWithInfo(codes.Internal, "Database error", herror.DatabaseError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 					}
 					return &emptypb.Empty{}, nil
@@ -267,7 +268,7 @@ func (s *CompanyManagementServer) AddUserToCompany(ctx context.Context, in *comp
 	// Commit the transaction
 	err = tx.Commit(ctx)
 	if err != nil {
-		logger.ErrorLogger.Println(err)
+		log.Error().Err(err).Msg("Error committing transaction")
 		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
 

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"hestia/api/utils/logger"
 
 	_ "github.com/microsoft/go-mssqldb"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -30,28 +30,28 @@ func main() {
 
 	// Check if mandatory arguments are provided
 	if *dbServer == "" || *dbUser == "" || *dbPassword == "" {
-		logger.ErrorLogger.Fatal("Database server, user and password must be provided")
+		log.Fatal().Msg("Database server, user and password must be provided")
 	}
 
 	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=1433", *dbServer, *dbUser, *dbPassword)
-	logger.InfoLogger.Printf("Connecting to database: %s", connString)
+	log.Info().Str("connStr", connString).Msg("Connecting to database")
 	// Connect to the database
 	db, err := sql.Open("mssql", connString)
 	if err != nil {
-		logger.ErrorLogger.Fatalf("Error connecting to database: %v", err)
+		log.Fatal().Err(err).Msg("Error connecting to database")
 	}
 	defer db.Close()
 
 	// Ping the database to verify the connection
 	err = db.Ping()
 	if err != nil {
-		logger.ErrorLogger.Fatalf("Error connecting to database: %v", err)
+		log.Fatal().Err(err).Msg("Error connecting to database")
 	}
 
 	fmt.Println("Successfully connected to the database!")
 
 	// If export flag is provided, perform export functionality
 	if *exportFlag {
-		logger.InfoLogger.Println("Exporting data...")
+		log.Info().Msg("Exporting data...")
 	}
 }
