@@ -8,6 +8,7 @@ import (
 	"hestia/api/pb/company"
 	"hestia/api/utils/db"
 	"hestia/api/utils/herror"
+	"hestia/api/utils/storage"
 
 	"github.com/hestiatechnology/autoridadetributaria/common"
 	"github.com/rs/zerolog/log"
@@ -168,6 +169,8 @@ func (s *CompanyManagementServer) CreateCompany(ctx context.Context, in *company
 		log.Error().Err(err).Msg("Error committing transaction")
 		return nil, herror.StatusWithInfo(codes.Internal, "Unable to commit transaction", herror.DatabaseTxError, company.CompanyManagement_ServiceDesc.ServiceName, nil).Err()
 	}
+
+	go storage.CreateS3Bucket(companyId)
 
 	return &company.Id{Id: companyId.String()}, nil
 }
