@@ -46,6 +46,11 @@ const (
 	InvalidEmployee       = "INVALID_EMPLOYEE"
 )
 
+// Storage Errors
+const (
+	PresignedURL = "PRESIGNED_URL"
+)
+
 func StatusWithInfo(code codes.Code, message string, reason string, domain string, metadata map[string]string) *status.Status {
 	st := status.New(code, message)
 	ds, err := st.WithDetails(&errdetails.ErrorInfo{

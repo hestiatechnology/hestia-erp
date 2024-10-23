@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,15 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	File_PresignedURL_FullMethodName = "/hestia.v1.file.File/PresignedURL"
-	File_GetFile_FullMethodName      = "/hestia.v1.file.File/GetFile"
+	File_UploadFile_FullMethodName = "/hestia.v1.file.File/UploadFile"
+	File_GetFile_FullMethodName    = "/hestia.v1.file.File/GetFile"
 )
 
 // FileClient is the client API for File service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
-	PresignedURL(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UploadFile(ctx context.Context, in *FileUpload, opts ...grpc.CallOption) (*PresignedURL, error)
 	GetFile(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
@@ -40,10 +39,10 @@ func NewFileClient(cc grpc.ClientConnInterface) FileClient {
 	return &fileClient{cc}
 }
 
-func (c *fileClient) PresignedURL(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *fileClient) UploadFile(ctx context.Context, in *FileUpload, opts ...grpc.CallOption) (*PresignedURL, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, File_PresignedURL_FullMethodName, in, out, cOpts...)
+	out := new(PresignedURL)
+	err := c.cc.Invoke(ctx, File_UploadFile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +63,7 @@ func (c *fileClient) GetFile(ctx context.Context, in *Request, opts ...grpc.Call
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility.
 type FileServer interface {
-	PresignedURL(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	UploadFile(context.Context, *FileUpload) (*PresignedURL, error)
 	GetFile(context.Context, *Request) (*Response, error)
 	mustEmbedUnimplementedFileServer()
 }
@@ -76,8 +75,8 @@ type FileServer interface {
 // pointer dereference when methods are called.
 type UnimplementedFileServer struct{}
 
-func (UnimplementedFileServer) PresignedURL(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PresignedURL not implemented")
+func (UnimplementedFileServer) UploadFile(context.Context, *FileUpload) (*PresignedURL, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedFileServer) GetFile(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFile not implemented")
@@ -103,20 +102,20 @@ func RegisterFileServer(s grpc.ServiceRegistrar, srv FileServer) {
 	s.RegisterService(&File_ServiceDesc, srv)
 }
 
-func _File_PresignedURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _File_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileUpload)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).PresignedURL(ctx, in)
+		return srv.(FileServer).UploadFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_PresignedURL_FullMethodName,
+		FullMethod: File_UploadFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).PresignedURL(ctx, req.(*emptypb.Empty))
+		return srv.(FileServer).UploadFile(ctx, req.(*FileUpload))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -147,8 +146,8 @@ var File_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*FileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PresignedURL",
-			Handler:    _File_PresignedURL_Handler,
+			MethodName: "UploadFile",
+			Handler:    _File_UploadFile_Handler,
 		},
 		{
 			MethodName: "GetFile",
